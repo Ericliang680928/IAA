@@ -141,6 +141,13 @@
   .hl li:last-child{border-bottom:none}
   .hl li::before{content:'';position:absolute;left:4px;top:17px;width:9px;height:9px;border-radius:50%;background:var(--teal)}
   .note{font-size:1.05rem;color:#b04518;font-weight:700;margin-top:14px;line-height:1.6}
+  .flow{margin-top:8px}
+  .frow{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-lt);align-items:baseline}
+  .frow:last-child{border-bottom:none}
+  .ft{flex:0 0 52px;color:var(--magenta);font-weight:700;font-variant-numeric:tabular-nums;font-size:1.05rem}
+  .fa{font-size:1.1rem;color:#3a4250;line-height:1.5;font-weight:500}
+  .frow.move .fa{color:var(--gray);font-weight:400;font-size:1rem}
+  .frow.move .ft{color:var(--teal-lt)}
 </style>
 </head>
 <body>
@@ -216,11 +223,27 @@
       <span class="predate lime">2026 / 9 / 4</span>
       <h3 class="serif">📅 IAA 第三次例會活動</h3>
       <div class="pgrid">
-        <div class="pcell"><div class="k">時間</div><div class="v">9 / 4</div></div>
+        <div class="pcell"><div class="k">時間</div><div class="v">9/4（五）</div></div>
         <div class="pcell"><div class="k">地點</div><div class="v">南科</div></div>
         <div class="pcell full"><div class="k">承辦團隊</div><div class="v">南區總召 郭文俊 及南區團隊</div></div>
       </div>
-      <div class="sm" style="margin-top:12px;color:var(--gray)">詳細議程將另行公告，敬請期待 🙌</div>
+      <div class="grp o">📋 活動流程</div>
+      <div class="flow">
+        <div class="frow"><span class="ft">10:00</span><span class="fa">🚄 集合 · 嘉義高鐵接送</span></div>
+        <div class="frow"><span class="ft">10:50</span><span class="fa">🏛️ 南科管理局 · 聽簡報</span></div>
+        <div class="frow move"><span class="ft">11:55</span><span class="fa">🚌 移動</span></div>
+        <div class="frow"><span class="ft">12:00</span><span class="fa">🍱 午餐 · 棕茂應材公司</span></div>
+        <div class="frow move"><span class="ft">13:15</span><span class="fa">🚌 移動</span></div>
+        <div class="frow"><span class="ft">13:20</span><span class="fa">🏺 南科考古博物館</span></div>
+        <div class="frow move"><span class="ft">15:00</span><span class="fa">🚌 移動 · 前往賛美酒店</span></div>
+        <div class="frow"><span class="ft">15:20</span><span class="fa">☕ 午茶交流</span></div>
+        <div class="frow"><span class="ft">15:30</span><span class="fa">🎤 專題演講 · 品牌規劃</span></div>
+        <div class="frow"><span class="ft">16:30</span><span class="fa">🎤 專題演講 · 待確認</span></div>
+        <div class="frow"><span class="ft">17:20</span><span class="fa">🤝 會議交流 &amp; 大合照</span></div>
+        <div class="frow"><span class="ft">17:30</span><span class="fa">🍽️ 賛美晚宴</span></div>
+        <div class="frow"><span class="ft">19:00</span><span class="fa">🚄 高鐵接駁</span></div>
+      </div>
+      <div class="sm" style="margin-top:12px;color:var(--gray)">部分議程仍待確認，最終以正式公告為準 🙌</div>
     </div>
   </div>
 
