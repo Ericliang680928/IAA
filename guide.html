@@ -130,6 +130,17 @@
   .footer-logo-text{font-family:'Noto Serif TC',serif;font-weight:700;color:#fff;font-size:1.05rem;letter-spacing:1px;margin-bottom:12px}
   .footer-text{color:rgba(255,255,255,.5);font-size:.9rem;letter-spacing:.03em;line-height:1.9}
   .footer-text a{color:var(--teal);text-decoration:none}
+
+  /* ── PREVIEW ── */
+  .predate{display:inline-block;background:var(--magenta);color:#fff;font-size:1rem;font-weight:700;padding:6px 15px;border-radius:20px;margin-bottom:10px;letter-spacing:.04em}
+  .predate.lime{background:#7a8800}
+  .bigbtn{display:block;text-align:center;background:var(--magenta);color:#fff;text-decoration:none;font-weight:700;font-size:1.2rem;padding:16px;border-radius:12px;margin-top:11px;letter-spacing:.03em;box-shadow:0 4px 14px rgba(179,28,131,.25)}
+  .bigbtn.alt{background:var(--navy);box-shadow:0 4px 14px rgba(18,38,71,.2)}
+  .hl{list-style:none;margin:8px 0 0;padding:0}
+  .hl li{font-size:1.08rem;color:#3a4250;padding:9px 0 9px 28px;position:relative;line-height:1.55;border-bottom:1px solid var(--gray-lt)}
+  .hl li:last-child{border-bottom:none}
+  .hl li::before{content:'';position:absolute;left:4px;top:17px;width:9px;height:9px;border-radius:50%;background:var(--teal)}
+  .note{font-size:1.05rem;color:#b04518;font-weight:700;margin-top:14px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -147,6 +158,7 @@
     <span style="flex:1"></span>
     <a href="#me">我的資訊</a>
     <a href="#timeline">完整行程</a>
+    <a href="#preview">活動預告</a>
   </div>
 </nav>
 
@@ -170,6 +182,47 @@
     <div id="tlBox"></div>
   </div>
 </div>
+
+  <div class="sect" id="preview">
+    <div class="sect-eyebrow"><span class="ebar" style="background:var(--magenta)"></span><span class="etext" style="color:var(--magenta)">近期活動</span></div>
+    <div class="sect-title serif">活動預告</div>
+
+    <div class="card" style="border-top-color:var(--magenta)">
+      <span class="predate">2026 / 7 / 3（五）14:30–16:30</span>
+      <h3 class="serif">🌏 IMC 國際大師講座</h3>
+      <div class="who">限額 40 席 · 完全免費（需事先線上報名）</div>
+      <div class="pcell full"><div class="k">講座主題</div><div class="v">《邁向 2030 企業新浪潮》Sustainability &amp; Well-Being 經營</div><div class="sm">從 SDGs 到 SWGs，打造身心靈與地球共榮的永續競爭力。SDGs 將於 2030 年底落幕，下一波國際巨浪 SWGs（永續福祉目標）已然襲來，搶先佈局「幸福與永續經營」的全新競爭力。</div></div>
+      <div class="grp">🎙️ 主講人</div>
+      <div class="pcell full"><div class="v">鈴木 和男 先生（Kazuo Suzuki）</div><div class="sm">KAZ 顧問股份有限公司 社長｜日本經營士會 會長｜RINRI SDGs 推進協議會 會長｜遼寧科技大學 客座教授。繼 2018 年 SDGs 巡迴演講後再次來台，以無償方式帶來跨國奉獻演講。</div></div>
+      <div class="grp t">📍 活動資訊</div>
+      <div class="pgrid">
+        <div class="pcell"><div class="k">時間</div><div class="v">7/3（五）14:30–16:30</div></div>
+        <div class="pcell"><div class="k">名額 / 費用</div><div class="v">限 40 人 · 免費</div></div>
+        <div class="pcell full"><div class="k">地點</div><div class="v">聖島國際專利商標聯合事務所</div><div class="sm">台北市南京東路三段 248 號 12F 會議室｜捷運「南京復興站」出站步行即達</div></div>
+      </div>
+      <div class="grp o">📋 講座精華（2 小時，含現場專業口譯）</div>
+      <ul class="hl">
+        <li>從 SDGs 到 SWGs 的世界趨勢</li>
+        <li>幸福感如何轉化為企業獲利能力</li>
+        <li>日本 Well-Being 經營實例深度分析</li>
+        <li>大師面對面 Q&amp;A 開放提問</li>
+      </ul>
+      <div class="note">⚠️ IMC 與 IAA 會員優先，席次有限，額滿即關閉，請把握機會！</div>
+      <a class="bigbtn" href="https://forms.gle/suR4wuGWH5UvN3hm7" target="_blank" rel="noopener">📝 立即報名（點我填表）</a>
+      <a class="bigbtn alt" href="https://docs.google.com/spreadsheets/d/1SbyXwe-GnKS9J6R9Cx-w9lr5yu1YJn6fM1kN05B_v-8/edit?usp=sharing" target="_blank" rel="noopener">🔍 查詢報名狀況</a>
+    </div>
+
+    <div class="card" style="border-top-color:var(--lime)">
+      <span class="predate lime">2026 / 9 / 4</span>
+      <h3 class="serif">📅 IAA 第三次例會活動</h3>
+      <div class="pgrid">
+        <div class="pcell"><div class="k">時間</div><div class="v">9 / 4</div></div>
+        <div class="pcell"><div class="k">地點</div><div class="v">南科</div></div>
+        <div class="pcell full"><div class="k">承辦團隊</div><div class="v">南區總召 郭文俊 及南區團隊</div></div>
+      </div>
+      <div class="sm" style="margin-top:12px;color:var(--gray)">詳細議程將另行公告，敬請期待 🙌</div>
+    </div>
+  </div>
 
 <footer>
   <img class="footer-logo" src="https://ericliang680928.github.io/IAA/%E5%BB%A0%E5%95%86%E7%85%A7%E7%89%87/IAA-logo.jpg" alt="IAA"
