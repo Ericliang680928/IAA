@@ -113,7 +113,14 @@
   .footer-logo{height:48px;background:#fff;border-radius:8px;padding:5px 14px;margin-bottom:14px}
   .footer-text{color:rgba(255,255,255,.55);font-size:.9rem;letter-spacing:.03em;line-height:1.9}
   .footer-text a{color:var(--teal);text-decoration:none}
-  @media(max-width:400px){.hero h1{font-size:1.5rem}.speaker img.photo{width:92px;height:126px}}
+  @media(max-width:560px){
+    .speaker{flex-direction:column;align-items:center;text-align:center}
+    .speaker>div{width:100%}
+    .speaker img.photo{width:150px;height:200px}
+    .speaker .sp-role{text-align:center}
+    .cvlist{text-align:left}
+  }
+  @media(max-width:400px){.hero h1{font-size:1.5rem}.speaker img.photo{width:132px;height:178px}}
 </style>
 </head>
 <body>
@@ -261,7 +268,7 @@
 
     <div class="talk">
       <span class="tk-tag">🚄 回程 · 送高鐵</span>
-      <div class="tk-time">晚宴後接駁專車送回嘉義高鐵站</div>
+      <div class="tk-time">晚宴後接駁專車 19:00 送回嘉義高鐵站</div>
       <div class="trow"><span class="tdir">南下</span><span class="ttrain">車次 0673</span><span class="ttime">嘉義發車 19:50</span></div>
       <div class="trow"><span class="tdir up">北上</span><span class="ttrain">車次 0854</span><span class="ttime">嘉義發車 20:00</span></div>
     </div>
