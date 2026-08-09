@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IAA 交朋友大冒險 · 三輪配對工具</title>
+<style>
+  :root{--navy:#1B2A4A;--navy2:#2A3B5E;--gold:#D4A24C;--cream:#F7F5F0;--ink:#1B2A4A;--muted:#5B6B8C;--line:#EEE9DD;--red:#E15554;--green:#3B8C6E;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Microsoft JhengHei","PingFang TC",system-ui,sans-serif;background:var(--cream);color:var(--ink);}
+  header{background:var(--navy);color:var(--cream);padding:18px 24px;}
+  header h1{margin:0;font-size:20px;letter-spacing:1px;}
+  header p{margin:4px 0 0;font-size:13px;color:#B9C2D6;}
+  .tabs{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .tab{padding:6px 16px;border-radius:999px;font-size:14px;border:0;cursor:pointer;background:var(--navy2);color:var(--cream);}
+  .tab.active{background:var(--gold);color:var(--navy);font-weight:700;}
+  main{max-width:860px;margin:0 auto;padding:24px;}
+  h2{font-size:17px;display:flex;align-items:center;gap:8px;margin:0 0 8px;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;}
+  .muted{color:var(--muted);font-size:13px;}
+  textarea{width:100%;border:1px solid #D9D4C7;border-radius:8px;padding:10px;font-family:ui-monospace,monospace;font-size:12px;background:#fff;}
+  button.act{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-size:14px;cursor:pointer;}
+  button.act:hover{background:var(--navy2);}
+  button.gold{background:var(--gold);color:var(--navy);font-weight:700;}
+  button.ghost{background:#fff;border:1px solid var(--navy);color:var(--navy);}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .pair{background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:14px;}
+  select,input[type=text]{border:1px solid #D9D4C7;border-radius:8px;padding:8px;font-size:14px;background:#fff;width:100%;}
+  .kicker{font-size:11px;letter-spacing:1px;color:var(--gold);font-weight:700;text-transform:uppercase;}
+  .partner{font-size:18px;font-weight:700;}
+  .ice{background:var(--cream);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:14px;}
+  .want{color:var(--green);} .offer{color:#B4791F;}
+  label.pick{display:flex;gap:8px;padding:8px;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:14px;align-items:flex-start;margin-bottom:6px;}
+  label.pick.sel{border-color:var(--gold);background:#FBF3E3;}
+  .timer{font-size:28px;font-weight:800;letter-spacing:2px;}
+  .err{background:var(--red);color:#fff;padding:8px 24px;font-size:13px;}
+  .ok{color:var(--green);} .warn{color:var(--red);}
+  .toggle{font-size:13px;display:flex;gap:6px;align-items:center;}
+  hr{border:0;border-top:1px solid var(--line);margin:14px 0;}
+  small.tag{font-size:11px;color:var(--muted);}
+  @media print{.tabs,.noprint{display:none;} body{background:#fff;}}
+  /* 圖解流程 */
+  .flow{display:flex;flex-wrap:wrap;gap:2px;align-items:stretch;justify-content:flex-start;margin:10px 0;}
+  .step{flex:0 0 118px;background:var(--cream);border:2px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;}
+  .step .pic{font-size:34px;line-height:1.2;}
+  .step .no{display:inline-block;background:var(--gold);color:var(--navy);font-weight:800;border-radius:999px;min-width:22px;padding:1px 6px;font-size:12px;margin-bottom:4px;}
+  .step .txt{font-size:13px;font-weight:700;margin-top:4px;}
+  .step .sub{font-size:11px;color:var(--muted);margin-top:2px;}
+  .arrow{align-self:center;font-size:20px;color:var(--gold);font-weight:800;padding:0 2px;}
+  .rolebar{display:inline-block;border-radius:999px;padding:3px 14px;font-size:13px;font-weight:800;color:#fff;margin-bottom:2px;}
+  .story{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;background:var(--cream);border-radius:14px;padding:12px;margin:8px 0;}
+  .story .sc{text-align:center;flex:0 0 130px;}
+  .story .sc .pic{font-size:38px;}
+  .story .sc .txt{font-size:12px;font-weight:700;margin-top:2px;}
+</style>
+</head>
+<body>
+<header>
+  <h1>IAA 創新加速聯盟 · 交朋友大冒險</h1>
+  <p>輪轉制三輪配對：每輪全員配對、換人不重複、單數自動併三人組 ｜ ① 指定 ② 需求/背景 ③ 隨機 ＋ 自由交流 30 分</p>
+  <div class="tabs noprint">
+    <button class="tab active" data-v="admin" onclick="setView('admin')">管理端</button>
+    <button class="tab" data-v="member" onclick="setView('member')">會友端</button>
+    <button class="tab" data-v="board" onclick="setView('board')">投影/總表</button>
+    <button class="tab" data-v="help" onclick="setView('help')">📖 使用說明</button>
+  </div>
+</header>
+<div id="err" class="err" style="display:none"></div>
+<main id="app"></main>
+
+<script>
+/* ---------------- 狀態 ---------------- */
+const KEY="iaa_match_v3";
+let S=load()||{roster:[],round1:null,round2Picks:{},round2:null,round3:null,
+  opts:{mode:"biz",crossShe:true,roundMin:10},absent:[],extraHist:[]};
+S.absent=S.absent||[];S.extraHist=S.extraHist||[];S.round1Picks=S.round1Picks||{};
+let view="admin", selfName="";
+
+function load(){try{return JSON.parse(localStorage.getItem(KEY));}catch(e){return null;}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){showErr("儲存失敗，資料仍在畫面中。");}}
+function showErr(m){const e=document.getElementById("err");e.textContent=m;e.style.display="block";setTimeout(()=>e.style.display="none",4000);}
+
+/* ---------------- CSV ---------------- */
+const DEFAULT_ROSTER=`姓名,社別,公司,產業大分類,產業細分類,最近在忙,想找,可提供,指定配對
+黃雅堂,宜蘭社,維多麗亞玫瑰莊園,觀光/住宿/旅遊,住宿/觀光,,,,
+賴約凱,宜蘭社,亞典菓子工場,食品/餐飲/伴手禮,烘焙/糕點,,,,
+謝陳煌,基隆社,和平島皇帝殿食品坊,食品/餐飲/伴手禮,餐飲/伴手禮,,,,
+楊麗玲,基隆社,藻樂趣海藻創意美食,食品/餐飲/伴手禮,餐飲/伴手禮,,,,
+鄭明仁,基隆社,IMC聯合會,社團/組織,社團/協會,,,,
+王雪香,台北社,弘喜有限公司,珠寶/禮品,珠寶/禮品,,,,
+張森烈,台北社,聖島國際專利商標聯合事務所,顧問/專業服務,智財/法律,,,,
+吳俊傑,台北社,珍萬國家具裝潢(股)公司,家具/家飾/寢飾,家具,,,,
+李伍滄,台北社,伍合床枕(股)公司,家具/家飾/寢飾,寢具/寢飾,,,,
+黃金龍,台北社,深耕開發(股)公司,資訊/電子/科技,通信/網路,,,,
+宋貴修,桃園社,嘉彰(股)公司,機械/設備/金屬製造,金屬/五金,,,,
+陳蒼海,桃園社,嘉彰(股)公司,機械/設備/金屬製造,金屬/五金,,,,
+陳麗美,桃園社,禾洋室內裝修工程有限公司,建築/營造/不動產,室內設計/裝修,,,,
+盧永濬,桃園社,源鮮農業生物科技(股)公司,農業/林業,農業/農產生技,,,,
+伍穗華,桃園社,侏羅紀(股)公司／藝信(股)公司,珠寶/禮品,珠寶/藝術,,,,
+陳嘉鴻,桃園社,富堡能源(股)公司,綠能/環保/能源,氫能/燃料電池,,,,
+古思明,桃園社,安耐視科技(股)公司,生技/醫療/保健,醫療器材,,,,
+陳昌平,桃園社,台灣粒線體應用技術(股)公司,生技/醫療/保健,生技/新藥,,,,
+謝昌寶,新竹社,建興農業科技(股)公司,農業/林業,農業/農產生技,,,,
+黃唯洲,新竹社,愛蜂園有限公司,食品/餐飲/伴手禮,農特產品,,,,
+林文華,新竹社,小林煎餅(股)公司,食品/餐飲/伴手禮,烘焙/糕點,,,,
+朱碧霞,苗栗社,勞動部勞資獨任仲裁人／勞動部勞資獨任調解人,顧問/專業服務,勞資/法律顧問,,,,
+江德利,苗栗社,泰安觀止溫泉(股)公司,觀光/住宿/旅遊,溫泉/飯店,,,,
+黃教誠,苗栗社,元埕建築師事務所,建築/營造/不動產,建築設計/事務所,,,,
+林鎂雲,苗栗社,后里薩克斯風玩家館有限公司,文創/藝術/設計印刷,樂器/音樂,,,,
+梁群儒,苗栗社,米樂家國際貿易有限公司,食品/餐飲/伴手禮,食品原料/批發,,,,
+林振鋒,苗栗社,賀喜能源(股)公司,綠能/環保/能源,綠能電力系統,,,,
+翟清楠,苗栗社,恆智重機(股)公司,機械/設備/金屬製造,搬運/物流設備,,,,
+江淑萍,苗栗社,江記永安囍餅有限公司,食品/餐飲/伴手禮,烘焙/糕點,,,,
+林浿安,苗栗社,EX—亞洲劇團,文創/藝術/設計印刷,表演藝術,,,,
+魏宏汶,苗栗社,麥世科(股)公司,化工/材料,不織布/複合材料,,,,
+沈香君,苗栗社,麥世科(股)公司,化工/材料,不織布/複合材料,,,,
+鄧克智,苗栗社,苗栗縣加樂林業生產合作社,農業/林業,林業,,,,
+劉筱文,苗栗社,和宸企業社附設阿昌清潔庇護工場,綠能/環保/能源,環保/清潔服務,,,,
+張光瑤,台中社,光纖電腦科技(股)公司,資訊/電子/科技,電子設備,,,,
+唐明良,台中社,向陽聯合會計師事務所,顧問/專業服務,會計/財稅,,,,
+林珮君,台中社,亞克科技開發(股)公司,汽機車/零件,汽車配件,,,,
+廖月照,台中社,歐群科技(股)公司,機械/設備/金屬製造,工具機/機械,,,,
+陳科仰,台中社,鼎力生醫(股)公司,美妝/保養品,保養品/代工,,,,
+陳奕錩,台中社,大振豐洋傘有限公司,紡織/傘具,傘具,,,,
+許慶修,台中社,中美本草生技(股)公司,生技/醫療/保健,保健品/新藥,,,,
+林祺豪,台中社,三風食品工業(股)公司,食品/餐飲/伴手禮,食品加工製造,,,,
+王明宇,台中社,恭勤化學工業(股)公司,化工/材料,化工原料,,,,
+孫連忠,台中社,敬統實業(股)公司,家具/家飾/寢飾,寢具/寢飾,,,,
+王信焜,台中社,群復中醫醫療照護事業,生技/醫療/保健,醫療照護/長照,,,,
+彭素菁,台中社,順心企業(股)公司,機械/設備/金屬製造,自動化/機械設備,,,,
+余垂恒,台中社,塑懋機械有限公司,機械/設備/金屬製造,塑膠加工機械,,,,
+呂金豐,台中社,金豐室內裝修有限公司,建築/營造/不動產,室內設計/裝修,,,,
+葉子儀,台中社,台灣快密刀科技有限公司,化工/材料,工業潤滑油/潤滑脂,,,,
+王瑞良,台中社,進發科技有限公司,機械/設備/金屬製造,工具機/機械,,,,
+陳祥彬,台中社,蜜友商行,食品/餐飲/伴手禮,冰品/飲品,,,,
+陳人豪,台中社,元亨精紡工業(股)公司,紡織/傘具,紡織,,,,
+廖經舜,台中社,旭建電機工業(股)公司,機械/設備/金屬製造,電機/馬達,,,,
+周鴻仁,彰化社,潤盟國際商管顧問,顧問/專業服務,企管/品牌顧問,,,,
+林金順,彰化社,富雨洋傘有限公司,紡織/傘具,傘具,,,,
+周淑秋,彰化社,富雨洋傘有限公司,紡織/傘具,傘具,,,,
+陳武郎,彰化社,夢龍(股)公司,食品/餐飲/伴手禮,食品貿易,,,,
+楊國珍,南投社,珍鼎記茶飲(股)公司,食品/餐飲/伴手禮,茶飲/飲品,,,,
+張金泉,南投社,良飛工業有限公司,汽機車/零件,消音器/排氣,,,,
+曾煌棊,南投社,昇大交通(股)公司,運輸/物流,貨物運輸,,,,
+張金來,南投社,良飛工業有限公司,汽機車/零件,消音器/排氣,,,,
+林子騰,雲林社,領點資訊有限公司,資訊/電子/科技,軟體/資訊服務,,,,
+鄭文太,雲林社,新吉發米粉工廠有限公司,食品/餐飲/伴手禮,食品加工製造,,,,
+陳盈豪,雲林社,土庫驛可可莊園有限公司,食品/餐飲/伴手禮,巧克力/可可,,,,
+郭建位,雲林社,雲林縣職業工會聯合服務中心,顧問/專業服務,勞資/職訓,,,,
+紀書菱,雲林社,台灣雅聞生技(股)公司,美妝/保養品,化妝/保養品,,,,
+葉欣芝,嘉義社,對了出發(股)公司／湯悅開發有限公司,文創/藝術/設計印刷,文創事業,,,,
+高麗琴,嘉義社,維霖開發建設(股)公司,建築/營造/不動產,建設/營造,,,,
+何勇魏,嘉義社,華實興業(股)公司,美妝/保養品,化妝/保養品,,,,
+郭奕谷,嘉義社,伍睿建設(股)公司／莆田市游龍生物科技有限公司,建築/營造/不動產,建設/營造,,,,
+林啟輝,嘉義社,志輝科技(股)公司,機械/設備/金屬製造,電機/馬達,,,,
+陳文忠,嘉義社,盈松環保(股)公司,綠能/環保/能源,環保/廢棄物,,,,
+陳琬媖,嘉義社,盈松環保(股)公司,綠能/環保/能源,環保/廢棄物,,,,
+李勳婷,台南市社,三道門旅店有限公司,觀光/住宿/旅遊,住宿/飯店,,,,
+陳政仁,台南市社,麒宏食品工業有限公司,食品/餐飲/伴手禮,食品加工製造,,,,
+陳信宏,南瀛社,南瀛IMC,社團/組織,社團/協會,,,,
+李敏妃,南瀛社,洋碁國際旅行社有限公司,觀光/住宿/旅遊,旅行社,,,,
+翁志宜,南瀛社,儕陞生化技術(股)公司,生技/醫療/保健,生技/新藥,,,,
+郭文勝,南瀛社,蔡阿姨租屋,建築/營造/不動產,不動產/租賃,,,,
+郭文俊,南瀛社,南科贊美酒店,觀光/住宿/旅遊,住宿/飯店,,,,
+陳慧龍,南瀛社,龍宏印刷有限公司,文創/藝術/設計印刷,設計/印刷,,,,
+鄭群亮,南瀛社,營新醫院,生技/醫療/保健,醫療照護/長照,,,,
+陳志銘,南瀛社,澄交生物科技(股)公司,生技/醫療/保健,生技/新藥,,,,
+蕭崇瑜,南瀛社,詠糧實業有限公司,食品/餐飲/伴手禮,食品原料/批發,,,,
+張翔渝,南瀛社,伍道眾合有限公司,食品/餐飲/伴手禮,生鮮食材,,,,
+李國陽,高雄社,順升昌企業(股)公司,機械/設備/金屬製造,金屬/五金,,,,
+周代耀,高雄社,誠翔國際顧問有限公司,顧問/專業服務,企管/品牌顧問,,,,
+宋小麗,高雄社,立達國際興業(股)公司,顧問/專業服務,人力資源/電商,,,,
+陳崇誠,高雄社,提碁(股)公司,美妝/保養品,美容美髮,,,,
+蔡俊明,高雄社,福樂多事業(股)公司,生技/醫療/保健,醫療照護/長照,,,,
+麥芯瑜,高雄社,創潔生技(股)公司,食品/餐飲/伴手禮,茶飲/飲品,,,,
+張清泉,高雄社,永泉國際企業有限公司,食品/餐飲/伴手禮,生鮮食材,,,,
+王竣立,高雄社,鴻信實業(股)公司,食品/餐飲/伴手禮,祭祀/禮品食品,,,,`;
+const SAMPLE=DEFAULT_ROSTER;
+
+function parseCSV(text){
+  const rows=[];let i=0,f="",row=[],q=false;text=text.replace(/\r/g,"");
+  while(i<text.length){const c=text[i];
+    if(q){if(c=='"'){if(text[i+1]=='"'){f+='"';i++;}else q=false;}else f+=c;}
+    else{if(c=='"')q=true;else if(c==','){row.push(f);f="";}
+      else if(c=='\n'){row.push(f);rows.push(row);row=[];f="";}else f+=c;}
+    i++;}
+  if(f!==""||row.length){row.push(f);rows.push(row);}
+  return rows;
+}
+function importRoster(text){
+  const rows=parseCSV(text.trim());if(rows.length<2){showErr("沒有資料列");return;}
+  const H=rows[0].map(s=>s.trim());const idx=n=>H.indexOf(n);
+  const g=(r,n)=>{const k=idx(n);return k>=0?(r[k]||"").trim():"";};
+  const seen={};
+  const roster=rows.slice(1).filter(r=>r.join("").trim()).map(r=>{
+    let nm=g(r,"姓名");if(seen[nm]){nm=nm+"("+g(r,"社別")+")";}seen[g(r,"姓名")]=1;
+    return {name:nm,she:g(r,"社別"),company:g(r,"公司"),
+      catBig:g(r,"產業大分類"),catSub:g(r,"產業細分類"),
+      interests:g(r,"最近在忙"),wants:g(r,"想找"),offers:g(r,"可提供"),
+      desired:g(r,"指定配對").split("|").map(s=>s.trim()).filter(Boolean)};
+  }).filter(m=>m.name);
+  S.roster=roster;S.round1=null;S.round1Picks={};S.round2Picks={};S.round2=null;S.round3=null;S.absent=[];S.extraHist=[];save();render();
+}
+/* ---------------- Google 試算表匯入 ---------------- */
+function sheetCsvUrl(url){
+  const m=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9\-_]+)/);if(!m)return null;
+  const gid=(url.match(/[#&?]gid=(\d+)/)||[])[1]||"0";
+  return "https://docs.google.com/spreadsheets/d/"+m[1]+"/gviz/tq?tqx=out:csv&gid="+gid;
+}
+function importFromSheet(url){
+  url=(url||"").trim();
+  if(!url){showErr("請先貼上 Google 試算表網址");return;}
+  const cu=sheetCsvUrl(url);
+  if(!cu){showErr("網址格式不對，請貼完整的 Google 試算表網址（含 /spreadsheets/d/…）");return;}
+  S.opts.sheetUrl=url;save();
+  fetch(cu).then(r=>{if(!r.ok)throw new Error();return r.text();})
+    .then(t=>{if(!t||t.indexOf("姓名")<0){showErr("讀到的內容沒有「姓名」欄，請確認工作表欄位與分頁 gid");return;}importRoster(t);})
+    .catch(()=>showErr("讀取失敗：請確認試算表已設「知道連結的使用者→檢視者」，且網路正常。"));
+}
+function markAbsent(n){if(!n)return;if(!S.absent.includes(n))S.absent.push(n);save();render();}
+function restoreAbsent(n){S.absent=S.absent.filter(x=>x!==n);save();render();}
+
+/* ---------------- 工具 ---------------- */
+function byName(){return Object.fromEntries(S.roster.map(m=>[m.name,m]));}
+function key(a,b){return [a,b].sort().join("|");}
+function sameCo(a,b){const bn=byName();return bn[a]&&bn[b]&&bn[a].company&&bn[a].company===bn[b].company;}
+function present(){return S.roster.filter(m=>!S.absent.includes(m.name));}
+function presentNames(){return present().map(m=>m.name);}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function metSet(rounds){const s=new Set();for(const r of rounds){if(!r)continue;
+  for(const [a,b] of Object.entries(r.matched)) s.add(key(a,b));
+  if(r.trio){s.add(key(r.trio.extra,r.trio.pair[0]));s.add(key(r.trio.extra,r.trio.pair[1]));}
+}return s;}
+
+// 通用配對：forbid 為硬條件；落單者退而求其次僅擋同公司，盡量讓每個人都有伴
+function greedyPair(names,forbid){
+  const pool=shuffle([...names]),matched={},used=new Set();
+  for(let i=0;i<pool.length;i++){const a=pool[i];if(used.has(a))continue;
+    for(let j=i+1;j<pool.length;j++){const b=pool[j];if(used.has(b))continue;if(forbid(a,b))continue;
+      matched[a]=b;matched[b]=a;used.add(a);used.add(b);break;}}
+  let left=pool.filter(n=>!used.has(n));
+  for(let i=0;i<left.length;i++){const a=left[i];if(used.has(a))continue;
+    for(let j=i+1;j<left.length;j++){const b=left[j];if(used.has(b))continue;if(sameCo(a,b))continue;
+      matched[a]=b;matched[b]=a;used.add(a);used.add(b);break;}}
+  return {matched,leftover:pool.filter(n=>!used.has(n))};
+}
+
+/* ---------------- 配對評分（第二輪推薦用） ---------------- */
+function tok(s){return (s||"").split(/[、,，\/／;；\s]+/).map(x=>x.trim()).filter(x=>x.length>=2);}
+function overlap(aStr,bStr){const A=tok(aStr),B=(bStr||"");return A.some(t=>B.includes(t));}
+function score(me,c){
+  const o=S.opts;let s=0;
+  const mw=overlap(me.wants,c.offers),cw=overlap(c.wants,me.offers);
+  if(mw)s+=50;if(cw)s+=50;if(mw&&cw)s+=30;
+  if(me.catSub&&me.catSub===c.catSub)s+=(o.mode==="deep"?30:20);
+  else if(me.catBig&&me.catBig===c.catBig)s+=10;
+  if(o.crossShe&&me.she&&c.she&&me.she!==c.she)s+=(o.mode==="deep"?4:8);
+  return s;
+}
+function suggest(name){
+  const bn=byName(),me=bn[name],met=metSet([S.round1]);
+  return presentNames().filter(n=>n!==name)
+    .filter(n=>!met.has(key(name,n))&&!sameCo(name,n))
+    .map(n=>bn[n]).map(c=>({m:c,s:score(me,c)}))
+    .sort((a,b)=>b.s-a.s).slice(0,5).map(x=>x.m);
+}
+
+/* ---------------- 三輪（輪轉制） ---------------- */
+function finishRound(R,others){
+  if(R.leftover&&R.leftover.length===1){
+    const met=metSet(others);
+    let x=R.leftover[0];
+    if(S.extraHist.includes(x)){
+      for(const [a,b] of Object.entries(R.matched)){
+        if(S.extraHist.includes(a)||a===x||b===x)continue;
+        if(!sameCo(x,b)&&!met.has(key(x,b))){
+          delete R.matched[a];R.matched[x]=b;R.matched[b]=x;R.leftover=[a];x=a;break;}
+      }
+    }
+    const ps=Object.entries(R.matched).filter(([a,b])=>a<b);
+    let best=null,bestS=-1;
+    for(const [a,b] of ps){
+      if(sameCo(x,a)||sameCo(x,b))continue;
+      let s=0;if(!met.has(key(x,a)))s++;if(!met.has(key(x,b)))s++;
+      if(s>bestS){bestS=s;best=[a,b];}
+    }
+    if(!best&&ps.length)best=ps[0];
+    R.trio=best?{pair:best,extra:x}:null;
+    if(R.trio)S.extraHist.push(x);
+  } else R.trio=null;
+  return R;
+}
+// 指定名單：會友端現場指定優先，沒有現場指定才退回匯入名單「指定配對」欄
+function desiredOf(m){const p=S.round1Picks[m.name];return (p&&p.target)?[p.target]:m.desired;}
+function computeRound1(){
+  const bn=byName(),matched={},used=new Set();
+  const P=new Set(presentNames());
+  const place=(a,b)=>{matched[a]=b;matched[b]=a;used.add(a);used.add(b);};
+  for(const m of present()){if(used.has(m.name))continue;
+    for(const d of desiredOf(m)){if(!P.has(d)||used.has(d)||!bn[d]||d===m.name||sameCo(m.name,d))continue;
+      if(desiredOf(bn[d]).includes(m.name)){place(m.name,d);break;}}}
+  for(const m of present()){if(used.has(m.name))continue;
+    for(const d of desiredOf(m)){if(used.has(m.name))break;
+      if(!P.has(d)||used.has(d)||!bn[d]||d===m.name||sameCo(m.name,d))continue;place(m.name,d);}}
+  const rest=presentNames().filter(n=>!used.has(n));
+  const g=greedyPair(rest,(a,b)=>sameCo(a,b));
+  Object.assign(matched,g.matched);
+  S.round1=finishRound({matched,leftover:g.leftover},[]);
+  S.round2Picks={};S.round2=null;S.round3=null;save();render();
+}
+function finalizeRound2(){
+  const met=metSet([S.round1]);
+  const P=new Set(presentNames());
+  const forbid=(a,b)=>a===b||sameCo(a,b)||met.has(key(a,b));
+  const matched={},used=new Set();
+  const place=(a,b)=>{matched[a]=b;matched[b]=a;used.add(a);used.add(b);};
+  const picks=Object.entries(S.round2Picks).filter(([n,p])=>P.has(n)&&P.has(p.target)).sort((x,y)=>x[1].ts-y[1].ts);
+  const pmap=Object.fromEntries(picks.map(([n,p])=>[n,p.target]));
+  for(const [n,p] of picks){if(used.has(n))continue;const t=p.target;
+    if(used.has(t))continue;if(pmap[t]===n&&!forbid(n,t))place(n,t);}
+  for(const [n,p] of picks){if(used.has(n))continue;const t=p.target;
+    if(used.has(t)||forbid(n,t))continue;place(n,t);}
+  const rest=presentNames().filter(n=>!used.has(n));
+  const g=greedyPair(rest,forbid);Object.assign(matched,g.matched);
+  S.round2=finishRound({matched,leftover:g.leftover},[S.round1]);
+  S.round3=null;save();render();
+}
+function computeRound3(){
+  const met=metSet([S.round1,S.round2]);
+  const g=greedyPair(presentNames(),(a,b)=>a===b||sameCo(a,b)||met.has(key(a,b)));
+  S.round3=finishRound({matched:g.matched,leftover:g.leftover},[S.round1,S.round2]);
+  save();render();
+}
+
+/* ---------------- 匯出 ---------------- */
+function exportCSV(){
+  const L=["姓名,社別,公司,第一輪,第二輪,第三輪"];
+  for(const m of S.roster){const abs=S.absent.includes(m.name);L.push([m.name+(abs?"(請假)":""),m.she,m.company,
+    abs?"—":(S.round1?.matched?.[m.name]||(S.round1?.trio?.extra===m.name?("三人組:"+S.round1.trio.pair.join("+")):"(輪空)")),S.round2?.matched?.[m.name]||"",S.round3?.matched?.[m.name]||""]
+    .map(x=>/[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x).join(","));}
+  const blob=new Blob(["﻿"+L.join("\n")],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="IAA配對結果.csv";a.click();
+}
+
+/* ---------------- 計時器 ---------------- */
+let timerInt=null,timerLeft=0;
+function startTimer(min){clearInterval(timerInt);timerLeft=min*60;renderTimer();
+  timerInt=setInterval(()=>{timerLeft--;renderTimer();if(timerLeft<=0)clearInterval(timerInt);},1000);}
+function renderTimer(){const el=document.getElementById("timer");if(!el)return;
+  const m=String(Math.floor(Math.max(timerLeft,0)/60)).padStart(2,"0"),s=String(Math.max(timerLeft,0)%60).padStart(2,"0");
+  el.textContent=m+":"+s;}
+
+/* ---------------- 畫面 ---------------- */
+function setView(v){view=v;document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.v===v));render();}
+function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function pairs(R){return R?Object.entries(R.matched).filter(([a,b])=>a<b):[];}
+function pairList(R){if(!R)return '<span class="muted">—</span>';
+  const t=R.trio;
+  const html=pairs(R).map(([a,b])=>{
+    if(t&&((t.pair[0]===a&&t.pair[1]===b)||(t.pair[0]===b&&t.pair[1]===a)))
+      return `<div class="pair">${esc(a)} ↔ ${esc(b)} ➕ ${esc(t.extra)}（三人組）</div>`;
+    return `<div class="pair">${esc(a)} ↔ ${esc(b)}</div>`;}).join("");
+  const lo=(!t&&R.leftover&&R.leftover.length)?`<div class="pair warn">輪空：${R.leftover.map(esc).join("、")}</div>`:"";
+  return (html||'<span class="muted">—</span>')+lo;}
+function stat(R){if(!R)return"";const t=R.trio;
+ return `<p class="muted" style="margin-top:8px">配成 ${pairs(R).length} 組${t?`（含 1 組三人組：${esc(t.extra)} 加入）`:(R.leftover&&R.leftover.length?`，${R.leftover.length} 人輪空`:``)}。</p>`;}
+function miniProfile(p){if(!p)return"";
+  return `<div style="margin-bottom:8px"><div class="partner">${esc(p.name)}</div>
+    <div class="muted">${esc(p.company)}${p.catSub?"・"+esc(p.catSub):(p.catBig?"・"+esc(p.catBig):"")}${p.she?"（"+esc(p.she)+"）":""}</div>
+    ${p.interests?`<div class="ice">💬 破冰：聽說你最近在忙「${esc(p.interests)}」，可以多聊聊嗎？</div>`:""}
+    ${p.wants?`<div class="ice"><span class="want">🎯 想找：</span>${esc(p.wants)}</div>`:""}
+    ${p.offers?`<div class="ice"><span class="offer">🙌 能提供：</span>${esc(p.offers)}</div>`:""}</div>`;
+}
+function iceCard(label,R,me){
+  const bn=byName();
+  if(S.absent.includes(me))return `<div class="card"><div class="kicker">${label}</div><p class="muted">已標記請假，本輪不參與配對。</p></div>`;
+  if(R&&R.trio&&R.trio.extra===me){
+    const [a,b]=R.trio.pair;
+    return `<div class="card"><div class="kicker">${label}</div><p class="ok" style="font-size:13px">本輪為三人組，你將加入下面這組一起聊：</p>${miniProfile(bn[a])}${miniProfile(bn[b])}</div>`;
+  }
+  if(R&&!R.trio&&R.leftover&&R.leftover.includes(me))
+    return `<div class="card"><div class="kicker">${label}</div><p class="warn">本輪輪空，請到自由交流時段找人聊聊。</p></div>`;
+  let extraNote="";
+  if(R&&R.trio&&R.trio.pair.includes(me))extraNote=`<p class="ok" style="font-size:13px">➕ ${esc(R.trio.extra)} 會加入你們，這輪是三人組。</p>`;
+  const pName=R?.matched?.[me];const p=pName?bn[pName]:null;
+  const inner=p?`${miniProfile(p)}${extraNote}`:'<span class="muted">尚未產生本輪配對</span>';
+  return `<div class="card"><div class="kicker">${label}</div>${inner}</div>`;
+}
+
+function render(){const app=document.getElementById("app");
+  app.innerHTML= view==="admin"?adminHTML():view==="member"?memberHTML():view==="board"?boardHTML():helpHTML();}
+
+function adminHTML(){
+  const r=S.roster,o=S.opts;
+  const prevCSV=document.getElementById("csv")?document.getElementById("csv").value:SAMPLE;
+  return `
+  <div class="card">
+    <h2>⚙️ 配對設定</h2>
+    <div class="row">
+      <label class="toggle">第二輪偏好：
+        <select style="width:auto" onchange="S.opts.mode=this.value;save();">
+          <option value="biz"${o.mode==="biz"?" selected":""}>商機互補優先</option>
+          <option value="deep"${o.mode==="deep"?" selected":""}>同產業深聊優先</option>
+        </select></label>
+      <label class="toggle"><input type="checkbox" ${o.crossShe?"checked":""} onchange="S.opts.crossShe=this.checked;save();"> 跨社優先</label>
+      <label class="toggle">每輪 <input type="text" value="${o.roundMin}" style="width:46px" onchange="S.opts.roundMin=+this.value||10;save();"> 分</label>
+    </div>
+    <p class="muted" style="margin-top:6px">輪轉制：每輪都替每個人配一位，換人不重複、不配同公司；人數為單數時每輪 1 人輪空。</p>
+  </div>
+
+  <div class="card">
+    <h2>📥 1. 匯入會友名單</h2>
+    <p class="muted">欄位：姓名,社別,公司,產業大分類,產業細分類,最近在忙,想找,可提供,指定配對（多人以 | 分隔，可留空）</p>
+    <textarea id="csv" rows="7">${esc(prevCSV)}</textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="act" onclick="importRoster(document.getElementById('csv').value)">匯入名單</button>
+      <input type="file" accept=".csv" class="noprint" onchange="const f=this.files[0];if(f){f.text().then(t=>{document.getElementById('csv').value=t;importRoster(t);});}">
+      <span class="muted">目前 ${r.length} 人</span>
+    </div>
+    <hr>
+    <p class="muted">☁️ 或直接從 <b>Google 試算表</b> 匯入（報名表單回應工作表；試算表共用需設「知道連結的使用者→檢視者」，欄位名稱同上）</p>
+    <div class="row">
+      <input type="text" id="gsUrl" placeholder="貼上 Google 試算表網址" value="${esc(o.sheetUrl||"")}" style="flex:1;min-width:240px">
+      <button class="act" onclick="importFromSheet(document.getElementById('gsUrl').value)">☁️ 從雲端匯入</button>
+    </div>
+  </div>
+
+  ${r.length?`
+  <div class="card">
+    <h2>🙋 出席管理（臨時請假）</h2>
+    <div class="row">
+      <select id="absSel" style="width:auto;min-width:160px">${present().map(m=>`<option>${esc(m.name)}</option>`).join("")}</select>
+      <button class="act" onclick="markAbsent(document.getElementById('absSel').value)">標記請假</button>
+      <span class="muted">出席 ${present().length} 人／請假 ${S.absent.length} 人</span>
+    </div>
+    ${S.absent.length?`<div style="margin-top:8px">${S.absent.map(n=>`<span class="pill">${esc(n)} <a href="#" onclick="restoreAbsent('${esc(n)}');return false;">✕</a></span>`).join(" ")}</div>`:""}
+    <p class="muted" style="margin-top:6px">請假者不會出現在之後產生的輪次；若某輪已產生才發現有人沒到，標記請假後請按該輪按鈕重新產生。</p>
+  </div>`:""}
+
+  ${r.length?`
+  <div class="card">
+    <h2>1️⃣ 第一輪 · 指定配對（沒指定者隨機補）</h2>
+    <p class="muted">會友可到「會友端」現場指定想見的人（優先於匯入名單的指定配對欄）；沒指定者系統隨機安排。指定人數：${Object.keys(S.round1Picks).length}。</p>
+    <div class="row"><button class="gold act" onclick="computeRound1()">產生第一輪配對</button>
+      ${S.round1?`<button class="ghost act" onclick="startTimer(S.opts.roundMin)">▶ 開始 ${o.roundMin} 分計時</button><span id="timer" class="timer"></span>`:""}</div>
+    ${stat(S.round1)}${S.round1?`<div class="grid">${pairList(S.round1)}</div>`:""}
+  </div>`:""}
+
+  ${S.round1?`
+  <div class="card">
+    <h2>2️⃣ 第二輪 · 需求/背景媒合（全員換人）</h2>
+    <p class="muted">會友可到「會友端」挑選想聊對象（未挑選者系統隨機換人）。已提交挑選 ${Object.keys(S.round2Picks).length} 份。</p>
+    <div class="row"><button class="gold act" onclick="finalizeRound2()">結算第二輪</button>
+      ${S.round2?`<button class="ghost act" onclick="startTimer(S.opts.roundMin)">▶ 開始 ${o.roundMin} 分計時</button><span id="timer" class="timer"></span>`:""}</div>
+    ${stat(S.round2)}${S.round2?`<div class="grid">${pairList(S.round2)}</div>`:""}
+  </div>`:""}
+
+  ${S.round2?`
+  <div class="card">
+    <h2>3️⃣ 第三輪 · 隨機配對（全員換人）</h2>
+    <div class="row"><button class="gold act" onclick="computeRound3()">產生第三輪配對</button>
+      ${S.round3?`<button class="ghost act" onclick="startTimer(S.opts.roundMin)">▶ 開始 ${o.roundMin} 分計時</button><span id="timer" class="timer"></span>`:""}</div>
+    ${stat(S.round3)}${S.round3?`<div class="grid">${pairList(S.round3)}</div>`:""}
+  </div>`:""}
+
+  ${r.length?`<div class="card"><button class="ghost act" onclick="exportCSV()">⬇ 匯出全部配對結果 (CSV)</button>
+    <button class="ghost act" onclick="if(confirm('確定清除所有資料？')){localStorage.removeItem(KEY);location.reload();}">🗑 清除全部</button></div>`:""}
+  `;
+}
+
+function updSelf(f,v){const m=S.roster.find(x=>x.name===selfName);if(m){m[f]=v.trim();save();}}
+function memberHTML(){
+  if(!S.roster.length)return `<div class="card muted">尚未匯入名單，請先到管理端匯入。</div>`;
+  const opts=S.roster.map(m=>`<option ${m.name===selfName?"selected":""}>${esc(m.name)}</option>`).join("");
+  let body="";
+  if(selfName){
+    const me=byName()[selfName];
+    if(me&&!S.round2){
+      body+=`<div class="card"><div class="kicker">✏️ 我的媒合資料（影響第二輪推薦，可隨時修改）</div>
+        <div style="display:grid;gap:8px;margin-top:8px">
+          <label style="font-size:13px">💬 最近在忙（破冰話題）<input type="text" value="${esc(me.interests)}" placeholder="例：自動化產線研發" onchange="updSelf('interests',this.value)"></label>
+          <label style="font-size:13px"><span class="want">🎯 我想找的資源／對象</span><input type="text" value="${esc(me.wants)}" placeholder="例：外銷通路、行銷人才、食品代工廠（多項用、分隔）" onchange="updSelf('wants',this.value)"></label>
+          <label style="font-size:13px"><span class="offer">🙌 我能提供的專長／資源</span><input type="text" value="${esc(me.offers)}" placeholder="例：CNC 加工、品牌顧問、通路資源（多項用、分隔）" onchange="updSelf('offers',this.value)"></label>
+        </div>
+        <p class="muted" style="font-size:12px;margin:8px 0 0">填得越具體，第二輪「需求↔資源互補」的推薦越準。輸入後點擊欄位外即自動儲存。</p>
+      </div>`;
+    }
+    if(!S.round1){
+      const bn=byName();
+      const cands=presentNames().filter(n=>n!==selfName&&!sameCo(selfName,n));
+      const groups={};
+      cands.forEach(n=>{const g=bn[n].catBig||"（未分類）";(groups[g]=groups[g]||[]).push(n);});
+      const groupNames=Object.keys(groups).sort((a,b)=>a==="（未分類）"?1:(b==="（未分類）"?-1:a.localeCompare(b,'zh-Hant')));
+      const cur=S.round1Picks[selfName]?.target||"";
+      const optHtml=groupNames.map(g=>{
+        const opts=groups[g].sort((a,b)=>a.localeCompare(b,'zh-Hant')).map(n=>{
+          const c=bn[n],lbl=c.catSub?`${n}（${c.catSub}）`:n;
+          return `<option value="${esc(n)}" ${cur===n?"selected":""}>${esc(lbl)}</option>`;}).join("");
+        return `<optgroup label="${esc(g)}">${opts}</optgroup>`;}).join("");
+      body+=`<div class="card"><div class="kicker">第一輪 · 指定配對（選填，你可以指定想見的人）</div>
+        <p class="muted" style="font-size:12px;margin:0 0 6px">下拉選單依產業大分類分組，方便找同產業或相關產業的人。</p>
+        <select onchange="S.round1Picks['${esc(selfName)}']={target:this.value,ts:Date.now()};save();render();">
+          <option value="">— 不指定，交給系統安排 —</option>
+          ${optHtml}
+        </select>
+        ${cur?`<p class="ok" style="font-size:13px">已指定：${esc(cur)}。若對方也指定你，會優先配成一對；若對方沒指定你，系統仍會優先幫你安排到他。請等承辦按下「產生第一輪配對」。</p>`:'<p class="muted" style="font-size:13px">不指定也沒關係，第一輪系統會自動幫你安排一位。</p>'}
+      </div>`;
+    } else {
+      body+=iceCard("第一輪 · 指定配對",S.round1,selfName);
+    }
+    // 第二輪：全員都可挑選（結算前）
+    if(S.round1&&!S.round2){
+      const notLeft=!(S.round1.leftover&&S.round1.leftover.includes(selfName))||true;
+      const sug=suggest(selfName);
+      body+=`<div class="card"><div class="kicker">第二輪 · 請選擇想聊的對象（換一位新朋友）</div>
+        ${sug.map(s=>`<label class="pick ${S.round2Picks[selfName]?.target===s.name?"sel":""}">
+          <input type="radio" name="r2" ${S.round2Picks[selfName]?.target===s.name?"checked":""} onchange="S.round2Picks['${esc(selfName)}']={target:'${esc(s.name)}',ts:Date.now()};save();render();">
+          <span><b>${esc(s.name)}</b> <small class="tag">${esc(s.company)}${s.catSub?"・"+esc(s.catSub):""}${s.she?"／"+esc(s.she):""}</small>
+          ${s.interests?`<div class="muted">最近在忙：${esc(s.interests)}</div>`:""}
+          ${s.offers?`<div class="offer" style="font-size:13px">能提供：${esc(s.offers)}</div>`:""}</span></label>`).join("")||'<span class="muted">沒有可推薦對象（可能都配過了），系統會於結算時隨機安排。</span>'}
+        ${S.round2Picks[selfName]?`<p class="ok" style="font-size:13px">已提交：${esc(S.round2Picks[selfName].target)}，等待結算。</p>`:""}</div>`;
+    }
+    if(S.round2)body+=iceCard("第二輪 · 需求/背景媒合",S.round2,selfName);
+    if(S.round3)body+=iceCard("第三輪 · 隨機配對",S.round3,selfName);
+  }
+  return `<div class="card"><div class="kicker">請選擇你的名字</div>
+    <select onchange="selfName=this.value;render();"><option value="">— 請選擇 —</option>${opts}</select></div>${body}`;
+}
+
+function boardHTML(){
+  return `<div class="card"><h2>📽 配對總表（可投影／列印）</h2>
+    <div class="row noprint"><button class="ghost act" onclick="window.print()">🖨 列印/投影</button></div>
+    <hr><div class="kicker">第一輪 · 指定</div>${stat(S.round1)}<div class="grid">${pairList(S.round1)}</div>
+    <hr><div class="kicker">第二輪 · 媒合</div>${stat(S.round2)}<div class="grid">${pairList(S.round2)}</div>
+    <hr><div class="kicker">第三輪 · 隨機</div>${stat(S.round3)}<div class="grid">${pairList(S.round3)}</div></div>`;
+}
+
+function helpHTML(){
+  const o=S.opts;
+  const th='style="text-align:left;border-bottom:2px solid var(--navy);padding:6px 8px;font-size:13px"';
+  const td='style="border-bottom:1px solid var(--line);padding:6px 8px;font-size:13px;vertical-align:top"';
+  const tbl='style="width:100%;border-collapse:collapse;margin:8px 0"';
+  const A=`<span class="arrow">➜</span>`;
+  return `
+  <div class="card">
+    <h2>🎨 一看就懂 · 圖解操作流程</h2>
+
+    <div class="story">
+      <div class="sc"><div class="pic">👥👥👥</div><div class="txt">大家來參加</div></div>
+      <div class="sc"><div class="pic">🤝</div><div class="txt">第1輪：跟指定的人聊</div></div>
+      <div class="sc"><div class="pic">🔄🤝</div><div class="txt">第2輪：換一位互補的人</div></div>
+      <div class="sc"><div class="pic">🎲🤝</div><div class="txt">第3輪：再換一位驚喜的人</div></div>
+      <div class="sc"><div class="pic">🎉</div><div class="txt">認識3位新朋友！</div></div>
+    </div>
+
+    <p><span class="rolebar" style="background:var(--green)">🙋 我是會友（現場這樣做）</span></p>
+    <div class="flow">
+      <div class="step"><span class="no">1</span><div class="pic">📱</div><div class="txt">打開網頁</div><div class="sub">點上面「會友端」</div></div>${A}
+      <div class="step"><span class="no">2</span><div class="pic">🙋</div><div class="txt">選自己名字</div><div class="sub">下拉選單找到你</div></div>${A}
+      <div class="step"><span class="no">3</span><div class="pic">✏️</div><div class="txt">填3個小問題</div><div class="sub">在忙・想找・能提供</div></div>${A}
+      <div class="step"><span class="no">4</span><div class="pic">👉</div><div class="txt">想見誰？</div><div class="sub">可指定（不指定也OK）</div></div>${A}
+      <div class="step"><span class="no">5</span><div class="pic">💬</div><div class="txt">看配對結果</div><div class="sub">照破冰話題開聊！</div></div>
+    </div>
+
+    <p style="margin-top:14px"><span class="rolebar" style="background:var(--navy)">🎛️ 我是承辦（照按鈕順序按）</span></p>
+    <div class="flow">
+      <div class="step"><span class="no">1</span><div class="pic">📥</div><div class="txt">匯入名單</div><div class="sub">已預載/雲端匯入</div></div>${A}
+      <div class="step"><span class="no">2</span><div class="pic">🙅</div><div class="txt">有人沒來？</div><div class="sub">出席管理標記請假</div></div>${A}
+      <div class="step"><span class="no">3</span><div class="pic">1️⃣</div><div class="txt">產生第一輪</div><div class="sub">按鈕＋開始計時</div></div>${A}
+      <div class="step"><span class="no">4</span><div class="pic">2️⃣</div><div class="txt">結算第二輪</div><div class="sub">等會友挑完再按</div></div>${A}
+      <div class="step"><span class="no">5</span><div class="pic">3️⃣</div><div class="txt">產生第三輪</div><div class="sub">系統隨機安排</div></div>${A}
+      <div class="step"><span class="no">6</span><div class="pic">⬇️</div><div class="txt">匯出結果</div><div class="sub">CSV 留存回報</div></div>
+    </div>
+
+    <p class="muted" style="margin-top:10px">🧡 貼心規則：每輪都有伴、絕不重複、不配同公司；人數單數會自動變一組三人小隊，沒有人落單！</p>
+  </div>
+
+  <div class="card">
+    <h2>📖 使用說明與配對原理</h2>
+    <p class="muted">這份說明分兩部分：① 現場怎麼操作　② 每一輪配對背後的邏輯，讓承辦與會友都能看懂系統為什麼這樣配。</p>
+  </div>
+
+  <div class="card">
+    <h2>🗓️ 整體流程</h2>
+    <p>報名 → <b>① 指定配對 ${o.roundMin} 分</b> → <b>② 需求/背景媒合 ${o.roundMin} 分</b> → <b>③ 隨機配對 ${o.roundMin} 分</b> → <b>自由交流 30 分</b></p>
+    <p class="muted">核心原則：<b>每一輪都讓在場的每個人都有伴聊天</b>（不是配到就結束的淘汰制），三輪下來換三位不同的人、絕不重複配到同一人、也不會配到同公司的人。人數是單數時，會有 1 組自動變成「三人組」，確保沒有人真的落單。</p>
+  </div>
+
+  <div class="card">
+    <h2>1️⃣ 第一輪：指定配對</h2>
+    <p><b>資料來源（兩種，現場指定優先）：</b></p>
+    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
+      <li>會友在「會友端」現場用下拉選單指定想見的人（已依產業大分類分組，方便找同產業）。</li>
+      <li>若沒有現場指定，退回採用匯入名單 CSV 裡「指定配對」欄位（報名表就先填好的人選，可用 <code>|</code> 分隔多人）。</li>
+    </ol>
+    <p><b>配對順序（承辦按下「產生第一輪配對」時，依序執行）：</b></p>
+    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
+      <li><b>互選優先</b>：A 指定 B、B 也指定 A → 直接配成一對（最強配對訊號，優先處理）。</li>
+      <li><b>單向指定</b>：只有一方指定 → 依名單順序，優先幫指定的人安排到他想見的對象（只要對方還沒被配走、不是同公司）。</li>
+      <li><b>其餘沒指定或指定對象已被配走的人</b>：用「隨機洗牌配對」（Fisher–Yates 洗牌法）兩兩隨機配對，只擋「同公司」這一條硬限制。</li>
+    </ol>
+    <p class="muted">為什麼要先洗牌再配對，而不是照名單順序？因為照原始順序配對容易讓名單前面的人反覆配到彼此、名單後面的人吃虧；洗牌後每次產生的隨機性才公平。</p>
+  </div>
+
+  <div class="card">
+    <h2>2️⃣ 第二輪：需求／背景媒合（加權推薦）</h2>
+    <p>第一輪結束、按「結算第二輪」前，會友可到「會友端」從系統推薦的 <b>3–5 位</b>候選人中挑一位。系統怎麼推薦？每個候選人都會被算一個「配對分數」，分數由以下條件<b>加總</b>而成，分數越高越推薦：</p>
+    <table ${tbl}>
+      <tr><th ${th}>條件</th><th ${th}>加分</th><th ${th}>邏輯</th></tr>
+      <tr><td ${td}>我的「想找」關鍵字，命中對方的「可提供」</td><td ${td}><b>+50</b></td><td ${td}>對方可能剛好有我要的資源，商機價值最高</td></tr>
+      <tr><td ${td}>反過來，對方的「想找」也命中我的「可提供」</td><td ${td}>+50</td><td ${td}>雙向都命中會再疊加，兩筆加分都拿到</td></tr>
+      <tr><td ${td}>上面兩條「雙向互補」同時成立</td><td ${td}>再 +30</td><td ${td}>彼此都能幫上對方，媒合最穩，額外加成</td></tr>
+      <tr><td ${td}>產業「細分類」相同（例如都做「食品加工製造」）</td><td ${td}>+20（深聊模式 +30）</td><td ${td}>同溫層話題多、容易聊開</td></tr>
+      <tr><td ${td}>細分類不同，但「大分類」相同</td><td ${td}>+10</td><td ${td}>相關產業，仍有共通語言</td></tr>
+      <tr><td ${td}>跨社別 / 跨分區</td><td ${td}>+8（深聊模式 +4）</td><td ${td}>鼓勵認識平常較少接觸的圈子；「同產業深聊優先」模式會降低這項權重，讓同產業優先勝出</td></tr>
+      <tr><td ${td}>同公司　／　第一輪已經配過這個人</td><td ${td}>直接剔除</td><td ${td}>系統推薦名單中不會出現，不需要手動排除</td></tr>
+    </table>
+    <p class="muted">關鍵字比對：把「想找／可提供」欄位用頓號、逗號、斜線等符號切成一個個詞，只要有一個詞出現在對方欄位裡就算命中（非嚴格字串完全比對，較寬鬆好用）。</p>
+    <p class="muted">「想找」「可提供」欄位是空的怎麼辦？→ 這兩項互補分數就拿不到，系統會改依產業分類分數排序推薦，不會沒有候選人。</p>
+    <p><b>「想找／可提供」資料從哪來？（兩個管道）</b></p>
+    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
+      <li><b>活動前</b>：報名 Google 表單一併填寫 → 匯出 CSV 匯入本工具（建議主要管道，可跨裝置收齊）。</li>
+      <li><b>現場補填</b>：會友端選了自己名字後，最上方有「✏️ 我的媒合資料」輸入區，可即時填寫或修改，立刻影響第二輪推薦。<span class="warn">注意：本工具資料只存在開啟它的那台裝置，現場補填請用承辦準備的平板／筆電（同一台），不要各自用手機開檔案填。</span></li>
+    </ol>
+    <p>目前設定：<b>${o.mode==="deep"?"同產業深聊優先":"商機互補優先"}</b>　｜　跨社加分：<b>${o.crossShe?"開啟":"關閉"}</b>（可在管理端調整，會即時影響上表的加分結果）</p>
+    <p><b>結算規則</b>：互選（兩人都選對方）優先直接成對；其餘依「提交時間」排序，先選先配；沒選的人由系統用同一套「洗牌＋只擋同公司/擋已配過」的邏輯隨機補上，確保每個人都有第二輪的伴。</p>
+  </div>
+
+  <div class="card">
+    <h2>3️⃣ 第三輪：隨機配對</h2>
+    <p>不用挑選，系統直接用「洗牌配對」處理所有在場的人；唯一限制是<b>不能是前兩輪配過的人、也不能同公司</b>。這樣三輪下來，每個人都認識了 3 位（或含三人組共 4 位）不重複的新朋友。</p>
+  </div>
+
+  <div class="card">
+    <h2>➕ 單數落單怎麼辦：三人組機制</h2>
+    <p>當在場人數是單數，兩兩配對一定會剩 1 人。系統不會讓這個人乾等，而是：</p>
+    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
+      <li>從當輪已配好的組別中，挑一組「這位落單者都還沒認識過的兩人」加入，變成三人組一起聊。</li>
+      <li>如果找不到完全沒認識過的組合，退而求其次，只要不是同公司就可以加入。</li>
+      <li>系統會記錄「誰當過三人組的第三人」，下一輪優先換別人當第三人，<b>避免同一人每次都被迫當三人組</b>（已用 93 人三輪模擬驗證：三輪的第三人皆為不同人）。</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>🙋 臨時請假怎麼處理</h2>
+    <p>管理端「出席管理」可即時把某人標記請假：</p>
+    <ul style="margin:4px 0 8px;padding-left:20px;font-size:14px">
+      <li>請假者會從<b>之後尚未產生的輪次</b>中自動剔除，不會被配對，也不會被系統誤挑去當三人組。</li>
+      <li>若某一輪<b>已經產生完</b>才發現有人沒到，把他標記請假後，重新按一次該輪「產生配對」按鈕，系統會排除他重算。</li>
+      <li>請假者的歷史配對紀錄仍保留在名單與匯出結果中（標註「請假」），不會從名單裡整個刪除。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🖥️ 操作步驟</h2>
+    <p><b>管理端（承辦／人資長）</b></p>
+    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
+      <li>「配對設定」選好第二輪偏好（商機互補優先／同產業深聊優先）與跨社優先開關、每輪時間。</li>
+      <li>「匯入會友名單」貼上或上傳報名 CSV（第一次開啟已自動預載目前會友名單，可直接使用或重新匯入更新）。</li>
+      <li>報到時，若有人請假，在「出席管理」標記。</li>
+      <li>按「產生第一輪配對」→ 投影／請會友到會友端查看 → 按「開始計時」。</li>
+      <li>第一輪結束後，開放會友到會友端挑第二輪對象，時間到按「結算第二輪」。</li>
+      <li>按「產生第三輪配對」。</li>
+      <li>活動後按「匯出全部配對結果 (CSV)」留存，或回報媒合成交狀況。</li>
+    </ol>
+    <p><b>會友端（現場會友自己操作）</b></p>
+    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
+      <li>下拉選單選自己的名字。</li>
+      <li>第一輪還沒產生前，可選填「指定配對」（依產業分組，找同產業的人更快）。</li>
+      <li>每輪配對出來後，畫面會顯示對象的公司／產業／破冰話題／想找／可提供，方便直接開口聊。</li>
+      <li>第二輪開放挑選時，從推薦的 3–5 位中選一位想聊的對象。</li>
+    </ol>
+    <p><b>投影／總表</b>：活動現場可直接投影本頁面（按「列印/投影」），一次看到三輪所有配對結果，方便主持人喊名字。</p>
+  </div>
+
+  <div class="card">
+    <h2>☁️ 上雲端（GitHub Pages）與 Google 試算表串接</h2>
+    <p><b>可以，而且已內建。</b>管理端「匯入會友名單」卡片下方有「☁️ 從雲端匯入」：貼上 Google 試算表網址，工具會直接把該工作表讀成 CSV 匯入——報名名單、每個人的「想找／可提供」一次帶進來，直接參與第二輪評分。</p>
+    <p><b>原理</b>：Google 試算表有一個公開的 CSV 輸出端點（gviz 匯出）。只要試算表共用設定為「知道連結的使用者→檢視者」，任何網頁（含放在 GitHub Pages 上的本工具）都能用瀏覽器直接抓到即時內容，<b>不需要伺服器、不需要 API 金鑰、零成本</b>。Google 表單的回應會自動寫進試算表，所以整條路是：</p>
+    <p style="text-align:center"><b>會友填 Google 表單 → 回應自動進試算表 → 本工具「☁️ 從雲端匯入」一鍵抓最新名單</b></p>
+    <p><b>設定步驟（一次性）：</b></p>
+    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
+      <li>建立 Google 表單，題目對應欄位：姓名、社別、公司、產業大分類、產業細分類、最近在忙、想找、可提供、指定配對。</li>
+      <li>表單「回應」→ 連結試算表；把試算表<b>第一列欄名改成上面這些名稱</b>（與工具欄位一致才對得上）。</li>
+      <li>試算表右上「共用」→「知道連結的使用者」→「檢視者」。</li>
+      <li>複製試算表網址，貼到管理端「☁️ 從雲端匯入」→ 完成。之後每次活動前按一下就是最新名單。</li>
+    </ol>
+    <p><b>把本工具放上 GitHub Pages：</b>把這個 HTML 檔放進 GitHub repo → Settings → Pages → 選分支發布，會得到一個 https 網址，承辦和會友都能用網址開啟，不必傳檔案。</p>
+    <p><b>限制與注意：</b></p>
+    <ul style="margin:4px 0;padding-left:20px;font-size:14px">
+      <li><b>讀取沒問題，回寫做不到</b>：工具能「讀」試算表，但無法把現場補填或配對結果「寫回」試算表（那需要另外掛 Google Apps Script，之後要做可以加）。現場補填仍存在該裝置，配對結果請用「匯出 CSV」留存。</li>
+      <li><b>就算網頁上了雲端，每台裝置的資料仍是各自獨立</b>（localStorage 特性）：會友用自己手機開，看得到名單與說明，但承辦電腦上產生的配對結果不會同步到會友手機。現場查看配對仍以投影／承辦裝置為主。</li>
+      <li><b>隱私</b>：設為「知道連結可檢視」的試算表等於半公開，<b>報名試算表只放媒合需要的欄位，不要放手機、地址</b>；GitHub repo 建議設 private（Pages 頁面本身仍公開，網址不主動外流）。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🔒 資料與隱私</h2>
+    <ul style="margin:4px 0;padding-left:20px;font-size:14px">
+      <li>配對顯示以公司／產業／在忙什麼／想找／可提供為主，<b>不顯示手機等聯絡方式</b>；要聯絡請現場交換名片或請人資長轉介。</li>
+      <li>所有資料只存在你目前瀏覽器的本機儲存（localStorage），沒有伺服器、不會外流；換瀏覽器或清除瀏覽器資料會需要重新匯入名單。</li>
+      <li>管理端「清除全部」會刪除本機所有配對資料，請先匯出 CSV 備份再清除。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>❓ 常見問題</h2>
+    <p><b>Q：會友端顯示「尚未產生本輪配對」？</b><br>A：代表承辦還沒在管理端按下該輪的「產生配對」按鈕，等承辦按下後畫面會自動更新對象。</p>
+    <p><b>Q：我指定的人沒被配到我？</b><br>A：如果對方也剛好被更早的互選配走，或對方指定了別人，系統會優先成全互選成功的雙方；沒配到會在後續「隨機補位」中被安排到別人，仍保證你這輪一定有伴。</p>
+    <p><b>Q：第二輪都沒有推薦名單？</b><br>A：通常代表可推薦的人都已經在第一輪配過或同公司，系統會在結算時直接隨機幫你安排，不影響你有伴聊天。</p>
+    <p><b>目前狀態</b>：名單 ${S.roster.length} 人｜出席 ${present().length} 人｜請假 ${S.absent.length} 人｜第一輪${S.round1?"已產生":"未產生"}｜第二輪${S.round2?"已結算":"未結算"}｜第三輪${S.round3?"已產生":"未產生"}</p>
+  </div>
+  `;
+}
+
+// 首次開啟自動預載目前會友名單
+if(!S.roster||!S.roster.length){importRoster(DEFAULT_ROSTER);}else{render();}
+</script>
+</body>
+</html>
