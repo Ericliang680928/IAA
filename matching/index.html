@@ -40,6 +40,19 @@
   hr{border:0;border-top:1px solid var(--line);margin:14px 0;}
   small.tag{font-size:11px;color:var(--muted);}
   @media print{.tabs,.noprint{display:none;} body{background:#fff;}}
+  /* 圖解流程 */
+  .flow{display:flex;flex-wrap:wrap;gap:2px;align-items:stretch;justify-content:flex-start;margin:10px 0;}
+  .step{flex:0 0 118px;background:var(--cream);border:2px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;}
+  .step .pic{font-size:34px;line-height:1.2;}
+  .step .no{display:inline-block;background:var(--gold);color:var(--navy);font-weight:800;border-radius:999px;min-width:22px;padding:1px 6px;font-size:12px;margin-bottom:4px;}
+  .step .txt{font-size:13px;font-weight:700;margin-top:4px;}
+  .step .sub{font-size:11px;color:var(--muted);margin-top:2px;}
+  .arrow{align-self:center;font-size:20px;color:var(--gold);font-weight:800;padding:0 2px;}
+  .rolebar{display:inline-block;border-radius:999px;padding:3px 14px;font-size:13px;font-weight:800;color:#fff;margin-bottom:2px;}
+  .story{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;background:var(--cream);border-radius:14px;padding:12px;margin:8px 0;}
+  .story .sc{text-align:center;flex:0 0 130px;}
+  .story .sc .pic{font-size:38px;}
+  .story .sc .txt{font-size:12px;font-weight:700;margin-top:2px;}
 </style>
 </head>
 <body>
@@ -528,7 +541,41 @@ function helpHTML(){
   const th='style="text-align:left;border-bottom:2px solid var(--navy);padding:6px 8px;font-size:13px"';
   const td='style="border-bottom:1px solid var(--line);padding:6px 8px;font-size:13px;vertical-align:top"';
   const tbl='style="width:100%;border-collapse:collapse;margin:8px 0"';
+  const A=`<span class="arrow">➜</span>`;
   return `
+  <div class="card">
+    <h2>🎨 一看就懂 · 圖解操作流程</h2>
+
+    <div class="story">
+      <div class="sc"><div class="pic">👥👥👥</div><div class="txt">大家來參加</div></div>
+      <div class="sc"><div class="pic">🤝</div><div class="txt">第1輪：跟指定的人聊</div></div>
+      <div class="sc"><div class="pic">🔄🤝</div><div class="txt">第2輪：換一位互補的人</div></div>
+      <div class="sc"><div class="pic">🎲🤝</div><div class="txt">第3輪：再換一位驚喜的人</div></div>
+      <div class="sc"><div class="pic">🎉</div><div class="txt">認識3位新朋友！</div></div>
+    </div>
+
+    <p><span class="rolebar" style="background:var(--green)">🙋 我是會友（現場這樣做）</span></p>
+    <div class="flow">
+      <div class="step"><span class="no">1</span><div class="pic">📱</div><div class="txt">打開網頁</div><div class="sub">點上面「會友端」</div></div>${A}
+      <div class="step"><span class="no">2</span><div class="pic">🙋</div><div class="txt">選自己名字</div><div class="sub">下拉選單找到你</div></div>${A}
+      <div class="step"><span class="no">3</span><div class="pic">✏️</div><div class="txt">填3個小問題</div><div class="sub">在忙・想找・能提供</div></div>${A}
+      <div class="step"><span class="no">4</span><div class="pic">👉</div><div class="txt">想見誰？</div><div class="sub">可指定（不指定也OK）</div></div>${A}
+      <div class="step"><span class="no">5</span><div class="pic">💬</div><div class="txt">看配對結果</div><div class="sub">照破冰話題開聊！</div></div>
+    </div>
+
+    <p style="margin-top:14px"><span class="rolebar" style="background:var(--navy)">🎛️ 我是承辦（照按鈕順序按）</span></p>
+    <div class="flow">
+      <div class="step"><span class="no">1</span><div class="pic">📥</div><div class="txt">匯入名單</div><div class="sub">已預載/雲端匯入</div></div>${A}
+      <div class="step"><span class="no">2</span><div class="pic">🙅</div><div class="txt">有人沒來？</div><div class="sub">出席管理標記請假</div></div>${A}
+      <div class="step"><span class="no">3</span><div class="pic">1️⃣</div><div class="txt">產生第一輪</div><div class="sub">按鈕＋開始計時</div></div>${A}
+      <div class="step"><span class="no">4</span><div class="pic">2️⃣</div><div class="txt">結算第二輪</div><div class="sub">等會友挑完再按</div></div>${A}
+      <div class="step"><span class="no">5</span><div class="pic">3️⃣</div><div class="txt">產生第三輪</div><div class="sub">系統隨機安排</div></div>${A}
+      <div class="step"><span class="no">6</span><div class="pic">⬇️</div><div class="txt">匯出結果</div><div class="sub">CSV 留存回報</div></div>
+    </div>
+
+    <p class="muted" style="margin-top:10px">🧡 貼心規則：每輪都有伴、絕不重複、不配同公司；人數單數會自動變一組三人小隊，沒有人落單！</p>
+  </div>
+
   <div class="card">
     <h2>📖 使用說明與配對原理</h2>
     <p class="muted">這份說明分兩部分：① 現場怎麼操作　② 每一輪配對背後的邏輯，讓承辦與會友都能看懂系統為什麼這樣配。</p>
