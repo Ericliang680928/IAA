@@ -470,6 +470,13 @@ function adminHTML(){
 }
 
 function updSelf(f,v){const m=S.roster.find(x=>x.name===selfName);if(m){m[f]=v.trim();save();}}
+let selfSaved=false;
+function saveSelf(){
+  updSelf('interests',document.getElementById('selfInt').value);
+  updSelf('wants',document.getElementById('selfWants').value);
+  updSelf('offers',document.getElementById('selfOffers').value);
+  selfSaved=true;render();
+}
 function memberHTML(){
   if(!S.roster.length)return `<div class="card muted">尚未匯入名單，請先到管理端匯入。</div>`;
   const opts=S.roster.map(m=>`<option ${m.name===selfName?"selected":""}>${esc(m.name)}</option>`).join("");
@@ -479,11 +486,15 @@ function memberHTML(){
     if(me&&!S.round2){
       body+=`<div class="card"><div class="kicker">✏️ 我的媒合資料（影響第二輪推薦，可隨時修改）</div>
         <div style="display:grid;gap:8px;margin-top:8px">
-          <label style="font-size:13px">💬 最近在忙（破冰話題）<input type="text" value="${esc(me.interests)}" placeholder="例：自動化產線研發" onchange="updSelf('interests',this.value)"></label>
-          <label style="font-size:13px"><span class="want">🎯 我想找的資源／對象</span><input type="text" value="${esc(me.wants)}" placeholder="例：外銷通路、行銷人才、食品代工廠（多項用、分隔）" onchange="updSelf('wants',this.value)"></label>
-          <label style="font-size:13px"><span class="offer">🙌 我能提供的專長／資源</span><input type="text" value="${esc(me.offers)}" placeholder="例：CNC 加工、品牌顧問、通路資源（多項用、分隔）" onchange="updSelf('offers',this.value)"></label>
+          <label style="font-size:13px">💬 最近在忙（破冰話題）<input type="text" id="selfInt" value="${esc(me.interests)}" placeholder="例：自動化產線研發"></label>
+          <label style="font-size:13px"><span class="want">🎯 我想找的資源／對象</span><input type="text" id="selfWants" value="${esc(me.wants)}" placeholder="例：外銷通路、行銷人才、食品代工廠（多項用、分隔）"></label>
+          <label style="font-size:13px"><span class="offer">🙌 我能提供的專長／資源</span><input type="text" id="selfOffers" value="${esc(me.offers)}" placeholder="例：CNC 加工、品牌顧問、通路資源（多項用、分隔）"></label>
         </div>
-        <p class="muted" style="font-size:12px;margin:8px 0 0">填得越具體，第二輪「需求↔資源互補」的推薦越準。輸入後點擊欄位外即自動儲存。</p>
+        <div class="row" style="margin-top:10px">
+          <button class="gold act" onclick="saveSelf()">💾 儲存送出</button>
+          ${selfSaved?'<span class="ok" style="font-weight:700">✅ 已儲存！之後想改再回來填即可。</span>':''}
+        </div>
+        <p class="muted" style="font-size:12px;margin:8px 0 0">填得越具體，第二輪「需求↔資源互補」的推薦越準。</p>
       </div>`;
     }
     if(!S.round1){
@@ -525,7 +536,7 @@ function memberHTML(){
     if(S.round3)body+=iceCard("第三輪 · 隨機配對",S.round3,selfName);
   }
   return `<div class="card"><div class="kicker">請選擇你的名字</div>
-    <select onchange="selfName=this.value;render();"><option value="">— 請選擇 —</option>${opts}</select></div>${body}`;
+    <select onchange="selfName=this.value;selfSaved=false;render();"><option value="">— 請選擇 —</option>${opts}</select></div>${body}`;
 }
 
 function boardHTML(){
