@@ -325,6 +325,8 @@ function spy(){
     var el = document.getElementById(pair[1]);
     if (el && el.offsetTop <= y) cur = pair[0];
   });
+  // 最後一段在頁尾，捲到底也追不上 offsetTop：捲到底就算它
+  if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 8) cur = "#preview";
   document.querySelectorAll("nav a").forEach(function(a){
     a.classList.toggle("on", a.getAttribute("href") === cur);
   });
