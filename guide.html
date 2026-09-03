@@ -93,19 +93,32 @@ select:disabled{background-color:#f4f5f9;color:#aab;cursor:not-allowed}
 .empty{text-align:center;color:var(--gray);padding:26px 10px;font-size:.98rem;line-height:1.8}
 .sect{margin-top:30px}
 .sect-title{font-family:'Noto Serif TC',serif;font-size:1.4rem;margin-bottom:12px}
-.tl{position:relative;padding-left:22px}
-.tl::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--gray-lt)}
-.tlrow{position:relative;padding:11px 0 11px 4px;border-bottom:1px solid var(--gray-lt)}
-.tlrow:last-child{border-bottom:none}
-.tlrow::before{content:'';position:absolute;left:-21px;top:19px;width:11px;height:11px;border-radius:50%;
- background:#fff;border:2.5px solid var(--gray-lt)}
-.tlrow.now::before{background:var(--teal);border-color:var(--teal);box-shadow:0 0 0 5px rgba(62,181,176,.2)}
-.tlrow.past{opacity:.45}
-.tlrow.now{background:#eefbfa;border-radius:10px;padding-left:12px;margin-left:-8px}
-.tlt{font-size:.9rem;font-weight:700;color:var(--gray);font-variant-numeric:tabular-nums}
-.tlrow.now .tlt{color:#1d7370}
-.tln{font-size:1.02rem;font-weight:700;margin-top:1px;line-height:1.4}
-.tld{font-size:.88rem;color:var(--gray);margin-top:2px;line-height:1.5}
+/* ── 時間軸（沿用 6 月宜蘭場配色：teal 直線＋圓點、magenta 時間、白卡片） ── */
+.dayhd{display:flex;align-items:center;gap:12px;margin:6px 0 18px}
+.day-pill{background:var(--navy);color:#fff;font-size:.92rem;letter-spacing:.08em;font-weight:700;
+ padding:7px 16px;border-radius:30px;flex-shrink:0}
+.day-title{font-family:'Noto Serif TC',serif;font-size:1.35rem;color:var(--navy)}
+.tl{position:relative;padding-left:32px}
+.tl::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:3px;
+ background:linear-gradient(to bottom,var(--teal),rgba(62,181,176,.1))}
+.tl-item{position:relative;margin-bottom:20px}
+.tl-dot{position:absolute;left:-28px;top:8px;width:14px;height:14px;border-radius:50%;background:#fff;
+ border:3px solid var(--teal);box-shadow:0 0 0 3px rgba(62,181,176,.2)}
+.tl-time{font-size:1rem;letter-spacing:.04em;color:var(--magenta);font-weight:700;margin-bottom:5px;
+ font-variant-numeric:tabular-nums}
+.tl-body{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 10px rgba(18,38,71,.06);
+ border-left:4px solid var(--gray-lt);transition:.2s}
+.tl-venue{font-family:'Noto Serif TC',serif;font-size:1.25rem;font-weight:700;color:var(--navy);
+ margin-bottom:5px;line-height:1.35}
+.tl-desc{font-size:1.02rem;color:#48515f;line-height:1.65}
+.tl-item.now .tl-body{border-left-color:var(--magenta);background:linear-gradient(135deg,#fff,#f0fbfa);
+ box-shadow:0 6px 20px rgba(62,181,176,.22)}
+.tl-item.now .tl-dot{background:var(--magenta);border-color:var(--magenta);
+ box-shadow:0 0 0 5px rgba(179,28,131,.22);animation:pulse 1.4s infinite}
+.tl-item.past{opacity:.5}
+.tl-item.past .tl-dot{background:var(--teal);box-shadow:0 0 0 2px rgba(62,181,176,.3)}
+.nowtag{display:inline-block;font-size:.8rem;font-weight:700;color:#fff;background:var(--magenta);
+ padding:2px 9px;border-radius:10px;margin-left:8px;vertical-align:middle;letter-spacing:.05em}
 .predate{display:inline-block;background:#fdf0e6;color:#a8541f;font-weight:700;font-size:.92rem;
  padding:5px 13px;border-radius:20px;letter-spacing:.02em}
 .foot{text-align:center;font-size:.85rem;color:var(--gray);margin-top:34px;line-height:1.8}
@@ -147,6 +160,10 @@ select:disabled{background-color:#f4f5f9;color:#aab;cursor:not-allowed}
   <div class="sect" id="timeline">
     <div class="eyebrow"><span class="ebar" style="background:var(--magenta)"></span><span class="etext" style="color:var(--magenta)">當日行程</span></div>
     <div class="sect-title serif">完整行程</div>
+    <div class="dayhd">
+      <span class="day-pill">DAY 1</span>
+      <span class="day-title">9 月 4 日（星期五）</span>
+    </div>
     <div class="tl" id="tlBox"></div>
   </div>
 
@@ -311,10 +328,16 @@ function renderLive(){
 
 function renderTL(){
   const t=now(), box=document.getElementById("tlBox"), i=curIdx(t);
+  const ICO = {bus:"🚌", talk:"🎤", meal:"🍽️", photo:"📸"};
   box.innerHTML = SCHEDULE.map((s,k)=>{
-    const cls = k===i?"now":(t>=dt(s[1])?"past":"");
-    return `<div class="tlrow ${cls}"><div class="tlt">${s[0]}–${s[1]}</div>
-      <div class="tln">${s[2]}</div>${s[3]?`<div class="tld">${mapInline(s[3])}</div>`:""}</div>`;
+    const cls = k===i ? "now" : (t>=dt(s[1]) ? "past" : "");
+    const tag = k===i ? `<span class="nowtag">進行中</span>` : "";
+    return `<div class="tl-item ${cls}"><div class="tl-dot"></div>
+      <div class="tl-time">${s[0]} – ${s[1]}${tag}</div>
+      <div class="tl-body">
+        <div class="tl-venue">${ICO[s[4]]||"·"} ${s[2]}</div>
+        ${s[3] ? `<div class="tl-desc">${mapInline(s[3])}</div>` : ""}
+      </div></div>`;
   }).join("");
 }
 
