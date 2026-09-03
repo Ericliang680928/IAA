@@ -2,450 +2,267 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IAA 宜蘭產業參訪團 2026 · 活動導覽</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IAA 第三屆第三次例會 · 當日活動資訊</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;700;900&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --navy:#122647; --navy-mid:#1e3866; --magenta:#B31C83; --orange:#D45824;
-    --lime:#BCCA29; --teal:#3EB5B0; --teal-lt:#A1C7C8; --white:#fff;
-    --off-white:#f7f8fc; --gray-lt:#eef0f6; --gray:#5b6473; --text:#1a2340;
-  }
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html{scroll-behavior:smooth}
-  body{font-family:'Noto Sans TC',sans-serif;background:var(--off-white);color:var(--text);line-height:1.7;font-size:18px}
-  .serif{font-family:'Noto Serif TC',serif}
-
-  /* ── COMPACT HERO (title only) ── */
-  .hero{background:var(--navy);padding:16px 18px 14px;text-align:center}
-  .hero h1{font-family:'Noto Serif TC',serif;font-size:1.7rem;color:#fff;letter-spacing:.05em;line-height:1.25}
-  .hero h1 .accent{color:var(--teal)}
-  .clock{margin-top:5px;font-size:.95rem;color:var(--teal-lt);font-variant-numeric:tabular-nums}
-
-  /* ── STICKY NAV ── */
-  nav{position:sticky;top:0;z-index:100;background:rgba(18,38,71,.97);backdrop-filter:blur(12px);
-    border-bottom:2px solid var(--magenta);padding:0 14px}
-  .nav-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:6px;height:48px}
-  .nav-logo{height:26px;background:#fff;border-radius:5px;padding:2px 9px;flex-shrink:0}
-  .nav-logo-text{font-family:'Noto Serif TC',serif;font-weight:700;color:#fff;font-size:.9rem;letter-spacing:1px}
-  nav a{color:rgba(255,255,255,.7);text-decoration:none;font-size:.95rem;font-weight:500;letter-spacing:.05em;
-    padding:8px 12px;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s}
-  nav a:hover,nav a.on{color:#fff;border-bottom-color:var(--teal)}
-
-  .wrap{max-width:680px;margin:0 auto;padding:16px 16px 70px}
-
-  /* ── PICKER ── */
-  .picker{background:#fff;border-radius:14px;padding:18px;box-shadow:0 4px 20px rgba(18,38,71,.1);border-top:4px solid var(--magenta)}
-  .picker .eyebrow{display:flex;align-items:center;gap:9px;margin-bottom:10px}
-  .ebar{width:28px;height:4px;border-radius:2px;background:var(--magenta)}
-  .etext{font-size:.85rem;letter-spacing:.12em;font-weight:700;color:var(--magenta)}
-  .picker label{font-family:'Noto Serif TC',serif;font-size:1.3rem;font-weight:700;color:var(--navy);display:block;margin-bottom:12px}
-  select,input.search{width:100%;padding:15px 14px;font-size:1.15rem;border:2px solid var(--gray-lt);
-    border-radius:11px;background:#fff;color:var(--text);font-family:inherit}
-  select{font-weight:500}
-  select:focus,input.search:focus{outline:none;border-color:var(--teal)}
-  .hint{font-size:.92rem;color:var(--gray);margin-top:11px;line-height:1.6}
-
-  /* ── LIVE ── */
-  .live{background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:#fff;border-radius:14px;
-    padding:20px 22px;margin-top:18px;box-shadow:0 6px 24px rgba(18,38,71,.25);border-left:6px solid var(--teal)}
-  .live .tag{display:inline-flex;align-items:center;gap:8px;font-size:.95rem;font-weight:700;letter-spacing:.04em;
-    background:rgba(62,181,176,.2);color:var(--teal-lt);padding:5px 14px;border-radius:20px;border:1px solid rgba(62,181,176,.35)}
-  .live .tag .dot{width:9px;height:9px;border-radius:50%;background:var(--teal);animation:pulse 1.4s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-  .live h2{font-family:'Noto Serif TC',serif;margin:12px 0 4px;font-size:1.65rem;font-weight:700;line-height:1.3}
-  .live .time{font-size:1.05rem;color:var(--teal-lt);font-variant-numeric:tabular-nums;font-weight:500}
-  .live .desc{font-size:1.02rem;color:rgba(255,255,255,.82);margin-top:9px;line-height:1.6}
-  .live.pre{border-left-color:var(--orange)}
-  .live.pre .tag{background:rgba(212,88,36,.2);color:#f0b89c;border-color:rgba(212,88,36,.4)}
-  .live.pre .tag .dot{background:var(--orange)}
-  .live.done{border-left-color:var(--lime)}
-  .live.done .tag{background:rgba(188,202,41,.2);color:#dde58a;border-color:rgba(188,202,41,.4)}
-  .live.done .tag .dot{background:var(--lime);animation:none}
-
-  .next{background:#fff;border-radius:14px;padding:16px 18px;margin-top:14px;box-shadow:0 2px 14px rgba(18,38,71,.08);
-    display:flex;align-items:center;gap:14px;border-left:5px solid var(--orange)}
-  .next .ico{font-size:30px}
-  .next .lab{font-size:.85rem;color:var(--orange);font-weight:700;letter-spacing:.1em}
-  .next .ttl{font-family:'Noto Serif TC',serif;font-size:1.25rem;font-weight:700;color:var(--navy);line-height:1.3}
-  .next .tm{font-size:.98rem;color:var(--gray);font-variant-numeric:tabular-nums;margin-top:2px}
-
-  /* ── CARDS ── */
-  .card{background:#fff;border-radius:14px;padding:22px;margin-top:18px;box-shadow:0 2px 16px rgba(18,38,71,.08);border-top:4px solid var(--teal)}
-  .card h3{font-family:'Noto Serif TC',serif;font-size:1.5rem;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:9px;line-height:1.3}
-  .card .who{font-size:1.02rem;color:var(--gray);margin:5px 0 18px}
-  .grp{font-size:.95rem;color:var(--magenta);font-weight:700;letter-spacing:.06em;margin:20px 0 10px;display:flex;align-items:center;gap:9px}
-  .grp::before{content:'';width:22px;height:4px;border-radius:2px;background:var(--magenta)}
-  .grp.t::before{background:var(--teal)} .grp.t{color:#2a9490}
-  .grp.o::before{background:var(--orange)} .grp.o{color:#b84a1a}
-  .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .pcell{background:var(--off-white);border-radius:12px;padding:15px}
-  .pcell.full{grid-column:1/-1}
-  .pcell .k{font-size:.9rem;color:var(--gray);font-weight:600;letter-spacing:.04em;margin-bottom:6px}
-  .pcell .v{font-size:1.2rem;font-weight:600;color:var(--text);line-height:1.4}
-  .pcell .v.big{font-family:'Noto Serif TC',serif;font-size:1.9rem;font-weight:700;color:var(--navy)}
-  .pcell .sm{font-size:.95rem;color:var(--gray);font-weight:400;margin-top:4px}
-  .chip{display:inline-block;font-size:1rem;font-weight:600;padding:5px 13px;border-radius:20px;margin:2px 5px 2px 0}
-  .chip.a{background:rgba(62,181,176,.16);color:#247e7a}
-  .chip.b{background:rgba(212,88,36,.14);color:#b04518}
-  .chip.veg{background:rgba(141,160,20,.2);color:#5f6c00}
-  .chip.none{background:var(--gray-lt);color:var(--gray)}
-  .roommate{display:inline-block;background:#fff;border:2px solid var(--teal);color:#247e7a;
-    font-size:1.1rem;font-weight:600;padding:5px 14px;border-radius:20px;margin:4px 6px 4px 0}
-  .telbtn{color:#fff;background:var(--magenta);text-decoration:none;font-weight:700;font-size:1.15rem;
-    padding:8px 16px;border-radius:10px;display:inline-block;letter-spacing:.03em}
-
-  /* ── TIMELINE ── */
-  .sect{margin-top:30px}
-  .sect-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-  .sect-title{font-family:'Noto Serif TC',serif;font-size:1.6rem;font-weight:700;color:var(--navy)}
-  .dayhd{display:flex;align-items:center;gap:12px;margin:24px 0 18px}
-  .day-pill{background:var(--navy);color:#fff;font-size:.92rem;letter-spacing:.08em;font-weight:700;padding:7px 16px;border-radius:30px}
-  .day-title{font-family:'Noto Serif TC',serif;font-size:1.35rem;color:var(--navy)}
-  .timeline{position:relative;padding-left:32px}
-  .timeline::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:3px;
-    background:linear-gradient(to bottom,var(--teal),rgba(62,181,176,.1))}
-  .tl-item{position:relative;margin-bottom:20px}
-  .tl-dot{position:absolute;left:-28px;top:8px;width:14px;height:14px;border-radius:50%;background:#fff;
-    border:3px solid var(--teal);box-shadow:0 0 0 3px rgba(62,181,176,.2)}
-  .tl-time{font-size:1rem;letter-spacing:.04em;color:var(--magenta);font-weight:700;margin-bottom:5px;font-variant-numeric:tabular-nums}
-  .tl-body{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 10px rgba(18,38,71,.06);
-    border-left:4px solid var(--gray-lt);transition:.2s}
-  .tl-venue{font-family:'Noto Serif TC',serif;font-size:1.25rem;font-weight:700;color:var(--navy);margin-bottom:5px;line-height:1.35}
-  .tl-desc{font-size:1.02rem;color:#48515f;line-height:1.65}
-  .tl-loc{font-size:.98rem;color:#2a9490;margin-top:6px;font-weight:500}
-  .tl-item.now .tl-body{border-left-color:var(--magenta);background:linear-gradient(135deg,#fff,#f0fbfa);box-shadow:0 6px 20px rgba(62,181,176,.22)}
-  .tl-item.now .tl-dot{background:var(--magenta);border-color:var(--magenta);box-shadow:0 0 0 5px rgba(179,28,131,.22);animation:pulse 1.4s infinite}
-  .tl-item.past{opacity:.5}
-  .tl-item.past .tl-dot{background:var(--teal);box-shadow:0 0 0 2px rgba(62,181,176,.3)}
-  .nowtag{display:inline-block;font-size:.8rem;font-weight:700;color:#fff;background:var(--magenta);padding:2px 9px;border-radius:10px;margin-left:8px;vertical-align:middle;letter-spacing:.05em}
-  .pertag{display:inline-block;font-size:.9rem;font-weight:700;padding:3px 10px;border-radius:10px;margin-left:8px;vertical-align:middle}
-  .pertag.a{background:rgba(62,181,176,.18);color:#247e7a}
-  .pertag.b{background:rgba(212,88,36,.16);color:#b04518}
-
-  .empty{text-align:center;color:var(--gray);padding:24px 12px;font-size:1.05rem;line-height:1.6}
-
-  footer{background:var(--navy);border-top:3px solid var(--magenta);padding:30px 20px;text-align:center;margin-top:30px}
-  .footer-logo{height:40px;background:#fff;border-radius:8px;padding:5px 14px;margin-bottom:14px}
-  .footer-logo-text{font-family:'Noto Serif TC',serif;font-weight:700;color:#fff;font-size:1.05rem;letter-spacing:1px;margin-bottom:12px}
-  .footer-text{color:rgba(255,255,255,.5);font-size:.9rem;letter-spacing:.03em;line-height:1.9}
-  .footer-text a{color:var(--teal);text-decoration:none}
-
-  /* ── PREVIEW ── */
-  .predate{display:inline-block;background:var(--magenta);color:#fff;font-size:1rem;font-weight:700;padding:6px 15px;border-radius:20px;margin-bottom:10px;letter-spacing:.04em}
-  .predate.lime{background:#7a8800}
-  .bigbtn{display:block;text-align:center;background:var(--magenta);color:#fff;text-decoration:none;font-weight:700;font-size:1.2rem;padding:16px;border-radius:12px;margin-top:11px;letter-spacing:.03em;box-shadow:0 4px 14px rgba(179,28,131,.25)}
-  .bigbtn.alt{background:var(--navy);box-shadow:0 4px 14px rgba(18,38,71,.2)}
-  .hl{list-style:none;margin:8px 0 0;padding:0}
-  .hl li{font-size:1.08rem;color:#3a4250;padding:9px 0 9px 28px;position:relative;line-height:1.55;border-bottom:1px solid var(--gray-lt)}
-  .hl li:last-child{border-bottom:none}
-  .hl li::before{content:'';position:absolute;left:4px;top:17px;width:9px;height:9px;border-radius:50%;background:var(--teal)}
-  .note{font-size:1.05rem;color:#b04518;font-weight:700;margin-top:14px;line-height:1.6}
-  .flow{margin-top:8px}
-  .frow{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-lt);align-items:baseline}
-  .frow:last-child{border-bottom:none}
-  .ft{flex:0 0 52px;color:var(--magenta);font-weight:700;font-variant-numeric:tabular-nums;font-size:1.05rem}
-  .fa{font-size:1.1rem;color:#3a4250;line-height:1.5;font-weight:500}
-  .frow.move .fa{color:var(--gray);font-weight:400;font-size:1rem}
-  .frow.move .ft{color:var(--teal-lt)}
-  .idbadge{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,var(--magenta),#d63ba0);color:#fff;border-radius:12px;padding:14px 20px;margin-bottom:14px;box-shadow:0 4px 14px rgba(179,28,131,.28)}
-  .idbadge .idlab{font-size:1.15rem;font-weight:700;letter-spacing:.05em;line-height:1.3}
-  .idbadge .idlab small{display:block;font-size:.82rem;font-weight:400;opacity:.85;letter-spacing:.02em}
-  .idbadge .idnum{font-family:'Noto Serif TC',serif;font-size:2.6rem;font-weight:700;line-height:1;flex-shrink:0}
-  .flow .frow.sub .fa{font-size:.94em;color:#5a6472;padding-left:1.6em}
-  .flow .frow.sub{margin-top:-2px}
+:root{--navy:#122647;--navy-mid:#1e3866;--magenta:#B31C83;--orange:#D45824;
+ --lime:#BCCA29;--teal:#3EB5B0;--teal-lt:#A1C7C8;--white:#fff;
+ --off-white:#f7f8fc;--gray-lt:#eef0f6;--gray:#5b6473;--text:#1a2340}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--off-white);color:var(--text);line-height:1.7;font-size:17px}
+.serif{font-family:'Noto Serif TC',serif}
+.hero{background:var(--navy);padding:18px 18px 15px;text-align:center}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:1.55rem;color:#fff;letter-spacing:.04em;line-height:1.3}
+.hero h1 .accent{color:var(--teal)}
+.hero .sub{margin-top:4px;font-size:.92rem;color:var(--teal-lt)}
+.clock{margin-top:6px;font-size:.95rem;color:var(--teal-lt);font-variant-numeric:tabular-nums}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 60px}
+.live{background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:#fff;border-radius:14px;
+ padding:18px 20px;margin-top:16px;box-shadow:0 6px 24px rgba(18,38,71,.25);border-left:6px solid var(--teal)}
+.live .tag{display:inline-flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700;
+ background:rgba(62,181,176,.2);color:var(--teal-lt);padding:5px 13px;border-radius:20px;border:1px solid rgba(62,181,176,.35)}
+.live .tag .dot{width:9px;height:9px;border-radius:50%;background:var(--teal);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.live h2{font-family:'Noto Serif TC',serif;margin:11px 0 3px;font-size:1.3rem;line-height:1.35}
+.live .time{font-size:.95rem;color:var(--teal-lt);font-variant-numeric:tabular-nums}
+.live.pre{border-left-color:var(--orange)} .live.pre .tag{background:rgba(212,88,36,.22);color:#f3c4ae;border-color:rgba(212,88,36,.4)}
+.live.pre .tag .dot{background:var(--orange)}
+.live.done{border-left-color:var(--lime)} .live.done .tag{background:rgba(188,202,41,.2);color:#e2e8a8;border-color:rgba(188,202,41,.4)}
+.live.done .tag .dot{background:var(--lime);animation:none}
+.picker{background:#fff;border-radius:14px;padding:18px;margin-top:16px;box-shadow:0 2px 12px rgba(18,38,71,.07)}
+.eyebrow{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.ebar{width:26px;height:3px;background:var(--teal);border-radius:2px}
+.etext{font-size:.85rem;font-weight:700;letter-spacing:.08em;color:#2a9490}
+label{display:block;font-size:.93rem;font-weight:700;color:var(--gray);margin:12px 0 6px}
+label:first-of-type{margin-top:0}
+select{width:100%;padding:13px 12px;font-size:1.05rem;font-family:inherit;border:2px solid var(--gray-lt);
+ border-radius:10px;background:#fff;color:var(--text);appearance:none;
+ background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6473' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+ background-repeat:no-repeat;background-position:right 12px center;background-size:20px}
+select:focus{outline:none;border-color:var(--teal)}
+select:disabled{background-color:#f4f5f9;color:#aab;cursor:not-allowed}
+.idbtns{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.idbtn{padding:12px 8px;font-size:.98rem;font-weight:700;font-family:inherit;border:2px solid var(--gray-lt);
+ border-radius:10px;background:#fff;color:var(--gray);cursor:pointer;transition:.15s}
+.idbtn:hover{border-color:var(--teal-lt)}
+.idbtn.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.hint{font-size:.85rem;color:var(--gray);margin-top:10px;line-height:1.6}
+.card{background:#fff;border-radius:14px;padding:20px;margin-top:16px;box-shadow:0 2px 12px rgba(18,38,71,.07);
+ border-top:5px solid var(--navy)}
+.card h3{font-family:'Noto Serif TC',serif;font-size:1.35rem;line-height:1.35}
+.who{font-size:.93rem;color:var(--gray);margin-top:3px}
+.grp{font-size:.88rem;font-weight:700;letter-spacing:.05em;color:var(--navy);
+ margin:18px 0 9px;padding-bottom:6px;border-bottom:2px solid var(--gray-lt)}
+.grp.o{color:var(--orange);border-color:#f4dcd0}
+.grp.t{color:#2a9490;border-color:#cfe8e7}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.pcell{background:var(--off-white);border-radius:10px;padding:11px 13px}
+.pcell.full{grid-column:1/-1}
+.pcell .k{font-size:.8rem;color:var(--gray);font-weight:700;letter-spacing:.03em}
+.pcell .v{font-size:1.05rem;font-weight:700;margin-top:2px;line-height:1.45}
+.pcell .v.big{font-size:1.5rem;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.pcell .sm{font-size:.85rem;color:var(--gray);font-weight:400;margin-top:3px;line-height:1.55}
+.meet{background:linear-gradient(135deg,#fff6f1,#ffeee3);border:2px solid var(--orange);border-radius:12px;padding:15px 16px}
+.meet .lbl{font-size:.82rem;font-weight:700;color:var(--orange);letter-spacing:.06em}
+.meet .tm{font-family:'Noto Serif TC',serif;font-size:2rem;font-weight:900;color:var(--navy);
+ line-height:1.15;margin-top:3px;font-variant-numeric:tabular-nums}
+.meet .pl{font-size:1.05rem;font-weight:700;margin-top:4px}
+.meet .note{font-size:.88rem;color:#8a4a28;margin-top:7px;line-height:1.6;font-weight:500}
+.chip{display:inline-block;padding:5px 13px;border-radius:20px;font-size:.95rem;font-weight:700}
+.chip.meat{background:#fdf0e6;color:#a8541f}
+.chip.veg{background:#122647;color:#fff}
+.chip.no{background:var(--gray-lt);color:var(--gray)}
+.rider{display:inline-block;background:#e8f4f4;color:#1d7370;border-radius:8px;padding:4px 11px;
+ margin:3px 5px 0 0;font-size:.95rem;font-weight:700}
+.empty{text-align:center;color:var(--gray);padding:26px 10px;font-size:.98rem;line-height:1.8}
+.sect{margin-top:30px}
+.sect-title{font-family:'Noto Serif TC',serif;font-size:1.4rem;margin-bottom:12px}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:'';position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--gray-lt)}
+.tlrow{position:relative;padding:11px 0 11px 4px;border-bottom:1px solid var(--gray-lt)}
+.tlrow:last-child{border-bottom:none}
+.tlrow::before{content:'';position:absolute;left:-21px;top:19px;width:11px;height:11px;border-radius:50%;
+ background:#fff;border:2.5px solid var(--gray-lt)}
+.tlrow.now::before{background:var(--teal);border-color:var(--teal);box-shadow:0 0 0 5px rgba(62,181,176,.2)}
+.tlrow.past{opacity:.45}
+.tlrow.now{background:#eefbfa;border-radius:10px;padding-left:12px;margin-left:-8px}
+.tlt{font-size:.9rem;font-weight:700;color:var(--gray);font-variant-numeric:tabular-nums}
+.tlrow.now .tlt{color:#1d7370}
+.tln{font-size:1.02rem;font-weight:700;margin-top:1px;line-height:1.4}
+.tld{font-size:.88rem;color:var(--gray);margin-top:2px;line-height:1.5}
+.foot{text-align:center;font-size:.85rem;color:var(--gray);margin-top:34px;line-height:1.8}
+@media(max-width:420px){.pgrid{grid-template-columns:1fr}.hero h1{font-size:1.35rem}}
 </style>
 </head>
 <body>
-
 <div class="hero">
-  <h1 class="serif">宜蘭產業<span class="accent">參訪團</span></h1>
+  <h1 class="serif">IAA 第三屆第三次例會<br><span class="accent">南 科 創 新 參 訪</span></h1>
+  <div class="sub">115 年 9 月 4 日（星期五）</div>
   <div class="clock" id="clock">—</div>
 </div>
 
-<nav>
-  <div class="nav-inner">
-    <img class="nav-logo" src="https://ericliang680928.github.io/IAA/%E5%BB%A0%E5%95%86%E7%85%A7%E7%89%87/IAA-logo.jpg" alt="IAA"
-      onerror="this.style.display='none';document.getElementById('navLogoTxt').style.display='inline'">
-    <span class="nav-logo-text" id="navLogoTxt" style="display:none">IAA</span>
-    <span style="flex:1"></span>
-    <a href="#me">我的資訊</a>
-    <a href="#timeline">完整行程</a>
-    <a href="#preview">活動預告</a>
-  </div>
-</nav>
-
 <div class="wrap">
-  <div class="picker" id="me">
+  <div id="liveBox"></div>
+
+  <div class="picker">
     <div class="eyebrow"><span class="ebar"></span><span class="etext">第一步 · 選擇身份</span></div>
-    <label>請先選擇您的姓名</label>
-    <input class="search" id="search" placeholder="輸入姓名快速搜尋…" autocomplete="off">
-    <select id="nameSel" style="margin-top:10px"></select>
-    <div class="hint">選擇後即可看到您的住宿、用餐、月例會分組與交通資訊。資料僅供本次活動使用。</div>
+    <label>我的身份</label>
+    <div class="idbtns" id="idbtns"></div>
+    <label style="margin-top:14px">我的姓名</label>
+    <select id="nameSel" disabled><option value="">請先選擇身份</option></select>
+    <div class="hint">選擇後即顯示您的集合時間、地點、交通與用餐資訊。<br>本頁資料僅供本次活動使用，請勿轉發。</div>
   </div>
 
-  <div id="liveBox"></div>
-  <div id="nextBox"></div>
-  <div id="driverBox"></div>
   <div id="personal"></div>
 
-  <div class="sect" id="timeline">
-    <div class="sect-eyebrow"><span class="ebar" style="background:var(--teal)"></span><span class="etext" style="color:#2a9490">活動行程</span></div>
+  <div class="sect">
+    <div class="eyebrow"><span class="ebar" style="background:var(--magenta)"></span><span class="etext" style="color:var(--magenta)">當日行程</span></div>
     <div class="sect-title serif">完整行程</div>
-    <div id="tlBox"></div>
+    <div class="tl" id="tlBox"></div>
+  </div>
+
+  <div class="foot">
+    承辦：IAA 南區承辦團隊　郭文俊 總召<br>
+    協辦：IMC 台南市社、南瀛社<br>
+    <span style="font-size:.8rem;color:#9aa2b1">資料基準 115/09/02</span>
   </div>
 </div>
 
-  <div class="sect" id="preview">
-    <div class="sect-eyebrow"><span class="ebar" style="background:var(--magenta)"></span><span class="etext" style="color:var(--magenta)">近期活動</span></div>
-    <div class="sect-title serif">活動預告</div>
-
-    <div class="card" style="border-top-color:var(--magenta)">
-      <span class="predate">2026 / 7 / 3（五）14:30–16:30</span>
-      <h3 class="serif">🌏 IMC 國際大師講座</h3>
-      <div class="who">限額 40 席 · 完全免費（需事先線上報名）</div>
-      <div class="pcell full"><div class="k">講座主題</div><div class="v">《邁向 2030 企業新浪潮》Sustainability &amp; Well-Being 經營</div><div class="sm">從 SDGs 到 SWGs，打造身心靈與地球共榮的永續競爭力。SDGs 將於 2030 年底落幕，下一波國際巨浪 SWGs（永續福祉目標）已然襲來，搶先佈局「幸福與永續經營」的全新競爭力。</div></div>
-      <div class="grp">🎙️ 主講人</div>
-      <div class="pcell full"><div class="v">鈴木 和男 先生（Kazuo Suzuki）</div><div class="sm">KAZ 顧問股份有限公司 社長｜日本經營士會 會長｜RINRI SDGs 推進協議會 會長｜遼寧科技大學 客座教授。繼 2018 年 SDGs 巡迴演講後再次來台，以無償方式帶來跨國奉獻演講。</div></div>
-      <div class="grp t">📍 活動資訊</div>
-      <div class="pgrid">
-        <div class="pcell"><div class="k">時間</div><div class="v">7/3（五）14:30–16:30</div></div>
-        <div class="pcell"><div class="k">名額 / 費用</div><div class="v">限 40 人 · 免費</div></div>
-        <div class="pcell full"><div class="k">地點</div><div class="v">聖島國際專利商標聯合事務所</div><div class="sm">台北市南京東路三段 248 號 12F 會議室｜捷運「南京復興站」出站步行即達</div></div>
-      </div>
-      <div class="grp o">📋 講座精華（2 小時，含現場專業口譯）</div>
-      <ul class="hl">
-        <li>從 SDGs 到 SWGs 的世界趨勢</li>
-        <li>幸福感如何轉化為企業獲利能力</li>
-        <li>日本 Well-Being 經營實例深度分析</li>
-        <li>大師面對面 Q&amp;A 開放提問</li>
-      </ul>
-      <div class="note">⚠️ IMC 與 IAA 會員優先，席次有限，額滿即關閉，請把握機會！</div>
-      <a class="bigbtn" href="https://forms.gle/suR4wuGWH5UvN3hm7" target="_blank" rel="noopener">📝 立即報名（點我填表）</a>
-      <a class="bigbtn alt" href="https://docs.google.com/spreadsheets/d/1SbyXwe-GnKS9J6R9Cx-w9lr5yu1YJn6fM1kN05B_v-8/edit?usp=sharing" target="_blank" rel="noopener">🔍 查詢報名狀況</a>
-    </div>
-
-    <div class="card" style="border-top-color:var(--lime)">
-      <span class="predate lime">2026 / 9 / 4</span>
-      <h3 class="serif">📅 IAA 第三次例會活動</h3>
-      <div class="pgrid">
-        <div class="pcell"><div class="k">時間</div><div class="v">9/4（五）</div></div>
-        <div class="pcell"><div class="k">地點</div><div class="v">南科</div></div>
-        <div class="pcell full"><div class="k">承辦團隊</div><div class="v">南區總召 郭文俊 及南區團隊</div></div>
-      </div>
-      <div class="grp o">📋 活動流程</div>
-      <div class="flow">
-        <div class="frow"><span class="ft">10:00</span><span class="fa">🚄 集合 · 嘉義高鐵接送</span></div>
-        <div class="frow"><span class="ft">10:50</span><span class="fa">🏛️ 南科管理局 · 聽簡報</span></div>
-        <div class="frow move"><span class="ft">11:55</span><span class="fa">🚌 移動</span></div>
-        <div class="frow"><span class="ft">12:00</span><span class="fa">🍱 午餐 · 南科公會自助餐</span></div>
-        <div class="frow move"><span class="ft">12:50</span><span class="fa">🚌 移動</span></div>
-        <div class="frow"><span class="ft">13:00</span><span class="fa">🏭 棕茂應材公司 · 企業參訪</span></div>
-        <div class="frow move"><span class="ft">14:00</span><span class="fa">🚌 移動 · 前往賛美酒店</span></div>
-        <div class="frow"><span class="ft">14:20</span><span class="fa">💡 創新加速產業分享（20 分 × 3）</span></div>
-        <div class="frow sub"><span class="ft"></span><span class="fa">① 曾煌棊《你有變現力嗎？從 800 萬到 2800 萬》</span></div>
-        <div class="frow sub"><span class="ft"></span><span class="fa">② 廖月照《善用政府資源培養企業創新研發》</span></div>
-        <div class="frow sub"><span class="ft"></span><span class="fa">③ 梁群儒《運用 AI 讓企業經營變得更簡單》</span></div>
-        <div class="frow"><span class="ft">15:20</span><span class="fa">☕ 午茶交流</span></div>
-        <div class="frow"><span class="ft">15:30</span><span class="fa">🎤 專題演講 · 品牌形象力幫你創造銷售率！（蔡慧貞）</span></div>
-        <div class="frow"><span class="ft">16:40</span><span class="fa">🔬 專題演講 · 糞菌也有外泌體！（陳志銘 博士）</span></div>
-        <div class="frow"><span class="ft">17:30</span><span class="fa">🤝 會議交流 &amp; 大合照</span></div>
-        <div class="frow"><span class="ft">17:40</span><span class="fa">🍽️ 賛美晚宴</span></div>
-        <div class="frow"><span class="ft">19:00</span><span class="fa">🚄 高鐵接駁</span></div>
-      </div>
-      <div class="sm" style="margin-top:12px;color:var(--gray)">行程已定案，最終以正式公告為準 🙌</div>
-    </div>
-  </div>
-
-<footer>
-  <img class="footer-logo" src="https://ericliang680928.github.io/IAA/%E5%BB%A0%E5%95%86%E7%85%A7%E7%89%87/IAA-logo.jpg" alt="IAA"
-    onerror="this.style.display='none';document.getElementById('footLogoTxt').style.display='block'">
-  <div class="footer-logo-text" id="footLogoTxt" style="display:none">IAA 創新加速聯盟會</div>
-  <div class="footer-text">
-    IAA 創新加速聯盟 · 第三屆第二次例會活動<br>
-    承辦：IAA 北區團隊　協辦：IMC宜蘭社 張永興社長、江文傑前社長、IAA宜蘭社 黃雅堂召集人<br>
-    <a href="https://ericliang680928.github.io/IAA/" target="_blank">查看完整活動公告 →</a>
-  </div>
-</footer>
-
 <script>
-const PARTICIPANTS = [{"id": "1", "name": "江德利", "role": "會長", "club": "苗栗社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B412", "roommates": ["張貴珍"]}, {"id": "2", "name": "張貴珍", "role": "會長夫人", "club": "苗栗社", "identity": "會長夫人", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B412", "roommates": ["江德利"]}, {"id": "3", "name": "高麗琴", "role": "前會長", "club": "嘉義社", "identity": "南區會友", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B416", "roommates": ["孫尉傑"]}, {"id": "4", "name": "孫尉傑", "role": "高麗琴前會長姑爺", "club": "嘉義社", "identity": "會友眷屬", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B416", "roommates": ["高麗琴"]}, {"id": "5", "name": "江文傑", "role": "宜蘭社前社長", "club": "宜蘭社", "identity": "貴賓", "gender": "", "depart": "自行開車", "return": "", "plate": "", "meal_bus": "不用餐", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "", "room_desc": "", "room_no": "", "roommates": []}, {"id": "6", "name": "朱碧霞", "role": "執行長", "club": "苗栗社", "identity": "中區會友", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "升等 嵐 山景雙床(二中床)", "room_no": "B528", "roommates": ["林浿安"]}, {"id": "7", "name": "林浿安", "role": "一副", "club": "苗栗社", "identity": "中區會友", "gender": "女", "depart": "自行報到", "return": "南港送車", "plate": "", "meal_bus": "不用餐", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "升等 嵐 山景雙床(二中床)", "room_no": "B528", "roommates": ["朱碧霞"]}, {"id": "8", "name": "林珮君", "role": "財務長", "club": "台中社", "identity": "中區會友", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B419", "roommates": ["廖月照"]}, {"id": "9", "name": "廖月照", "role": "中區總召", "club": "台中社", "identity": "中區會友", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B419", "roommates": ["林珮君"]}, {"id": "10", "name": "謝陳煌", "role": "北區總召", "club": "基隆社", "identity": "北區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "升等 嵐 山景雙床(二中床)", "room_no": "B527", "roommates": ["楊麗玲"]}, {"id": "11", "name": "楊麗玲", "role": "北區總召夫人", "club": "基隆社", "identity": "北區會友", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "升等 嵐 山景雙床(二中床)", "room_no": "B527", "roommates": ["謝陳煌"]}, {"id": "12", "name": "黃雅堂", "role": "宜蘭社召集人", "club": "宜蘭社", "identity": "北區會友", "gender": "男", "depart": "自行開車", "return": "", "plate": "AKG-2528", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "單人房", "room_desc": "玥 山景雙人客房(一大床)", "room_no": "B520", "roommates": []}, {"id": "13", "name": "賴約凱", "role": "", "club": "宜蘭社", "identity": "北區會友", "gender": "", "depart": "自行開車", "return": "", "plate": "AJK-5155", "meal_bus": "不用餐", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "不住宿", "room_desc": "不住宿", "room_no": "", "roommates": []}, {"id": "14", "name": "王雪香", "role": "台北社召集人", "club": "台北社", "identity": "北區會友", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B413", "roommates": ["李勳婷"]}, {"id": "15", "name": "李勳婷", "role": "台南市社召集人", "club": "台南市社", "identity": "南區會友", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B413", "roommates": ["王雪香"]}, {"id": "16", "name": "吳俊傑", "role": "", "club": "台北社", "identity": "北區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "", "monthly": "自由活動", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B415", "roommates": ["孫連忠"]}, {"id": "17", "name": "孫連忠", "role": "前社長", "club": "台中社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "素食自理", "meal_dinner": "素食", "meal_lunch2": "素食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B415", "roommates": ["吳俊傑"]}, {"id": "18", "name": "宋貴修", "role": "前創新主委", "club": "桃園社", "identity": "北區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "單人房", "room_desc": "玥 山景雙人客房(一大床)", "room_no": "B517", "roommates": []}, {"id": "19", "name": "楊琛", "role": "前社長", "club": "桃園社", "identity": "北區會友", "gender": "男", "depart": "自行開車", "return": "", "plate": "BXS-2208", "meal_bus": "不用餐", "meal_dinner": "不用餐", "meal_lunch2": "葷食", "monthly": "", "room_type": "不住宿", "room_desc": "不住宿", "room_no": "", "roommates": []}, {"id": "20", "name": "黃唯洲", "role": "新竹社召集人", "club": "新竹社", "identity": "北區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B420", "roommates": ["翟清楠"]}, {"id": "21", "name": "翟清楠", "role": "前社長", "club": "苗栗社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B420", "roommates": ["黃唯洲"]}, {"id": "22", "name": "林振鋒", "role": "前社長", "club": "苗栗社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B417", "roommates": ["張金泉"]}, {"id": "23", "name": "張金泉", "role": "2027會長", "club": "南投社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B417", "roommates": ["林振鋒"]}, {"id": "24", "name": "徐詩淳", "role": "開喜商行", "club": "苗栗社", "identity": "與會來賓", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B418", "roommates": ["廖聆余"]}, {"id": "25", "name": "廖聆余", "role": "愛美經典美", "club": "苗栗社", "identity": "與會來賓", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "玥 山景雙人客房(二小床)", "room_no": "B418", "roommates": ["徐詩淳"]}, {"id": "26", "name": "梁群儒", "role": "秘書長", "club": "苗栗社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "升等 嵐 山景雙床(二中床)", "room_no": "B529", "roommates": ["張廖欣儀", "梁蔭琦"]}, {"id": "27", "name": "張廖欣儀", "role": "秘書長夫人", "club": "苗栗社", "identity": "會友眷屬", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "升等 嵐 山景雙床(二中床)", "room_no": "B529", "roommates": ["梁群儒", "梁蔭琦"]}, {"id": "28", "name": "梁蔭琦", "role": "秘書長女兒", "club": "苗栗社", "identity": "會友眷屬", "gender": "女", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "雙人房", "room_desc": "升等 嵐 山景雙床(二中床)", "room_no": "B529", "roommates": ["梁群儒", "張廖欣儀"]}, {"id": "29", "name": "徐志勳", "role": "贏幕科技", "club": "苗栗社", "identity": "與會來賓", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "四人房", "room_desc": "嵐 山景雙床客房(二中床)", "room_no": "B530", "roommates": ["陳祥彬", "葉子儀", "廖經舜"]}, {"id": "30", "name": "陳祥彬", "role": "", "club": "台中社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "四人房", "room_desc": "嵐 山景雙床客房(二中床)", "room_no": "B530", "roommates": ["徐志勳", "葉子儀", "廖經舜"]}, {"id": "31", "name": "葉子儀", "role": "", "club": "台中社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "四人房", "room_desc": "嵐 山景雙床客房(二中床)", "room_no": "B530", "roommates": ["徐志勳", "陳祥彬", "廖經舜"]}, {"id": "32", "name": "廖經舜", "role": "", "club": "台中社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "四人房", "room_desc": "嵐 山景雙床客房(二中床)", "room_no": "B530", "roommates": ["徐志勳", "陳祥彬", "葉子儀"]}, {"id": "33", "name": "郭文俊", "role": "南區總召", "club": "南瀛社", "identity": "南區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "單人房", "room_desc": "玥 山景雙人客房(一大床)", "room_no": "B518", "roommates": []}, {"id": "34", "name": "陳志銘", "role": "南瀛社召集人", "club": "南瀛社", "identity": "南區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "自由活動", "room_type": "單人房", "room_desc": "玥 山景雙人客房(一大床)", "room_no": "B519", "roommates": []}, {"id": "35", "name": "呂金豐", "role": "", "club": "台中社", "identity": "中區會友", "gender": "男", "depart": "南港接送", "return": "", "plate": "", "meal_bus": "葷食", "meal_dinner": "葷食", "meal_lunch2": "葷食", "monthly": "參加", "room_type": "單人房", "room_desc": "玥 山景雙人客房(一大床)", "room_no": "B521", "roommates": []}];
+const P = [{"name": "吳俊傑", "club": "台北社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "黃金龍", "club": "台北社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳嘉鴻", "club": "桃園社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "盧永濬", "club": "桃園社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "黃唯洲", "club": "新竹社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "江淑萍", "club": "苗栗社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "江德利", "club": "苗栗社", "identity": "中區會友", "role": "第三屆會長", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "林浿安", "club": "苗栗社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "林鎂雲", "club": "苗栗社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "梁群儒", "club": "苗栗社", "identity": "中區會友", "role": "秘書長", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "翟清楠", "club": "苗栗社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "呂金豐", "club": "台中社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "孫連忠", "club": "台中社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "素食", "dinner": "素食"}, {"name": "陳人豪", "club": "台中社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "葉子儀", "club": "台中社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "廖月照", "club": "台中社", "identity": "中區會友", "role": "中區總召", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "周淑秋", "club": "彰化社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "周鴻仁", "club": "彰化社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "朱碧霞", "club": "苗栗社", "identity": "中區會友", "role": "執行長", "transport": "自駕", "plate": "BCB-8393", "riders": [], "lunch": "不用餐", "dinner": "不用餐"}, {"name": "王明宇", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "AAB-6713", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "王信焜", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "BVD-1200", "riders": ["王瑞良", "唐明良"], "lunch": "葷食", "dinner": "葷食"}, {"name": "王瑞良", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "BVD-1200", "riders": ["王信焜", "唐明良"], "lunch": "葷食", "dinner": "葷食"}, {"name": "唐明良", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "BVD-1200", "riders": ["王信焜", "王瑞良"], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳科仰", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "CBV-3069", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳祥彬", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "REB-3875", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "張金泉", "club": "南投社", "identity": "中區會友", "role": "副會長", "transport": "自駕", "plate": "AYP-0679", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "曾煌棊", "club": "南投社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "EAK-9702", "riders": [], "lunch": "葷食", "dinner": "不用餐"}, {"name": "紀書菱", "club": "雲林社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "高麗琴", "club": "嘉義社", "identity": "南區會友", "role": "第二屆會長", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "郭奕谷", "club": "嘉義社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳琬媖", "club": "嘉義社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "王竣立", "club": "高雄社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "宋小麗", "club": "高雄社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳盈豪", "club": "雲林社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "CEN-3159", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "何勇魏", "club": "嘉義社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "AVK9507", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "李敏妃", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "1230-NR（陳信宏車）", "riders": ["陳信宏"], "lunch": "葷食", "dinner": "葷食"}, {"name": "翁志宜", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "RFW-3895", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳志銘", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "6668-TL", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳信宏", "club": "南瀛社", "identity": "南區會友", "role": "副執行長", "transport": "自駕", "plate": "1230-NR", "riders": ["李敏妃"], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳慧龍", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "★未定", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "張翔渝", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "CEA5207", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "郭文俊", "club": "南瀛社", "identity": "南區會友", "role": "南區總召", "transport": "自駕", "plate": "9069-R5", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "李國陽", "club": "高雄社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "BVS-9167", "riders": [], "lunch": "素食", "dinner": "素食"}, {"name": "陳世雷", "club": "高雄社", "identity": "南區會友", "role": "2026 聯合會理事長", "transport": "自駕", "plate": "AWC-8610", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "李孝賢", "club": "台中社 前社長", "identity": "與會來賓", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "杜建國", "club": "蔡慧貞講師 助理", "identity": "與會來賓", "role": "", "transport": "自駕", "plate": "計程車", "riders": ["蔡慧貞"], "lunch": "葷食", "dinner": "葷食"}, {"name": "林妤芮", "club": "陳人豪眷屬", "identity": "與會來賓", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "潘姿秀", "club": "江記永安囍餅", "identity": "與會來賓", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "蔡慧貞", "club": "知本設計 總經理", "identity": "與會來賓", "role": "", "transport": "自駕", "plate": "計程車", "riders": ["杜建國"], "lunch": "葷食", "dinner": "葷食"}];
+const SCHEDULE = [["10:00", "10:50", "集合報到 · 車程移動", "嘉義高鐵站 → 南部科學園區", "bus"], ["10:50", "11:55", "南科管理局　園區簡報", "南部科學園區管理局", "talk"], ["11:55", "12:00", "移動", "前往南科公會", "bus"], ["12:00", "12:50", "午餐", "南科公會自助餐", "meal"], ["12:50", "13:00", "移動", "前往棕茂應材", "bus"], ["13:00", "14:00", "企業參訪　棕茂應材", "精密陶瓷 × 生醫陶瓷材料", "talk"], ["14:00", "14:20", "移動", "前往南科贊美酒店（經台積電、台達電）", "bus"], ["14:20", "15:20", "創新加速產業分享", "曾煌棊 · 廖月照 · 梁群儒（各 20 分鐘）", "talk"], ["15:20", "15:30", "午茶交流", "南科贊美酒店", "meal"], ["15:30", "16:30", "專題演講①　品牌形象力幫你創造銷售率！", "知本設計　蔡慧貞 總經理", "talk"], ["16:30", "16:40", "Q & A", "", "talk"], ["16:40", "17:20", "專題演講②　糞菌也有外泌體！", "澄交生技　陳志銘 博士", "talk"], ["17:20", "17:30", "Q & A", "", "talk"], ["17:30", "17:40", "會議交流 · 大合照", "南科贊美酒店", "photo"], ["17:40", "19:00", "晚宴餐敘", "南科贊美酒店", "meal"], ["19:00", "19:30", "發車 · 送回嘉義高鐵站", "回程 南下 0849（19:55）／北上 0854（20:00）", "bus"]];
+const IDS = ["北區會友","中區會友","南區會友","與會來賓","工作人員"];
+const DAY = "2026-09-04";
 
-const SCHEDULE = [
- {day:1, date:"6/11", s:"2026-06-11T11:40", e:"2026-06-11T11:50", ico:"🚉", nm:"高鐵南港站出口集合報到", dt:"報名名冊點名，11:50 統一帶隊上大巴。車上享用便當及冷飲。", loc:"高鐵南港站出口"},
- {day:1, date:"6/11", s:"2026-06-11T12:00", e:"2026-06-11T13:10", ico:"🚌", nm:"南港出發 → 第一站", dt:"遊覽車前往蘇澳，車程約 70 分鐘。", loc:""},
- {day:1, date:"6/11", s:"2026-06-11T13:10", e:"2026-06-11T14:40", ico:"🐟", nm:"大鯖魚夢工廠", dt:"公司簡介、工廠參觀、Q&A、大合照、自由購物。", loc:"蘇澳鎮大圳路 118 號"},
- {day:1, date:"6/11", s:"2026-06-11T14:40", e:"2026-06-11T14:55", ico:"🚌", nm:"轉場 → 第二站", dt:"遊覽車前往五結鄉。", loc:""},
- {day:1, date:"6/11", s:"2026-06-11T14:55", e:"2026-06-11T16:20", ico:"🏭", nm:"力富得（股）公司", dt:"製造廠參觀、展示場、搬運設備展示、Q&A。", loc:"五結鄉利五濱路二段 32 號"},
- {day:1, date:"6/11", s:"2026-06-11T16:20", e:"2026-06-11T16:45", ico:"🎨", nm:"珍藏藝術品導覽欣賞", dt:"董事長親自導覽，贈送感謝狀、紀念品、大合照。", loc:""},
- {day:1, date:"6/11", s:"2026-06-11T16:45", e:"2026-06-11T17:00", ico:"🏨", nm:"綠舞國際觀光飯店 Check In", dt:"住宿費臨櫃自理（含早餐）。", loc:"五結鄉五濱路二段 459 號"},
- {day:1, date:"6/11", s:"2026-06-11T17:00", e:"2026-06-11T20:00", ico:"🎤", nm:"宜蘭社月例會 ／ 遊園自由活動", dt:"A組：月例會「從零到一：人脈與顧客經營智慧」講師 廖學茂董事長。B組：飯店遊園自由活動。", loc:"綠舞國際觀光飯店", split:true},
- {day:1, date:"6/11", s:"2026-06-11T18:30", e:"2026-06-11T20:00", ico:"🍽️", nm:"晚宴聯誼", dt:"感謝狀、紀念品贈送，桌菜聯誼晚宴。", loc:""},
- {day:1, date:"6/11", s:"2026-06-11T20:00", e:"2026-06-11T22:00", ico:"🌙", nm:"聯誼、自由活動", dt:"晚間自由活動，享受宜蘭夜晚。", loc:""},
- {day:2, date:"6/12", s:"2026-06-12T06:40", e:"2026-06-12T08:10", ico:"☀️", nm:"晨喚 · 自助早餐 · 退房", dt:"飯店自助早餐（含住宿費用）。", loc:"綠舞國際觀光飯店"},
- {day:2, date:"6/12", s:"2026-06-12T08:10", e:"2026-06-12T08:30", ico:"🚌", nm:"搭乘遊覽車點名 → 第三站", dt:"前往宜蘭科學園區宜科南路。", loc:""},
- {day:2, date:"6/12", s:"2026-06-12T08:30", e:"2026-06-12T10:20", ico:"🏗️", nm:"台灣松澤防震設備（股）公司", dt:"防震設備、新式建材導覽、Q&A、大合照。", loc:"宜科南路 7 號"},
- {day:2, date:"6/12", s:"2026-06-12T10:30", e:"2026-06-12T11:50", ico:"🦻", nm:"元健大和直販事業（股）公司", dt:"工廠參觀、聽力測試體驗（每人價值 NT$2,000）。", loc:"宜科南路 11 號"},
- {day:2, date:"6/12", s:"2026-06-12T11:50", e:"2026-06-12T13:10", ico:"🍱", nm:"午餐", dt:"元健大和直販事業（股）公司用餐。", loc:""},
- {day:2, date:"6/12", s:"2026-06-12T13:30", e:"2026-06-12T14:50", ico:"💾", nm:"宜鼎國際（股）公司宜蘭分公司", dt:"公司簡介、工廠參觀、Q&A、大合照。", loc:"宜科路 128 號"},
- {day:2, date:"6/12", s:"2026-06-12T15:20", e:"2026-06-12T16:45", ico:"🔬", nm:"偉翔生技開發（股）公司", dt:"公司簡介、工廠參觀、Q&A、大合照。", loc:"宜科東路 5 號 2F-6"},
- {day:2, date:"6/12", s:"2026-06-12T16:45", e:"2026-06-12T18:10", ico:"🚅", nm:"遊覽車 → 高鐵南港站解散", dt:"車上提供宜蘭小吃美食餐盒。0676：南港18:35→左營20:45；0152：南港18:55→左營20:40。", loc:"高鐵南港站"},
-];
+function dt(hm){ return new Date(DAY+"T"+hm+":00+08:00"); }
+function now(){ return new Date(); }
+function pad(n){ return String(n).padStart(2,"0"); }
 
-const DEMO = null;
-function now(){ return DEMO ? new Date(DEMO) : new Date(); }
-function dt(s){ return new Date(s); }
-function hm(s){ return s.slice(11,16); }
-
-const sel = document.getElementById('nameSel');
-const search = document.getElementById('search');
-function buildOptions(filter){
-  const f = (filter||'').trim();
-  sel.innerHTML = '<option value="">— 請選擇姓名 —</option>' +
-    PARTICIPANTS.filter(p=>!f||p.name.includes(f))
-      .map(p=>`<option value="${p.name}">${p.name}（${p.club||p.identity}）</option>`).join('');
+/* ── 身份按鈕 ── */
+let curId = "";
+const idbox = document.getElementById("idbtns");
+IDS.forEach(id=>{
+  const b=document.createElement("button");
+  b.className="idbtn"; b.textContent=id; b.dataset.id=id;
+  b.onclick=()=>{ curId=id; [...idbox.children].forEach(c=>c.classList.toggle("on",c.dataset.id===id)); fillNames(); };
+  idbox.appendChild(b);
+});
+const sel = document.getElementById("nameSel");
+function fillNames(){
+  const list = P.filter(p=>p.identity===curId);
+  sel.innerHTML = '<option value="">— 請選擇 —</option>' +
+    list.map(p=>`<option value="${p.name}">${p.name}${p.club?'（'+p.club+'）':''}</option>`).join("");
+  sel.disabled = list.length===0;
+  if(list.length===0) sel.innerHTML = '<option value="">本次無此身份人員，請洽承辦團隊</option>';
+  renderPersonal();
 }
-buildOptions();
-search.addEventListener('input', ()=>buildOptions(search.value));
-sel.addEventListener('change', ()=>{ try{localStorage.setItem('iaa_name', sel.value);}catch(e){} render(); });
+sel.onchange = renderPersonal;
 
-function mealChip(v){
-  if(!v||v==='不用餐') return '<span class="chip none">不用餐</span>';
-  if(v.includes('素')) return '<span class="chip veg">'+v+'</span>';
-  return '<span class="chip a">'+v+'</span>';
-}
-
-function renderDriver(){
-  const box = document.getElementById('driverBox');
-  const name = sel.value;
-  const p = name ? PARTICIPANTS.find(x=>x.name===name) : null;
-  if(!p || p.depart.includes('自行開車')){ box.innerHTML=''; return; }
-  box.innerHTML = `
-  <div class="card" style="border-top-color:var(--orange)">
-    <h3 class="serif">🚍 IAA 宜蘭遊覽車</h3>
-    <div class="who">全程接駁專車 · 車上資訊</div>
-    <div class="pgrid">
-      <div class="pcell"><div class="k">司機</div><div class="v">陳志奇</div></div>
-      <div class="pcell"><div class="k">車號</div><div class="v big" style="font-size:1.5rem">KAB-0229</div></div>
-      <div class="pcell full"><div class="k">聯絡電話</div><div class="v"><a class="telbtn" href="tel:0906029471">📞 0906-029-471</a></div></div>
-    </div>
-  </div>`;
+function mealChip(m){
+  if(m==="素食") return '<span class="chip veg">素　食</span>';
+  if(m==="不用餐") return '<span class="chip no">不用餐</span>';
+  return '<span class="chip meat">葷食</span>';
 }
 
 function renderPersonal(){
-  const box = document.getElementById('personal');
+  const box = document.getElementById("personal");
   const name = sel.value;
-  if(!name){ box.innerHTML = '<div class="card"><div class="empty">↑ 選擇姓名後，這裡會顯示您的住宿、用餐、月例會分組與交通資訊</div></div>'; return; }
-  const p = PARTICIPANTS.find(x=>x.name===name);
-  if(!p){ box.innerHTML=''; return; }
-  const isA = p.monthly==='參加', isB = p.monthly==='自由活動';
-  const monthlyHtml = isA ? '<span class="chip a">A組 · 參加宜蘭社月例會</span>'
-    : isB ? '<span class="chip b">B組 · 遊園自由活動</span>'
-    : '<span class="chip none">未填／不適用</span>';
-  const stay = p.room_no && p.room_type!=='不住宿';
-  const roomHtml = stay
-    ? `<div class="pcell"><div class="k">房號</div><div class="v big">${p.room_no}</div></div>
-       <div class="pcell"><div class="k">房型</div><div class="v">${p.room_type}</div><div class="sm">${p.room_desc||''}</div></div>
-       <div class="pcell full"><div class="k">同房室友</div><div class="v">${p.roommates.length? p.roommates.map(r=>'<span class="roommate">'+r+'</span>').join('') : '<span class="sm">本房僅您一人</span>'}</div></div>`
-    : `<div class="pcell full"><div class="k">住宿</div><div class="v">不住宿</div></div>`;
+  if(!name){ box.innerHTML = '<div class="card"><div class="empty">↑ 選擇身份與姓名後<br>這裡會顯示您的集合時間、交通與用餐資訊</div></div>'; return; }
+  const p = P.find(x=>x.name===name && x.identity===curId);
+  if(!p){ box.innerHTML=""; return; }
+
+  const hsr = p.transport==="高鐵";
+  const meet = hsr
+   ? `<div class="meet">
+        <div class="lbl">🚄 集合時間</div>
+        <div class="tm">10:00</div>
+        <div class="pl">📍 嘉義高鐵站</div>
+        <div class="note">建議 09:45 前抵達，交通組將於出口處舉牌接待。<br>清點人數後即發車前往南部科學園區。</div>
+      </div>`
+   : `<div class="meet">
+        <div class="lbl">🚗 抵達時間</div>
+        <div class="tm">10:50</div>
+        <div class="pl">📍 南部科學園區管理局</div>
+        <div class="note">自行開車者<b>不必到高鐵站</b>，請直接前往南科管理局。<br>建議 <b>10:35–10:40</b> 抵達，預留停車與入場時間。</div>
+      </div>`;
+
+  const carHtml = hsr ? "" : `
+    <div class="grp o">🚗 車輛資訊</div>
+    <div class="pgrid">
+      <div class="pcell${p.riders.length?"":" full"}"><div class="k">車牌號碼</div><div class="v big">${p.plate||"—"}</div></div>
+      ${p.riders.length?`<div class="pcell"><div class="k">同車夥伴</div><div class="v">${p.riders.map(r=>'<span class="rider">'+r+'</span>').join("")}</div></div>`:""}
+    </div>`;
+
   box.innerHTML = `
   <div class="card">
     <h3 class="serif">👋 ${p.name} 您好</h3>
-    <div class="who">${[p.identity,p.role,p.club].filter(Boolean).join(' · ')}</div>
-    <div class="idbadge"><span class="idlab">參加編號<small>分組／點名依此編號</small></span><span class="idnum">${p.id||'—'}</span></div>
-    <div class="pcell full"><div class="k">6/11 晚上 · 月例會分組</div><div class="v">${monthlyHtml}</div></div>
-    <div class="grp t">🏨 6/11 住宿資訊</div>
-    <div class="pgrid">${roomHtml}</div>
-    <div class="grp">🍽️ 用餐選擇</div>
+    <div class="who">${[p.identity,p.role,p.club].filter(Boolean).join(" · ")}</div>
+
+    <div class="grp o">🚌 交通與集合</div>
+    ${meet}
+    ${carHtml}
+
+    <div class="grp t">🍽️ 用餐</div>
     <div class="pgrid">
-      <div class="pcell"><div class="k">6/11 車上便當</div><div class="v">${mealChip(p.meal_bus)}</div></div>
-      <div class="pcell"><div class="k">6/11 綠舞晚餐</div><div class="v">${mealChip(p.meal_dinner)}</div></div>
-      <div class="pcell full"><div class="k">6/12 午餐 (Buffet)</div><div class="v">${mealChip(p.meal_lunch2)}</div></div>
+      <div class="pcell"><div class="k">午餐　12:00–12:50</div><div class="v">${mealChip(p.lunch)}</div><div class="sm">南科公會自助餐</div></div>
+      <div class="pcell"><div class="k">晚宴　17:40–19:00</div><div class="v">${mealChip(p.dinner)}</div><div class="sm">南科贊美酒店</div></div>
     </div>
-    <div class="grp o">🚌 交通資訊</div>
+
+    <div class="grp">🚄 回程資訊</div>
     <div class="pgrid">
-      <div class="pcell"><div class="k">去程</div><div class="v">${p.depart||'—'}</div></div>
-      <div class="pcell"><div class="k">回程</div><div class="v">${p.return||p.depart||'—'}</div></div>
-      ${p.plate?`<div class="pcell full"><div class="k">車牌號碼（自行開車）</div><div class="v">${p.plate}</div></div>`:''}
+      <div class="pcell full"><div class="k">19:00 發車　送回嘉義高鐵站</div>
+        <div class="v" style="font-size:1rem">南下 0849 次　嘉義 19:55 發<br>北上 0854 次　嘉義 20:00 發</div>
+        <div class="sm">班次不同者請於晚宴前告知交通組登記。</div></div>
     </div>
   </div>`;
 }
 
-function currentIndex(t){ for(let i=0;i<SCHEDULE.length;i++){ if(t>=dt(SCHEDULE[i].s)&&t<dt(SCHEDULE[i].e)) return i; } return -1; }
-function nextIndex(t){ for(let i=0;i<SCHEDULE.length;i++){ if(t<dt(SCHEDULE[i].s)) return i; } return -1; }
+/* ── 即時狀態 ── */
+function curIdx(t){ for(let i=0;i<SCHEDULE.length;i++){ if(t>=dt(SCHEDULE[i][0])&&t<dt(SCHEDULE[i][1])) return i; } return -1; }
+function nextIdx(t){ for(let i=0;i<SCHEDULE.length;i++){ if(t<dt(SCHEDULE[i][0])) return i; } return -1; }
 
 function renderLive(){
-  const t = now();
-  const box = document.getElementById('liveBox');
-  const nb = document.getElementById('nextBox');
-  const start = dt(SCHEDULE[0].s), end = dt(SCHEDULE[SCHEDULE.length-1].e);
-  const ci = currentIndex(t), ni = nextIndex(t);
-  if(t < start){
-    const diffH = Math.floor((start-t)/3600000), diffD=Math.floor(diffH/24);
-    box.innerHTML = `<div class="live pre"><span class="tag"><span class="dot"></span>活動尚未開始</span>
-      <h2 class="serif">即將展開精彩兩天</h2>
-      <div class="time">起點：6/11 11:40 高鐵南港站集合${diffD>=1?'（約 '+diffD+' 天後）':'（約 '+diffH+' 小時後）'}</div></div>`;
-  } else if(t >= end){
-    box.innerHTML = `<div class="live done"><span class="tag"><span class="dot"></span>活動圓滿結束</span>
-      <h2 class="serif">感謝您的參與！</h2><div class="time">期待下次再相見 👋</div></div>`;
-  } else if(ci>=0){
-    const c = SCHEDULE[ci];
-    box.innerHTML = `<div class="live"><span class="tag"><span class="dot"></span>現在進行中</span>
-      <h2 class="serif">${c.ico} ${c.nm}</h2>
-      <div class="time">${c.date} ${hm(c.s)} – ${hm(c.e)}</div>
-      <div class="desc">${c.dt}${c.loc?'　📍'+c.loc:''}</div></div>`;
+  const t=now(), box=document.getElementById("liveBox");
+  const start=dt(SCHEDULE[0][0]), end=dt(SCHEDULE[SCHEDULE.length-1][1]);
+  if(t<start){
+    const ms=start-t, h=Math.floor(ms/3600000), d=Math.floor(h/24), m=Math.floor(ms%3600000/60000);
+    box.innerHTML=`<div class="live pre"><span class="tag"><span class="dot"></span>活動尚未開始</span>
+      <h2 class="serif">明天見！南科創新參訪</h2>
+      <div class="time">9/4（五）10:00 嘉義高鐵站集合　·　${d>=1?"約 "+d+" 天 "+(h%24)+" 小時後":"約 "+h+" 小時 "+m+" 分後"}</div></div>`;
+  } else if(t>=end){
+    box.innerHTML=`<div class="live done"><span class="tag"><span class="dot"></span>活動圓滿結束</span>
+      <h2 class="serif">感謝您的參與！</h2>
+      <div class="time">期待下次相會　·　2026/12/4 會員大會</div></div>`;
   } else {
-    box.innerHTML = `<div class="live pre"><span class="tag"><span class="dot"></span>活動空檔</span>
-      <h2 class="serif">稍作休息</h2><div class="time">下一個活動即將開始</div></div>`;
+    const i=curIdx(t), n=nextIdx(t);
+    const c=i>=0?SCHEDULE[i]:null;
+    box.innerHTML=`<div class="live"><span class="tag"><span class="dot"></span>${c?"進行中":"移動／空檔"}</span>
+      <h2 class="serif">${c?c[2]:"下一站準備中"}</h2>
+      <div class="time">${c?c[0]+"–"+c[1]+(c[3]?"　·　"+c[3]:""):""}</div>
+      ${n>=0?`<div class="time" style="margin-top:6px;opacity:.75">下一段　${SCHEDULE[n][0]}　${SCHEDULE[n][2]}</div>`:""}</div>`;
   }
-  if(ni>=0){
-    const n = SCHEDULE[ni];
-    nb.innerHTML = `<div class="next"><div class="ico">${n.ico}</div><div>
-      <div class="lab">接下來</div><div class="ttl serif">${n.nm}</div>
-      <div class="tm">${n.date} ${hm(n.s)} – ${hm(n.e)}${n.loc?'　·　'+n.loc:''}</div></div></div>`;
-  } else { nb.innerHTML=''; }
 }
 
-function renderTimeline(){
-  const t = now();
-  const ci = currentIndex(t);
-  const name = sel.value;
-  const p = name? PARTICIPANTS.find(x=>x.name===name):null;
-  const box = document.getElementById('tlBox');
-  const days = [...new Set(SCHEDULE.map(it=>it.day))];
-  let html='';
-  days.forEach(day=>{
-    html += `<div class="dayhd"><span class="day-pill">DAY ${day}</span><span class="day-title serif">${day===1?'6 月 11 日（四）':'6 月 12 日（五）'}</span></div><div class="timeline">`;
-    SCHEDULE.forEach((it,i)=>{
-      if(it.day!==day) return;
-      let cls='';
-      if(t>=dt(it.e)) cls='past';
-      if(i===ci) cls='now';
-      let perTag='';
-      if(it.split && p){
-        if(p.monthly==='參加') perTag='<span class="pertag a">您：A組月例會</span>';
-        else if(p.monthly==='自由活動') perTag='<span class="pertag b">您：B組自由活動</span>';
-      }
-      const nowtag = i===ci?'<span class="nowtag">進行中</span>':'';
-      html += `<div class="tl-item ${cls}"><div class="tl-dot"></div>
-        <div class="tl-time">${hm(it.s)} – ${hm(it.e)}</div>
-        <div class="tl-body"><div class="tl-venue serif">${it.ico} ${it.nm}${nowtag}${perTag}</div>
-        <div class="tl-desc">${it.dt}</div>${it.loc?`<div class="tl-loc">📍 ${it.loc}</div>`:''}</div></div>`;
-    });
-    html += '</div>';
-  });
-  box.innerHTML = html;
+function renderTL(){
+  const t=now(), box=document.getElementById("tlBox"), i=curIdx(t);
+  box.innerHTML = SCHEDULE.map((s,k)=>{
+    const cls = k===i?"now":(t>=dt(s[1])?"past":"");
+    return `<div class="tlrow ${cls}"><div class="tlt">${s[0]}–${s[1]}</div>
+      <div class="tln">${s[2]}</div>${s[3]?`<div class="tld">${s[3]}</div>`:""}</div>`;
+  }).join("");
 }
 
-function render(){ renderDriver(); renderPersonal(); renderLive(); renderTimeline(); }
 function tick(){
-  const t = now();
-  document.getElementById('clock').textContent =
-    t.toLocaleString('zh-TW',{month:'numeric',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false});
-  renderLive(); renderTimeline();
+  const d=now();
+  document.getElementById("clock").textContent =
+    `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())}　${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  renderLive(); renderTL();
 }
-try{const sv=localStorage.getItem('iaa_name'); if(sv && PARTICIPANTS.some(p=>p.name===sv)){ sel.value=sv; }}catch(e){}
-render(); tick(); setInterval(tick, 30000);
+renderPersonal(); tick(); setInterval(tick,1000);
 </script>
 </body>
 </html>
