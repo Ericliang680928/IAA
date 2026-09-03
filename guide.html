@@ -45,11 +45,11 @@ select{width:100%;padding:13px 12px;font-size:1.05rem;font-family:inherit;border
  background-repeat:no-repeat;background-position:right 12px center;background-size:20px}
 select:focus{outline:none;border-color:var(--teal)}
 select:disabled{background-color:#f4f5f9;color:#aab;cursor:not-allowed}
-.idbtns{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.idbtn{padding:12px 8px;font-size:.98rem;font-weight:700;font-family:inherit;border:2px solid var(--gray-lt);
- border-radius:10px;background:#fff;color:var(--gray);cursor:pointer;transition:.15s}
-.idbtn:hover{border-color:var(--teal-lt)}
-.idbtn.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.mapbtn{display:inline-flex;align-items:center;gap:7px;background:#fff;border:2px solid var(--orange);
+ border-radius:10px;padding:9px 14px;color:var(--navy);text-decoration:none;font-weight:700;font-size:1.05rem;margin-top:2px}
+.mapbtn .go{font-size:.82rem;color:var(--orange);font-weight:700;letter-spacing:.02em}
+.mapbtn:active{background:#fff2ea}
+.maplink{color:#1d7370;text-decoration:none;border-bottom:1px dashed #7cc3c0;font-weight:700}
 .hint{font-size:.85rem;color:var(--gray);margin-top:10px;line-height:1.6}
 .card{background:#fff;border-radius:14px;padding:20px;margin-top:16px;box-shadow:0 2px 12px rgba(18,38,71,.07);
  border-top:5px solid var(--navy)}
@@ -111,7 +111,7 @@ select:disabled{background-color:#f4f5f9;color:#aab;cursor:not-allowed}
   <div class="picker">
     <div class="eyebrow"><span class="ebar"></span><span class="etext">第一步 · 選擇身份</span></div>
     <label>我的身份</label>
-    <div class="idbtns" id="idbtns"></div>
+    <select id="idSel"><option value="">— 請選擇身份 —</option></select>
     <label style="margin-top:14px">我的姓名</label>
     <select id="nameSel" disabled><option value="">請先選擇身份</option></select>
     <div class="hint">選擇後即顯示您的集合時間、地點、交通與用餐資訊。<br>本頁資料僅供本次活動使用，請勿轉發。</div>
@@ -136,23 +136,41 @@ select:disabled{background-color:#f4f5f9;color:#aab;cursor:not-allowed}
 const P = [{"name": "吳俊傑", "club": "台北社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "黃金龍", "club": "台北社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳嘉鴻", "club": "桃園社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "盧永濬", "club": "桃園社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "黃唯洲", "club": "新竹社", "identity": "北區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "江淑萍", "club": "苗栗社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "江德利", "club": "苗栗社", "identity": "中區會友", "role": "第三屆會長", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "林浿安", "club": "苗栗社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "林鎂雲", "club": "苗栗社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "梁群儒", "club": "苗栗社", "identity": "中區會友", "role": "秘書長", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "翟清楠", "club": "苗栗社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "呂金豐", "club": "台中社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "孫連忠", "club": "台中社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "素食", "dinner": "素食"}, {"name": "陳人豪", "club": "台中社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "葉子儀", "club": "台中社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "廖月照", "club": "台中社", "identity": "中區會友", "role": "中區總召", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "周淑秋", "club": "彰化社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "周鴻仁", "club": "彰化社", "identity": "中區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "朱碧霞", "club": "苗栗社", "identity": "中區會友", "role": "執行長", "transport": "自駕", "plate": "BCB-8393", "riders": [], "lunch": "不用餐", "dinner": "不用餐"}, {"name": "王明宇", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "AAB-6713", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "王信焜", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "BVD-1200", "riders": ["王瑞良", "唐明良"], "lunch": "葷食", "dinner": "葷食"}, {"name": "王瑞良", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "BVD-1200", "riders": ["王信焜", "唐明良"], "lunch": "葷食", "dinner": "葷食"}, {"name": "唐明良", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "BVD-1200", "riders": ["王信焜", "王瑞良"], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳科仰", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "CBV-3069", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳祥彬", "club": "台中社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "REB-3875", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "張金泉", "club": "南投社", "identity": "中區會友", "role": "副會長", "transport": "自駕", "plate": "AYP-0679", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "曾煌棊", "club": "南投社", "identity": "中區會友", "role": "", "transport": "自駕", "plate": "EAK-9702", "riders": [], "lunch": "葷食", "dinner": "不用餐"}, {"name": "紀書菱", "club": "雲林社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "高麗琴", "club": "嘉義社", "identity": "南區會友", "role": "第二屆會長", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "郭奕谷", "club": "嘉義社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳琬媖", "club": "嘉義社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "王竣立", "club": "高雄社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "宋小麗", "club": "高雄社", "identity": "南區會友", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳盈豪", "club": "雲林社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "CEN-3159", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "何勇魏", "club": "嘉義社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "AVK9507", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "李敏妃", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "1230-NR（陳信宏車）", "riders": ["陳信宏"], "lunch": "葷食", "dinner": "葷食"}, {"name": "翁志宜", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "RFW-3895", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳志銘", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "6668-TL", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳信宏", "club": "南瀛社", "identity": "南區會友", "role": "副執行長", "transport": "自駕", "plate": "1230-NR", "riders": ["李敏妃"], "lunch": "葷食", "dinner": "葷食"}, {"name": "陳慧龍", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "★未定", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "張翔渝", "club": "南瀛社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "CEA5207", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "郭文俊", "club": "南瀛社", "identity": "南區會友", "role": "南區總召", "transport": "自駕", "plate": "9069-R5", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "李國陽", "club": "高雄社", "identity": "南區會友", "role": "", "transport": "自駕", "plate": "BVS-9167", "riders": [], "lunch": "素食", "dinner": "素食"}, {"name": "陳世雷", "club": "高雄社", "identity": "南區會友", "role": "2026 聯合會理事長", "transport": "自駕", "plate": "AWC-8610", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "李孝賢", "club": "台中社 前社長", "identity": "與會來賓", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "杜建國", "club": "蔡慧貞講師 助理", "identity": "與會來賓", "role": "", "transport": "自駕", "plate": "計程車", "riders": ["蔡慧貞"], "lunch": "葷食", "dinner": "葷食"}, {"name": "林妤芮", "club": "陳人豪眷屬", "identity": "與會來賓", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "潘姿秀", "club": "江記永安囍餅", "identity": "與會來賓", "role": "", "transport": "高鐵", "plate": "", "riders": [], "lunch": "葷食", "dinner": "葷食"}, {"name": "蔡慧貞", "club": "知本設計 總經理", "identity": "與會來賓", "role": "", "transport": "自駕", "plate": "計程車", "riders": ["杜建國"], "lunch": "葷食", "dinner": "葷食"}];
 const SCHEDULE = [["10:00", "10:50", "集合報到 · 車程移動", "嘉義高鐵站 → 南部科學園區", "bus"], ["10:50", "11:55", "南科管理局　園區簡報", "南部科學園區管理局", "talk"], ["11:55", "12:00", "移動", "前往南科公會", "bus"], ["12:00", "12:50", "午餐", "南科公會自助餐", "meal"], ["12:50", "13:00", "移動", "前往棕茂應材", "bus"], ["13:00", "14:00", "企業參訪　棕茂應材", "精密陶瓷 × 生醫陶瓷材料", "talk"], ["14:00", "14:20", "移動", "前往南科贊美酒店（經台積電、台達電）", "bus"], ["14:20", "15:20", "創新加速產業分享", "曾煌棊 · 廖月照 · 梁群儒（各 20 分鐘）", "talk"], ["15:20", "15:30", "午茶交流", "南科贊美酒店", "meal"], ["15:30", "16:30", "專題演講①　品牌形象力幫你創造銷售率！", "知本設計　蔡慧貞 總經理", "talk"], ["16:30", "16:40", "Q & A", "", "talk"], ["16:40", "17:20", "專題演講②　糞菌也有外泌體！", "澄交生技　陳志銘 博士", "talk"], ["17:20", "17:30", "Q & A", "", "talk"], ["17:30", "17:40", "會議交流 · 大合照", "南科贊美酒店", "photo"], ["17:40", "19:00", "晚宴餐敘", "南科贊美酒店", "meal"], ["19:00", "19:30", "發車 · 送回嘉義高鐵站", "回程 南下 0849（19:55）／北上 0854（20:00）", "bus"]];
 const IDS = ["北區會友","中區會友","南區會友","與會來賓","工作人員"];
+const MAPS = {
+  "嘉義高鐵站":"台灣高鐵嘉義站",
+  "南部科學園區管理局":"南部科學園區管理局 台南市新市區南科三路22號",
+  "南科公會":"南科公會 台南市新市區",
+  "棕茂應材":"棕茂應材股份有限公司 台南",
+  "南科贊美酒店":"贊美酒店 南科"
+};
+function mapUrl(q){ return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q); }
+function mapBtn(name){
+  const q=MAPS[name]; if(!q) return name;
+  return `<a class="mapbtn" href="${mapUrl(q)}" target="_blank" rel="noopener">📍 ${name}<span class="go">導航 ›</span></a>`;
+}
+function mapInline(text){
+  let out=text;
+  Object.keys(MAPS).forEach(k=>{
+    if(out.includes(k)) out=out.split(k).join(`<a class="maplink" href="${mapUrl(MAPS[k])}" target="_blank" rel="noopener">${k} 📍</a>`);
+  });
+  return out;
+}
 const DAY = "2026-09-04";
 
 function dt(hm){ return new Date(DAY+"T"+hm+":00+08:00"); }
 function now(){ return new Date(); }
 function pad(n){ return String(n).padStart(2,"0"); }
 
-/* ── 身份按鈕 ── */
+/* ── 身份下拉 ── */
 let curId = "";
-const idbox = document.getElementById("idbtns");
+const idSel = document.getElementById("idSel");
 IDS.forEach(id=>{
-  const b=document.createElement("button");
-  b.className="idbtn"; b.textContent=id; b.dataset.id=id;
-  b.onclick=()=>{ curId=id; [...idbox.children].forEach(c=>c.classList.toggle("on",c.dataset.id===id)); fillNames(); };
-  idbox.appendChild(b);
+  const o=document.createElement("option"); o.value=id; o.textContent=id; idSel.appendChild(o);
 });
+idSel.onchange = ()=>{ curId = idSel.value; fillNames(); };
 const sel = document.getElementById("nameSel");
 function fillNames(){
+  if(!curId){ sel.innerHTML='<option value="">請先選擇身份</option>'; sel.disabled=true; renderPersonal(); return; }
   const list = P.filter(p=>p.identity===curId);
   sel.innerHTML = '<option value="">— 請選擇 —</option>' +
     list.map(p=>`<option value="${p.name}">${p.name}${p.club?'（'+p.club+'）':''}</option>`).join("");
@@ -180,13 +198,13 @@ function renderPersonal(){
    ? `<div class="meet">
         <div class="lbl">🚄 集合時間</div>
         <div class="tm">10:00</div>
-        <div class="pl">📍 嘉義高鐵站</div>
+        <div class="pl">${mapBtn("嘉義高鐵站")}</div>
         <div class="note">建議 09:45 前抵達，交通組將於出口處舉牌接待。<br>清點人數後即發車前往南部科學園區。</div>
       </div>`
    : `<div class="meet">
         <div class="lbl">🚗 抵達時間</div>
         <div class="tm">10:50</div>
-        <div class="pl">📍 南部科學園區管理局</div>
+        <div class="pl">${mapBtn("南部科學園區管理局")}</div>
         <div class="note">自行開車者<b>不必到高鐵站</b>，請直接前往南科管理局。<br>建議 <b>10:35–10:40</b> 抵達，預留停車與入場時間。</div>
       </div>`;
 
@@ -208,8 +226,8 @@ function renderPersonal(){
 
     <div class="grp t">🍽️ 用餐</div>
     <div class="pgrid">
-      <div class="pcell"><div class="k">午餐　12:00–12:50</div><div class="v">${mealChip(p.lunch)}</div><div class="sm">南科公會自助餐</div></div>
-      <div class="pcell"><div class="k">晚宴　17:40–19:00</div><div class="v">${mealChip(p.dinner)}</div><div class="sm">南科贊美酒店</div></div>
+      <div class="pcell"><div class="k">午餐　12:00–12:50</div><div class="v">${mealChip(p.lunch)}</div><div class="sm">${mapInline("南科公會")}自助餐</div></div>
+      <div class="pcell"><div class="k">晚宴　17:40–19:00</div><div class="v">${mealChip(p.dinner)}</div><div class="sm">${mapInline("南科贊美酒店")}</div></div>
     </div>
 
     <div class="grp">🚄 回程資訊</div>
@@ -252,7 +270,7 @@ function renderTL(){
   box.innerHTML = SCHEDULE.map((s,k)=>{
     const cls = k===i?"now":(t>=dt(s[1])?"past":"");
     return `<div class="tlrow ${cls}"><div class="tlt">${s[0]}–${s[1]}</div>
-      <div class="tln">${s[2]}</div>${s[3]?`<div class="tld">${s[3]}</div>`:""}</div>`;
+      <div class="tln">${s[2]}</div>${s[3]?`<div class="tld">${mapInline(s[3])}</div>`:""}</div>`;
   }).join("");
 }
 
