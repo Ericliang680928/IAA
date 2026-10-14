@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>商務交流許願牆｜苗栗IMC 第15屆</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css?v=1">
+<style>
+.wrap2{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:start}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--dark);color:#F8E7B8;padding:6px 8px 6px 14px;border-radius:999px;font-size:15px;font-weight:600}
+.chip small{color:var(--gold3);font-weight:400}
+.chip button{width:24px;height:24px;border-radius:50%;border:0;background:#4A3312;color:#F8E7B8;font-size:14px;cursor:pointer;line-height:1}
+.res{border:2px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;display:flex;flex-direction:column}
+.res button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 16px;border:0;background:#fff;font-size:17px;cursor:pointer;min-height:48px;border-top:1px solid #F0E8D8}
+.res button:first-child{border-top:0}.res button:hover{background:var(--cream)}
+.wish{border-left:5px solid var(--gold3)}
+@media (max-width:980px){.wrap2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nin">
+  <img src="assets/logo15.png" alt="第15屆 ART &amp; ACTION">
+  <a href="index.html">活動主頁</a><a href="seat.html">座位查詢</a><a href="wish.html" class="on">商務許願</a><a href="shop.html">社友商品館</a><a href="sponsors.html">贊助廣告</a>
+</div></nav>
+<header class="hero"><div class="wrap" style="display:flex;flex-direction:column;gap:10px;padding:0">
+  <div class="kicker">藝術共感・行動共創　讓每一桌都有新的連結</div><h1>商務交流許願牆</h1>
+  <p style="max-width:760px">寫下「我有什麼資源」與「我最近想找什麼」，活動前就幫您配好對；茶敘時間（15:20–15:40）直接在 5 桌旁碰面。</p>
+</div></header>
+<main class="wrap" style="padding:32px 20px 64px">
+<div class="banner" style="margin-bottom:20px">預覽版：許願內容暫存於此頁，尚未寫入資料庫；名單為 2026/10/14 排座匯出版（341 位）。</div>
+<div class="wrap2">
+  <form class="card" id="form" style="gap:16px">
+    <div class="serif" style="font-size:24px;font-weight:700;color:var(--dark)">我的許願</div>
+    <div class="grid g2" style="gap:14px">
+      <div class="fld"><label class="f" for="w-unit">社別／單位</label><select id="w-unit" class="in" required><option value="">— 請選擇 —</option></select></div>
+      <div class="fld"><label class="f" for="w-name">姓名</label><select id="w-name" class="in" required disabled><option value="">— 先選社別 —</option></select></div>
+    </div>
+    <div class="fld"><label class="f" for="w-biz">我的事業／產業</label><input id="w-biz" class="in" required placeholder="例：食材批發、餐飲、營建、保險、法律…"></div>
+    <div class="fld"><label class="f" for="w-have"><span style="color:var(--green)">●</span> 我有什麼資源可以分享</label><textarea id="w-have" class="in" placeholder="例：中部餐飲食材供應鏈、場地、人脈、專業諮詢…"></textarea></div>
+    <div class="fld"><label class="f" for="w-want"><span style="color:var(--rose)">●</span> 我最近想找什麼資源</label><textarea id="w-want" class="in" placeholder="例：想找行銷顧問、想認識電商平台的社友、找合作通路…"></textarea></div>
+    <div class="fld">
+      <label class="f" for="w-meet">想認識哪些與會社友（可複選，從本次參加名單搜尋）</label>
+      <div id="picked" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px"></div>
+      <input id="w-meet" class="in" autocomplete="off" placeholder="輸入姓名、社別或產業關鍵字，例：高雄社、物流、陳…">
+      <div id="results" class="res" style="display:none;margin-top:8px"></div>
+      <div class="note" id="noRes" style="display:none;color:#8A3B1F">名單中找不到，請換個關鍵字</div>
+      <div class="note" style="margin-top:6px">已選 <span id="nPicked">0</span> 位。名單同步自「交接活動座位安排」。</div>
+    </div>
+    <div class="fld"><label class="f" for="w-line">LINE ID（僅配對成功的社友看得到）</label><input id="w-line" class="in"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><button type="submit" class="btn btn-gold">送出許願</button><span id="saved" style="display:none;color:var(--green);font-weight:700">已送出！配對結果會出現在您的活動頁。</span></div>
+    <div class="note">許願牆公開顯示社別、姓名、產業、資源與需求；「想認識誰」與 LINE ID 不公開。</div>
+  </form>
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px"><div class="serif" style="font-size:24px;font-weight:700;color:var(--dark)">社友許願牆</div><div class="note">共 <span id="count">0</span> 則</div></div>
+    <div id="filters" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    <div id="wall" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div class="note">以上為示範內容。正式版許願資料存於 Google 試算表，並與「社友產業調查與商務連結建議」合併產生配對。</div>
+  </section>
+</div>
+</main>
+<footer>社團法人苗栗縣國際工商經營研究社・資料僅供本次活動交流使用，請勿轉發</footer>
+<script>
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let ROSTER=[], picked=[], filter='全部';
+let LIST=[
+ {unit:'苗栗社',name:'林浿安',biz:'劇場・藝文',have:'EX-亞洲劇團演出與演員訓練、企業內訓的表演課程',want:'想找企業活動、員工培訓的合作窗口',match:'可認識做教育訓練、人資顧問的社友'},
+ {unit:'苗栗社',name:'［社友姓名］',biz:'食材批發',have:'中部餐飲食材供應、冷鏈配送',want:'想找連鎖餐飲、團膳的採購窗口',match:'高雄社有 2 位餐飲業社友，建議晚宴時互相認識'},
+ {unit:'高雄社',name:'［社友姓名］',biz:'物流',have:'南部倉儲與配送',want:'想找北部合作的食品製造商',match:'與「食材批發」社友需求互補'},
+ {unit:'聯合會',name:'［社友姓名］',biz:'數位行銷',have:'社群經營、廣告投放代操',want:'想認識有在地品牌的小農與製造業社友',match:'可認識金稼農業社等伴手禮提供社友'}
+];
+const ORD=['聯合會','苗栗社','基隆社','台北社','新北社','桃園社','新竹社','台中社','彰化社','南投社','雲林社','嘉義社','南瀛社','台南社','高雄社','屏東社','宜蘭社','顧問及來賓','EX-亞洲劇團'];
+fetch('roster.json').then(r=>r.json()).then(d=>{ROSTER=d;
+  const units=[...new Set(d.map(p=>p.unit))].sort((a,b)=>(ORD.indexOf(a)<0?99:ORD.indexOf(a))-(ORD.indexOf(b)<0?99:ORD.indexOf(b)));
+  document.getElementById('w-unit').innerHTML='<option value="">— 請選擇 —</option>'+units.map(u=>'<option>'+esc(u)+'</option>').join('');
+}).catch(()=>{});
+document.getElementById('w-unit').addEventListener('change',e=>{const u=e.target.value;const sel=document.getElementById('w-name');
+  const ps=ROSTER.filter(p=>p.unit===u);sel.disabled=ps.length===0;sel.innerHTML='<option value="">— 請選擇 —</option>'+ps.map(p=>'<option>'+esc(p.name)+'</option>').join('')+'<option value="__other">不在名單中（手動輸入）</option>';});
+document.getElementById('w-name').addEventListener('change',e=>{if(e.target.value==='__other'){const n=prompt('請輸入姓名');if(n){const o=document.createElement('option');o.textContent=n;o.selected=true;e.target.insertBefore(o,e.target.lastElementChild);}else e.target.value='';}
+  const p=ROSTER.find(x=>x.unit===document.getElementById('w-unit').value&&x.name===e.target.value); if(p&&p.ind&&document.getElementById('w-biz').value==='')document.getElementById('w-biz').value=p.ind;});
+const meet=document.getElementById('w-meet');
+meet.addEventListener('input',()=>{const q=meet.value.trim();const box=document.getElementById('results'),no=document.getElementById('noRes');
+  if(q===''){box.style.display='none';no.style.display='none';return;}
+  const rs=ROSTER.filter(r=>picked.indexOf(r.id)<0&&(r.name+r.unit+(r.ind||'')+(r.grp||'')).includes(q)).slice(0,8);
+  box.style.display=rs.length?'flex':'none';no.style.display=rs.length?'none':'block';
+  box.innerHTML=rs.map(r=>'<button type="button" onclick="pick('+r.id+')"><span style="font-weight:700;color:var(--dark)">'+esc(r.name)+'</span><span class="note">'+esc(r.unit)+'</span><span class="tag tag-gold" style="margin-left:auto">'+esc(r.ind||'')+'</span><span class="note" style="white-space:nowrap">'+(r.lunch?'午 '+r.lunch+' 桌':'')+'</span></button>').join('');});
+function pick(id){picked.push(id);meet.value='';document.getElementById('results').style.display='none';renderPicked();}
+function unpick(id){picked=picked.filter(x=>x!==id);renderPicked();}
+function renderPicked(){document.getElementById('picked').innerHTML=picked.map(id=>{const r=ROSTER.find(x=>x.id===id);return '<span class="chip">'+esc(r.name)+'<small>'+esc(r.unit)+'</small><button type="button" aria-label="移除" onclick="unpick('+id+')">×</button></span>';}).join('');document.getElementById('nPicked').textContent=picked.length;}
+function renderWall(){const bizs=['全部',...new Set(LIST.map(w=>w.biz))];
+  document.getElementById('filters').innerHTML=bizs.map(b=>'<button type="button" class="pill sm'+(b===filter?' on':'')+'" onclick="filter=\''+esc(b)+'\';renderWall()">'+esc(b)+'</button>').join('');
+  document.getElementById('count').textContent=LIST.length;
+  document.getElementById('wall').innerHTML=LIST.filter(w=>filter==='全部'||w.biz===filter).map(w=>'<article class="card wish"><div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px"><span class="serif" style="font-size:20px;font-weight:700;color:var(--dark)">'+esc(w.name)+'</span><span class="note">'+esc(w.unit)+'</span><span class="tag tag-gold">'+esc(w.biz)+'</span></div><div style="display:flex;gap:10px"><span class="tag tag-green" style="flex:none">我有</span><span>'+esc(w.have)+'</span></div><div style="display:flex;gap:10px"><span class="tag tag-rose" style="flex:none">想找</span><span>'+esc(w.want)+'</span></div>'+(w.match?'<div style="background:var(--cream);border-radius:10px;padding:10px 14px;font-size:15px;color:var(--dark2)">交流建議：'+esc(w.match)+'</div>':'')+'<div><button type="button" class="btn btn-line sm" onclick="this.textContent=\'已送出交流邀請 ✓\';this.disabled=true">我想和你交流</button></div></article>').join('');}
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();const g=id=>document.getElementById(id).value.trim();
+  LIST.unshift({unit:g('w-unit'),name:g('w-name'),biz:g('w-biz'),have:g('w-have')||'—',want:g('w-want')||'—',match:picked.length?'想認識：'+picked.map(id=>{const r=ROSTER.find(x=>x.id===id);return r.name+'（'+r.unit+'）';}).join('、'):''});
+  filter='全部';renderWall();document.getElementById('saved').style.display='inline';['w-have','w-want'].forEach(id=>document.getElementById(id).value='');picked=[];renderPicked();window.scrollTo({top:0,behavior:'smooth'});});
+renderWall();
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>社友商品館｜苗栗IMC 第15屆</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css?v=1">
+<style>
+.shop{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
+.cartbox{position:sticky;top:80px}
+.prod{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 14px rgba(43,29,10,.06);display:flex;flex-direction:column}
+.prod .img{height:160px;display:flex;align-items:center;justify-content:center;color:var(--dark2);background:#E8D9B8;font-size:40px;font-weight:900;opacity:.9}
+.prod .img img{width:100%;height:100%;object-fit:cover}
+.qty{width:44px;height:44px;border-radius:50%;border:2px solid var(--line2);background:#fff;font-size:22px;cursor:pointer;color:var(--dark2)}
+.row{display:flex;align-items:center;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:12px}
+@media (max-width:980px){.shop{grid-template-columns:1fr}.cartbox{position:static}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nin">
+  <img src="assets/logo15.png" alt="第15屆 ART &amp; ACTION">
+  <a href="index.html">活動主頁</a><a href="seat.html">座位查詢</a><a href="wish.html">商務許願</a><a href="shop.html" class="on">社友商品館</a><a href="sponsors.html">贊助廣告</a>
+  <a href="#cart" style="margin-left:auto">購物車 <span id="cnt" class="tag tag-dark">0</span></a>
+</div></nav>
+<header class="hero"><div class="wrap" style="display:flex;flex-direction:column;gap:10px;padding:0">
+  <div class="kicker">伴手禮・餐桌點心</div><h1>社友商品館</h1>
+  <p style="max-width:720px">本次典禮的伴手禮與桌上點心皆由社友提供。喜歡的話可以直接下單，支持社友、也把苗栗的好味道帶回家。</p>
+  <div style="margin-top:8px;background:rgba(255,255,255,.1);border:1px solid rgba(226,189,99,.5);border-radius:12px;padding:12px 18px;font-size:16px;color:#F8E7B8">備註：因需彙整各社友商品，出貨時間目前未定，會儘早送達，不急再下單。</div>
+</div></header>
+
+<main class="wrap" style="padding:32px 20px 64px">
+<div class="banner" style="margin-bottom:20px">預覽版：商品為示範資料，訂單尚未連接資料庫，送出後不會真正成立訂單。</div>
+<div class="shop">
+  <section style="display:flex;flex-direction:column;gap:20px">
+    <div id="cats" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+    <div id="prods" class="grid g2"></div>
+    <div class="note">正式商品由承辦團隊於後台登錄後顯示。</div>
+  </section>
+  <aside id="cart" class="card cartbox" style="scroll-margin-top:80px">
+    <div class="serif" style="font-size:24px;font-weight:700;color:var(--dark)">購物車</div>
+    <div id="cartList"></div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="color:var(--muted2)">合計</span><span style="font-size:28px;font-weight:700;color:var(--rose)">NT$ <span id="total">0</span></span></div>
+    <form id="form" style="display:none;border-top:2px solid var(--line);padding-top:16px;flex-direction:column;gap:12px">
+      <div style="font-weight:700;color:var(--gold2)">收件資料</div>
+      <div class="fld"><label class="f" for="f-unit">社別／單位</label><input id="f-unit" class="in" required placeholder="例：苗栗IMC"></div>
+      <div class="fld"><label class="f" for="f-name">姓名</label><input id="f-name" class="in" required></div>
+      <div class="fld"><label class="f" for="f-tel">電話</label><input id="f-tel" class="in" type="tel" required placeholder="09xx-xxx-xxx"></div>
+      <div class="fld"><label class="f" for="f-addr">地址</label><input id="f-addr" class="in" required placeholder="收件地址"></div>
+      <div class="note">出貨時間未定、會儘早送達；付款方式由各社友與您聯繫確認。</div>
+      <button type="submit" class="btn btn-gold">送出訂單</button>
+    </form>
+    <div id="done" style="display:none;background:var(--greenbg);border:1px solid #BFE0C8;border-radius:14px;padding:18px;color:var(--green)">
+      <div style="font-weight:700;font-size:20px">訂單已送出，謝謝支持社友！</div>
+      <div style="font-size:15px">訂單編號 <span id="orderNo"></span>・我們彙整後會儘早安排出貨，並以您留的電話聯繫。</div>
+      <button type="button" class="btn btn-line" style="margin-top:10px" onclick="reset()">再逛一次</button>
+    </div>
+  </aside>
+</div>
+</main>
+<footer>社團法人苗栗縣國際工商經營研究社・社友商品館　訂購資料僅供本次出貨使用</footer>
+
+<script>
+const PRODUCTS=[
+ {id:'a1',cat:'伴手禮',name:'［社友商品名稱］',seller:'［社友姓名］',price:480,unit:'盒',desc:'一句話商品介紹，例：小農手作，限量供應',color:'#E8D9B8'},
+ {id:'a2',cat:'伴手禮',name:'堅果辣油禮盒',seller:'米樂家',price:420,unit:'組',desc:'苗栗在地食材，佐餐拌麵都合適。',color:'#D9C2A3'},
+ {id:'a3',cat:'餐桌點心',name:'黑木耳脆片 TaHes',seller:'金稼農業社',price:150,unit:'包',desc:'南庄段木栽培黑木耳製成的酥脆點心。',color:'#C9B48C'},
+ {id:'a4',cat:'餐桌點心',name:'［桌上點心名稱］',seller:'［社友姓名］',price:120,unit:'份',desc:'一句話商品介紹',color:'#EADDC3'}
+];
+const CATS=['全部','伴手禮','餐桌點心'];
+let cat='全部', cart={};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderCats(){document.getElementById('cats').innerHTML=CATS.map(c=>'<button type="button" class="pill'+(c===cat?' on':'')+'" onclick="setCat(\''+c+'\')">'+c+'</button>').join('');}
+function setCat(c){cat=c;renderCats();renderProds();}
+function renderProds(){
+  document.getElementById('prods').innerHTML=PRODUCTS.filter(p=>cat==='全部'||p.cat===cat).map(p=>'<article class="prod"><div class="img" style="background:'+p.color+'">'+esc(p.name.replace(/^［/,'').slice(0,1))+'</div><div style="padding:18px 20px 20px;display:flex;flex-direction:column;gap:8px;flex:1"><div style="display:flex;justify-content:space-between;font-size:13px"><span class="lbl" style="font-size:13px">'+esc(p.cat)+'</span><span class="note">提供：'+esc(p.seller)+'</span></div><div class="serif" style="font-size:22px;font-weight:700;color:var(--dark)">'+esc(p.name)+'</div><div style="font-size:15px;color:var(--muted2);flex:1">'+esc(p.desc)+'</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px"><div style="font-size:24px;font-weight:700;color:var(--rose)">NT$ '+p.price+'<span class="note" style="font-weight:400;margin-left:4px">／'+esc(p.unit)+'</span></div><button type="button" class="btn btn-gold sm" onclick="change(\''+p.id+'\',1)">加入購物車</button></div></div></article>').join('');
+}
+function change(id,d){const q=(cart[id]||0)+d; if(q>0)cart[id]=q; else delete cart[id]; document.getElementById('done').style.display='none'; renderCart();}
+function renderCart(){
+  const ids=Object.keys(cart); let total=0,count=0;
+  document.getElementById('cartList').innerHTML=ids.length?ids.map(id=>{const p=PRODUCTS.find(x=>x.id===id);total+=p.price*cart[id];count+=cart[id];
+    return '<div class="row"><div style="flex:1;min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(p.name)+'</div><div class="note">NT$ '+p.price+' × '+cart[id]+'</div></div><button type="button" class="qty" aria-label="減少" onclick="change(\''+id+'\',-1)">−</button><span style="min-width:24px;text-align:center;font-weight:700">'+cart[id]+'</span><button type="button" class="qty" aria-label="增加" onclick="change(\''+id+'\',1)">+</button></div>';}).join('')
+    :'<div style="background:var(--cream);border-radius:12px;padding:20px;text-align:center;color:var(--muted)">還沒有商品，先逛逛左邊的社友好物吧。</div>';
+  document.getElementById('total').textContent=total; document.getElementById('cnt').textContent=count;
+  document.getElementById('form').style.display=ids.length?'flex':'none';
+}
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();
+  document.getElementById('orderNo').textContent='IMC15-'+String(Date.now()).slice(-6);
+  cart={}; renderCart(); document.getElementById('done').style.display='block'; e.target.reset();});
+function reset(){document.getElementById('done').style.display='none';}
+renderCats();renderProds();renderCart();
+</script>
+</body>
+</html>

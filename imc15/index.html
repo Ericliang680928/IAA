@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>苗栗IMC 第14、15屆社長交接暨理監事就職典禮</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css?v=1">
+<style>
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:center;max-width:1120px;margin:0 auto}
+.hero-big{padding:72px 20px 64px}
+.hero-big h1{font-size:52px}
+.status{background:#fff;border-bottom:1px solid var(--line);padding:16px 20px}
+.status .nin{max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--gold3)}
+.tl{position:relative;padding-left:36px}
+.tl::before{content:'';position:absolute;left:10px;top:12px;bottom:12px;width:3px;background:linear-gradient(to bottom,var(--gold3),rgba(201,162,74,.1))}
+.tli{position:relative;margin-bottom:18px}
+.tli .d{position:absolute;left:-36px;top:22px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--gold3)}
+.tli .body{display:grid;grid-template-columns:170px 1fr;gap:12px 24px;background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 1px 10px rgba(43,29,10,.06);border-left:5px solid var(--line)}
+.tli .t{color:var(--rose);font-weight:700;font-variant-numeric:tabular-nums;font-size:19px}
+.tli .ttl{font-size:23px;font-weight:700;color:var(--dark)}
+.tli .sub{display:flex;gap:10px;align-items:flex-start;font-size:17px;color:var(--ink2)}
+.tli .sub span:first-child{color:var(--gold3);flex:none}
+.tli.now .d{background:var(--rose);border-color:var(--rose)}
+.tli.now .body{border-left-color:var(--rose);background:linear-gradient(135deg,#fff,#FBF0F4)}
+.tli.past{opacity:.5}
+.badge{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.1em;padding:2px 10px;border-radius:999px;width:max-content;margin-top:4px}
+.spk{display:grid;grid-template-columns:380px 1fr;gap:40px;align-items:start}
+.wide{grid-template-columns:1.2fr 1fr}
+@media (max-width:860px){.wide{grid-template-columns:1fr}.hero-grid{grid-template-columns:1fr}.hero-big h1{font-size:34px}.spk{grid-template-columns:1fr}.tli .body{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nin">
+  <img src="assets/logo15.png" alt="第15屆 ART &amp; ACTION">
+  <a href="#info">活動資訊</a><a href="#schedule">完整流程</a><a href="#speaker">專題演講</a><a href="#traffic">交通</a>
+  <a href="#seat">座位查詢</a><a href="wish.html">商務許願</a><a href="sponsors.html">贊助廣告</a>
+  <a href="shop.html" class="cta">社友商品館</a>
+</div></nav>
+
+<header class="hero hero-big">
+  <div class="hero-grid">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;align-items:center;gap:14px"><img src="assets/imclogo.png" alt="苗栗IMC" style="width:56px;height:56px;border-radius:50%;background:#fff;padding:3px"><div class="kicker">社團法人苗栗縣國際工商經營研究社</div></div>
+      <h1>第十四、第十五屆<br>社長交接暨理監事就職典禮</h1>
+      <p style="font-size:20px">藝術共感・行動共創　ART &amp; ACTION</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
+        <a class="btn btn-gold" href="#schedule">查看即時流程</a>
+        <a class="btn" href="me.html" style="border:2px solid var(--gold3);color:#F8E7B8">我的活動頁 ›</a>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+      <img src="assets/logo15.png" alt="15 ART &amp; ACTION 藝術共感・行動共創" style="width:260px;filter:drop-shadow(0 10px 30px rgba(0,0,0,.35))">
+      <div style="background:rgba(255,255,255,.08);border:1px solid rgba(226,189,99,.5);border-radius:16px;padding:16px 24px;text-align:center">
+        <div class="serif" style="font-size:40px;font-weight:700;color:#F8E7B8;line-height:1">10/17<span style="font-size:22px;margin-left:6px">(六)</span></div>
+        <div style="font-size:17px;color:#F3E3C0;margin-top:6px">13:00 – 20:00　千八會館・竹南婚宴餐廳</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="status"><div class="nin">
+  <div style="display:flex;align-items:center;gap:12px"><span class="dot" id="sdot"></span><strong style="font-size:20px;color:var(--dark)" id="stitle">載入中…</strong></div>
+  <div style="font-size:18px;color:var(--dark2);flex:1 1 320px" id="sdetail"></div>
+  <div style="font-variant-numeric:tabular-nums;font-size:16px;color:#8C7A5A">現在時間 <span id="clock"></span></div>
+</div></section>
+
+<section id="info" class="sec" style="scroll-margin-top:72px"><div class="wrap">
+  <h2>活動資訊</h2>
+  <div class="grid g3">
+    <div class="card"><div class="lbl">日期時間</div><div style="font-size:22px;font-weight:700">115年10月17日（週六）</div><div>下午 13:30 開始・13:00 報到</div></div>
+    <div class="card"><div class="lbl">地點</div><div style="font-size:22px;font-weight:700">千八會館・竹南婚宴餐廳</div><div>苗栗縣竹南鎮公園五街 19 號</div></div>
+    <div class="card"><div class="lbl">主席</div><div style="font-size:22px;font-weight:700">第十四屆社長 劉詩詣</div><div>第十五屆社長 林浿安</div><div class="note">年會司儀：宋怡嬅／曾仕傑　濕婆神之夜主持：潘建男／謝碧珍</div></div>
+  </div>
+</div></section>
+
+<section id="schedule" class="sec" style="padding-top:0;scroll-margin-top:72px"><div class="wrap">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px"><h2>完整流程</h2><div class="note">依現在時間自動標示進行中段落，已結束段落轉淡</div></div>
+  <div class="tl" id="tl"></div>
+</div></section>
+
+<section id="speaker" class="sec" style="background:#fff;scroll-margin-top:72px"><div class="wrap">
+  <h2>專題演講　15:40 – 16:50</h2>
+  <div class="spk">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <img src="assets/speaker.jpg" alt="江譚佳彥 Jayanta" style="width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;border-radius:20px;box-shadow:0 10px 30px rgba(43,29,10,.18)">
+      <div style="text-align:center"><div class="lbl">年會主講／演出</div><div class="serif" style="font-size:30px;font-weight:700;color:var(--dark)">江譚佳彥 Jayanta</div><div class="note">EX-亞洲劇團藝術總監暨駐團導演</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="serif" style="font-size:40px;font-weight:900;color:var(--gold2);line-height:1.2">勇敢，是一個動詞</div>
+      <div style="font-size:20px;color:var(--dark2)">—— 當選擇成為行動，人生的故事才真正開始</div>
+      <div style="background:var(--cream);border-radius:14px;padding:18px 22px;display:flex;flex-direction:column;gap:6px">
+        <div><strong>演講主題：</strong>舞台劇《老虎與士兵》獨角戲演出（約 70 分鐘）</div>
+        <div><strong>引言人：</strong>周鴻仁 顧問</div>
+        <div><strong>原著：</strong>改編自義大利劇作家達利歐・佛（Dario Fo）作品</div>
+      </div>
+      <p style="margin:0;color:var(--ink2)">一個演員，就是一座劇場。故事從戰爭開始——一名受傷的士兵被同伴遺留，逃亡途中進入洞穴，遇見一隻母老虎。原本應該彼此恐懼的人與獸，卻在特殊處境中開始共同生活。作品帶著幽默與荒謬，提出一個直接的問題：<strong>究竟誰才是真正的野獸？</strong></p>
+      <p style="margin:0;color:var(--ink2)">Jayanta 以一人之力分飾 11 個角色，透過身體、聲音、節奏與角色轉換，讓身體本身成為最核心的劇場語言。這齣作品自 2008 年第一屆臺北藝穗節起演出十八年，2026 年因林浿安社長接任第 15 屆社長，他答應讓這齣原已準備封箱的作品再次回到舞台，並以最貼近作品本質的母語 Manipuri 演出。</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px"><span class="tag tag-gold" style="font-size:15px;padding:6px 14px">印度國立戲劇學院表演碩士</span><span class="tag tag-gold" style="font-size:15px;padding:6px 14px">2017 利賀藝術節亞洲青年導演獎</span><span class="tag tag-gold" style="font-size:15px;padding:6px 14px">台新藝術獎年度十大表演節目</span></div>
+      <div class="note">劇場的理解，不只發生在文字裡。當語言退到第二線，觀眾更專注地觀看一個演員的身體、聲音、呼吸、節奏與情感。</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="traffic" class="sec" style="scroll-margin-top:72px"><div class="wrap">
+  <h2>交通資訊</h2>
+  <div class="grid g2 wide">
+    <div class="card"><div style="font-size:22px;font-weight:700">千八會館・竹南婚宴餐廳</div><div>苗栗縣竹南鎮公園五街 19 號</div>
+      <a class="btn btn-gold" style="width:max-content" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=%E5%8D%83%E5%85%AB%E6%9C%83%E9%A4%A8%20%E8%8B%97%E6%A0%97%E7%B8%A3%E7%AB%B9%E5%8D%97%E9%8E%AE%E5%85%AC%E5%9C%92%E4%BA%94%E8%A1%9719%E8%99%9F">Google 導航 ›</a>
+      <div class="note">停車資訊：待確定（最終以正式公告為準）</div></div>
+    <div class="card"><div class="lbl">現場服務</div><div>17:35 – 18:00　轉場／領取伴手禮／工商聯誼</div><div>18:00 – 20:00　「濕婆神之夜」餐敘、晚會、慶生、友社交接邀請</div><div class="note">伴手禮與桌上點心由社友提供，可至「社友商品館」加購。</div><a class="btn btn-line" href="shop.html" style="width:max-content">前往社友商品館 ›</a></div>
+  </div>
+</div></section>
+
+<section id="seat" class="sec" style="padding-top:0;scroll-margin-top:72px"><div class="wrap">
+  <h2>座位查詢</h2>
+  <div class="grid g2">
+    <div class="card gold" style="align-items:center;text-align:center;padding:36px">
+      <div class="serif" style="font-size:26px;font-weight:700;color:var(--dark)">查我的座位</div>
+      <p style="margin:0;color:var(--ink2)">輸入姓名、社別或桌號，即可查到午場與晚宴的桌次、會場平面圖位置與同桌賓客。</p>
+      <a class="btn btn-gold" href="seat.html" style="font-size:20px;min-height:56px;padding:0 32px">開啟座位查詢頁 ›</a>
+      <div class="note">座位以現場桌卡為準；資料僅供本次活動使用，請勿轉發。</div>
+    </div>
+    <div class="card" style="background:linear-gradient(135deg,#fff,var(--cream2))">
+      <div class="lbl">查完座位，順便看看值得認識的社友</div>
+      <div class="serif" style="font-size:24px;font-weight:700;color:var(--dark)">商務交流許願牆</div>
+      <div style="color:var(--ink2)">寫下「我有什麼資源」與「我最近想找什麼」，活動前就幫您配好對，茶敘時間直接碰面。</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px"><a class="btn btn-gold" href="wish.html">填我的商務許願 ›</a><a class="btn btn-line" href="me.html">我的活動頁</a></div>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap" style="display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;justify-content:center">
+  <img src="assets/imclogo.png" alt="苗栗IMC" style="width:48px;height:48px;border-radius:50%;background:#fff;padding:2px">
+  <div>社團法人苗栗縣國際工商經營研究社　International Management Council, Miaoli</div>
+  <div>第十五屆社長 林浿安・例會節目理事 許耕輔 敬邀</div>
+</div></footer>
+
+<script>
+const DEMO = new URLSearchParams(location.search).get('t') || null;
+function now(){ return DEMO ? new Date(DEMO) : new Date(); }
+const D='2026-10-17T';
+const SCHED=[
+ ['13:00','13:30','報到、交流、大合照',[]],
+ ['13:30','14:30','交接典禮',['開場表演—星月寶萊舞團','進場儀式—總召、歷屆前社長、伉儷進場、第14屆社長進場、第15屆社長進場','主席鳴鐘宣布開會（劉詩詣社長）','唱社歌（第一節及第二節）','宣讀 IMC 宗旨、使命、願景、核心價值（第一副社長姜文玉）','開會祝福（輔導社長江淑萍）','介紹貴賓及友社社友代表','主席致詞（劉詩詣社長）','頒發新任社長（林浿安社長）當選證書','貴賓及友社代表致詞：長官及貴賓、聯合會理事長陳世雷、友社代表高雄社林秀英社長']],
+ ['14:30','15:00','第十四屆敘獎',['第十四屆影片回顧《社長的一天》','卸任感言（劉詩詣社長）']],
+ ['15:00','15:20','第14屆、第15屆交接儀式',['印信／權鍊交接（聯合會陳世雷理事長監交）','聯合會理事長致贈上任及卸任社長紀念品','輔導社長及社長互贈紀念品','傳承勉勵（劉詩詣輔導社長）']],
+ ['15:20','15:40','茶敘交流（中場休息 20 分鐘）',['商務交流碰面點：5 桌旁「商務交流」立牌']],
+ ['15:40','16:50','專題演講',['引言人：周鴻仁顧問','講師：Jayanta（江譚佳彥）','演講主題：舞台劇《老虎與士兵》獨角戲演出']],
+ ['16:50','17:35','第15屆理監事就職典禮',['祝賀致詞','上任感言（林浿安社長）','致贈禮品／獻花：2027 理事長、社長同學；2024 聯合會秘書長、秘書長同學；社長家人／EX-亞洲劇團獻花','頒發證書／聘書：菁英顧問群聘書、第十五屆秘書長、財務長、副秘書長暨公關長、資訊長、秘書聘書、理監事團隊證書、總幹事、副總幹事聘書、休閒社團隊長授旗儀式','新社友入社宣誓','唱社歌（第三節）','主席鳴鐘宣布閉會（林浿安社長）','禮成']],
+ ['17:35','18:00','轉場／領取伴手禮／工商聯誼',[]],
+ ['18:00','20:00','「濕婆神之夜」—舞動、歡聚、今晚不設限',['餐敘、晚會、慶生、友社交接邀請']],
+ ['20:00','20:30','珍重再見',[]]
+];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+function render(){
+  const n=now(), start=new Date(D+'13:00:00'), end=new Date(D+'20:30:00');
+  let nowIdx=-1,nextIdx=-1;
+  SCHED.forEach((s,i)=>{const a=new Date(D+s[0]+':00'),b=new Date(D+s[1]+':00'); if(n>=a&&n<b)nowIdx=i; if(nextIdx<0&&n<a)nextIdx=i;});
+  const html=SCHED.map((s,i)=>{
+    const isNow=i===nowIdx, isPast=new Date(D+s[1]+':00')<=n, isNext=i===nextIdx&&n>=start;
+    return '<div class="tli'+(isNow?' now':'')+(isPast?' past':'')+'"><span class="d'+(isNow?' pulse':'')+'"></span><div class="body"><div><div class="t">'+s[0]+' – '+s[1]+'</div>'
+      +(isNow?'<span class="badge" style="background:var(--rose);color:#fff">進行中 NOW</span>':'')+(isNext?'<span class="badge tag-gold">接下來 NEXT</span>':'')
+      +'</div><div><div class="ttl serif">'+esc(s[2])+'</div>'+s[3].map(t=>'<div class="sub"><span>◆</span><span>'+esc(t)+'</span></div>').join('')+'</div></div></div>';
+  }).join('');
+  document.getElementById('tl').innerHTML=html;
+  let title,detail,color='var(--gold3)',pulse=false;
+  const sameDay=n.getFullYear()===2026&&n.getMonth()===9&&n.getDate()===17;
+  if(n<start){const diff=start-n,days=Math.floor(diff/86400000),hrs=Math.floor(diff/3600000),mins=Math.floor(diff/60000)%60;
+    title=sameDay?'今天 13:00 開始報到':(days>=1?'距離活動還有 '+days+' 天':'明天就是交接典禮');
+    detail=sameDay?('還有 '+hrs+' 小時 '+mins+' 分，歡迎提早到場交流、拍大合照。'):'10/17（六）13:00 報到，地點：千八會館・竹南婚宴餐廳。';}
+  else if(nowIdx>=0){title='現正進行：'+SCHED[nowIdx][2];detail=nextIdx>=0?'接下來 '+SCHED[nextIdx][0]+'　'+SCHED[nextIdx][2]:'這是今天的最後一段，謝謝大家。';color='var(--rose)';pulse=true;}
+  else if(n<end){title='空檔中';detail=nextIdx>=0?'接下來 '+SCHED[nextIdx][0]+'　'+SCHED[nextIdx][2]:'';}
+  else{title='活動圓滿結束';detail='感謝所有社友與貴賓蒞臨，第十五屆正式啟航。';color='var(--gold2)';}
+  document.getElementById('stitle').textContent=title; document.getElementById('sdetail').textContent=detail;
+  const dot=document.getElementById('sdot'); dot.style.background=color; dot.className='dot'+(pulse?' pulse':'');
+  document.getElementById('clock').textContent=(n.getMonth()+1)+'/'+n.getDate()+' '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
+}
+render(); setInterval(render,1000);
+</script>
+</body>
+</html>

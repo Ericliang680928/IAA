@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>年會贊助社友廣告｜苗栗IMC 第15屆</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css?v=1">
+<style>
+.edm{background:none;border:0;padding:0;cursor:pointer;text-align:left;width:100%;border-radius:18px;overflow:hidden;box-shadow:0 2px 14px rgba(43,29,10,.08);display:flex;flex-direction:column;color:inherit;font:inherit}
+.edm:hover{box-shadow:0 8px 28px rgba(43,29,10,.16)}
+.edm .img{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;color:var(--dark2);font-size:22px;font-weight:700;opacity:.9}
+.edm .img img{width:100%;height:100%;object-fit:cover}
+.edm.on .img{outline:4px solid var(--gold);outline-offset:-4px}
+.ov{position:fixed;inset:0;background:rgba(43,29,10,.7);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+.ov.show{display:flex}
+.ov .box{background:#fff;border-radius:20px;max-width:920px;width:100%;max-height:92vh;overflow:auto;display:grid;grid-template-columns:1.1fr 1fr;gap:24px;padding:24px;border:2px solid var(--gold3)}
+.ov .big{aspect-ratio:3/4;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--dark2);font-size:28px;font-weight:700}
+@media (max-width:760px){.ov .box{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nin">
+  <img src="assets/logo15.png" alt="第15屆 ART &amp; ACTION">
+  <a href="index.html">活動主頁</a><a href="seat.html">座位查詢</a><a href="wish.html">商務許願</a><a href="shop.html">社友商品館</a><a href="sponsors.html" class="on">贊助廣告</a>
+</div></nav>
+<header class="hero"><div class="wrap" style="display:flex;flex-direction:column;gap:10px;padding:0">
+  <div class="kicker">感謝第十五屆年會贊助</div><h1>年會贊助社友廣告</h1>
+  <p style="max-width:720px">謝謝每一位贊助年會的社友。點一下廣告可放大瀏覽 EDM，歡迎多認識社友的事業，彼此支持。</p>
+</div></header>
+<main class="wrap" style="padding:32px 20px 64px">
+  <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:18px"><h2 class="serif" style="margin:0;font-size:30px;color:var(--dark);border-left:6px solid var(--gold);padding-left:14px">贊助社友</h2><div class="note">共 <span id="n">0</span> 位社友贊助・依贊助順序排列</div></div>
+  <div id="grid" class="grid g3"></div>
+  <div class="note" style="margin-top:14px">灰底為 EDM 圖片位置；贊助社友的 EDM 由承辦團隊於後台登錄後即顯示。</div>
+</main>
+<div class="ov" id="ov" onclick="if(event.target===this)closeOv()">
+  <div class="box">
+    <div class="big" id="ovImg"></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="lbl" id="ovTier"></div>
+      <div class="serif" style="font-size:30px;font-weight:700;color:var(--dark)" id="ovTitle"></div>
+      <div class="note" id="ovMember"></div>
+      <p style="margin:0;color:var(--ink2)" id="ovDesc"></p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:auto"><a class="btn btn-gold" id="ovLink" target="_blank" rel="noopener">前往官網／LINE ›</a><button type="button" class="btn btn-line" onclick="closeOv()">關閉</button></div>
+    </div>
+  </div>
+</div>
+<footer>社團法人苗栗縣國際工商經營研究社・第十五屆年會贊助社友　敬致謝忱</footer>
+<script>
+const S=[
+ {member:'［贊助社友 1］',title:'［公司／品牌名稱］',tier:'年會贊助',desc:'［一句話介紹］',link:'',color:'#E8D9B8'},
+ {member:'［贊助社友 2］',title:'［公司／品牌名稱］',tier:'伴手禮贊助',desc:'［一句話介紹］',link:'',color:'#D9C2A3'},
+ {member:'［贊助社友 3］',title:'［公司／品牌名稱］',tier:'餐桌點心贊助',desc:'［一句話介紹］',link:'',color:'#C9B48C'},
+ {member:'［贊助社友 4］',title:'［公司／品牌名稱］',tier:'年會贊助',desc:'［一句話介紹］',link:'',color:'#EADDC3'},
+ {member:'［贊助社友 5］',title:'［公司／品牌名稱］',tier:'年會贊助',desc:'［一句話介紹］',link:'',color:'#D4B46A'},
+ {member:'［贊助社友 6］',title:'［公司／品牌名稱］',tier:'年會贊助',desc:'［一句話介紹］',link:'',color:'#E2D2AC'}
+];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+document.getElementById('n').textContent=S.length;
+document.getElementById('grid').innerHTML=S.map((x,i)=>'<button type="button" class="edm" onclick="openOv('+i+')" aria-label="放大 '+esc(x.title)+' 的廣告"><div class="img" style="background:'+x.color+'">'+(x.img?'<img src="'+esc(x.img)+'" alt="">':'EDM 圖片')+'</div><div style="padding:16px 18px;display:flex;flex-direction:column;gap:4px;background:#fff"><div class="lbl" style="font-size:13px">'+esc(x.tier)+'</div><div class="serif" style="font-size:20px;font-weight:700;color:var(--dark)">'+esc(x.title)+'</div><div class="note">'+esc(x.member)+'</div></div></button>').join('');
+function openOv(i){const x=S[i];const im=document.getElementById('ovImg');im.style.background=x.color;im.innerHTML=x.img?'<img src="'+esc(x.img)+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:12px">':'EDM 圖片';
+  document.getElementById('ovTier').textContent=x.tier;document.getElementById('ovTitle').textContent=x.title;document.getElementById('ovMember').textContent='贊助社友：'+x.member;document.getElementById('ovDesc').textContent=x.desc;
+  const a=document.getElementById('ovLink');a.href=x.link||'#';a.style.display=x.link?'':'none';document.getElementById('ov').classList.add('show');}
+function closeOv(){document.getElementById('ov').classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOv();});
+</script>
+</body>
+</html>

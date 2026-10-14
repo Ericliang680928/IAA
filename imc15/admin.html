@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>承辦後台｜苗栗IMC 第15屆</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="style.css?v=1">
+<style>
+body{font-size:17px}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:16px}
+th{text-align:left;font-size:13px;letter-spacing:.08em;color:var(--gold2);padding:10px 12px;border-bottom:2px solid var(--line);white-space:nowrap}
+td{padding:12px;border-bottom:1px solid #F0E8D8;vertical-align:top}
+.kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.kpi .card{padding:18px 20px;gap:2px}
+.kpi .v{font-family:'Noto Serif TC',serif;font-size:34px;font-weight:700}
+.tabs{display:flex;gap:10px;flex-wrap:wrap}
+.tab{min-height:48px;padding:0 22px;border-radius:999px;border:2px solid var(--line2);background:#fff;font-size:17px;font-weight:700;color:var(--dark2);cursor:pointer}
+.tab.on{background:var(--dark);color:#F8E7B8;border-color:var(--dark)}
+.pane{display:none}.pane.on{display:block}
+.sel{min-height:40px;font-size:15px;border:2px solid var(--line2);border-radius:10px;padding:0 10px;background:#fff}
+.st{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700;white-space:nowrap}
+@media (max-width:720px){.kpi{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nin" style="gap:12px;overflow:visible">
+  <img src="assets/logo15.png" alt="第15屆" style="margin:0">
+  <span style="color:#F8E7B8;font-weight:700;font-size:18px">承辦後台</span><span class="tag" style="background:var(--rose);color:#fff;letter-spacing:.1em">僅承辦團隊</span>
+  <a href="index.html" style="margin-left:auto">回活動主頁 ›</a>
+</div></nav>
+<main class="wrap" style="padding:32px 20px 64px;display:flex;flex-direction:column;gap:24px">
+  <div class="banner">預覽版：此頁為示範資料，尚未連接 Google 試算表；正式版會加通關密碼，請勿對外分享此頁連結。</div>
+  <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
+    <div><h1 class="serif" style="margin:0;font-size:30px;color:var(--dark)">社友商品館・訂單與登錄管理</h1><div class="note">資料來源：Google 試算表「15屆交接_商品館」（網頁送出即寫入，此頁即時讀取）</div></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="btn btn-gold" onclick="show('new')">＋ 登錄商品／EDM</button><button type="button" class="btn btn-line" disabled>匯出訂單 Excel</button></div>
+  </div>
+  <div class="kpi">
+    <div class="card"><div class="lbl" style="font-size:13px">訂單數</div><div class="v" id="kOrders">0</div></div>
+    <div class="card"><div class="lbl" style="font-size:13px">訂單金額</div><div class="v" style="color:var(--rose)">NT$ <span id="kSum">0</span></div></div>
+    <div class="card"><div class="lbl" style="font-size:13px">待出貨</div><div class="v" id="kPending">0</div></div>
+    <div class="card"><div class="lbl" style="font-size:13px">上架商品／EDM</div><div class="v"><span id="kProd">0</span><span style="font-size:18px;color:var(--muted)"> ／ <span id="kEdm">0</span></span></div></div>
+  </div>
+  <div class="tabs"><button type="button" class="tab on" data-t="orders" onclick="show('orders')">訂單</button><button type="button" class="tab" data-t="prods" onclick="show('prods')">上架商品</button><button type="button" class="tab" data-t="edm" onclick="show('edm')">贊助 EDM</button><button type="button" class="tab" data-t="new" onclick="show('new')">登錄商品／EDM</button></div>
+
+  <div class="pane on" id="p-orders"><div class="card" style="padding:8px 8px 16px;overflow-x:auto"><table><thead><tr><th>訂單編號</th><th>時間</th><th>社別／單位</th><th>姓名</th><th>電話</th><th>地址</th><th>商品明細</th><th>金額</th><th>狀態</th></tr></thead><tbody id="orders"></tbody></table></div><div class="note" style="margin-top:8px">依「提供社友」分拆出貨：「匯出訂單 Excel」會同時產生各社友的出貨名單分頁。</div></div>
+  <div class="pane" id="p-prods"><div class="card" style="padding:8px 8px 16px;overflow-x:auto"><table><thead><tr><th>類別</th><th>商品</th><th>提供社友</th><th>售價</th><th>已訂數量</th><th>聯絡方式</th><th>狀態</th><th></th></tr></thead><tbody id="prods"></tbody></table></div></div>
+  <div class="pane" id="p-edm"><div class="card" style="padding:8px 8px 16px;overflow-x:auto"><table><thead><tr><th>贊助社友</th><th>公司／品牌</th><th>連結</th><th>EDM</th><th>狀態</th><th></th></tr></thead><tbody id="edms"></tbody></table></div></div>
+
+  <div class="pane" id="p-new">
+    <form class="card" id="nf" style="gap:16px;max-width:760px">
+      <div class="serif" style="font-size:24px;font-weight:700;color:var(--dark)">登錄社友商品／贊助 EDM</div>
+      <div class="note">承辦團隊代社友登錄；社友把商品資料、照片或 EDM 交給承辦即可。</div>
+      <div><span class="lbl">類別</span><div id="cats" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px"></div></div>
+      <div class="fld"><label class="f" for="n-seller" id="n-seller-l">提供社友／商號</label><input id="n-seller" class="in" required placeholder="例：米樂家 林社友"></div>
+      <div id="prodFields" style="display:flex;flex-direction:column;gap:16px">
+        <div class="fld"><label class="f" for="n-name">商品名稱</label><input id="n-name" class="in" placeholder="例：堅果辣油禮盒"></div>
+        <div class="grid g2" style="gap:16px"><div class="fld"><label class="f" for="n-price">售價（NT$）</label><input id="n-price" class="in" type="number" min="0" step="1"></div><div class="fld"><label class="f" for="n-unit">單位</label><input id="n-unit" class="in" placeholder="盒／組／包／份"></div></div>
+        <div class="fld"><label class="f" for="n-desc">一句話介紹</label><textarea id="n-desc" class="in" placeholder="食材來源、口味特色、份量、保存方式…"></textarea></div>
+        <div class="fld"><label class="f" for="n-photo">商品照片</label><input id="n-photo" type="file" accept="image/*"></div>
+      </div>
+      <div id="adFields" style="display:none;flex-direction:column;gap:16px">
+        <div class="banner">年會贊助廣告不需填商品名、售價與單位，只要上傳 EDM；刊登後出現在「贊助廣告」頁。</div>
+        <div class="fld"><label class="f" for="a-title">公司／品牌名稱</label><input id="a-title" class="in" placeholder="例：米樂家食材"></div>
+        <div class="fld"><label class="f" for="a-link">官網或 LINE 官方帳號連結（選填）</label><input id="a-link" class="in" type="url" placeholder="https://"></div>
+        <div class="fld"><label class="f" for="a-desc">一句話介紹（選填）</label><input id="a-desc" class="in"></div>
+        <div class="fld"><label class="f" for="a-edm">廣告 EDM 圖片（JPG／PNG，建議直式 3:4 或正方形，寬度 1080px 以上）</label><input id="a-edm" type="file" accept="image/*"></div>
+      </div>
+      <div class="fld"><label class="f" for="n-contact">社友聯絡方式（不公開，出貨聯繫用）</label><input id="n-contact" class="in" placeholder="LINE ID 或電話"></div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button type="submit" class="btn btn-gold" id="nBtn">上架商品</button><span id="nSaved" style="display:none;color:var(--green);font-weight:700"></span></div>
+    </form>
+  </div>
+</main>
+<footer>承辦後台含訂購者電話與地址，請勿對外分享此頁連結</footer>
+<script>
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let orders=[{no:'IMC15-000123',time:'10/14 00:12',unit:'苗栗IMC',name:'［訂購人］',tel:'09xx-xxx-xxx',addr:'［收件地址］',items:'堅果辣油禮盒 ×2、黑木耳脆片 ×3',total:1290,status:'待確認'},{no:'IMC15-000124',time:'10/14 09:40',unit:'高雄社',name:'［訂購人］',tel:'09xx-xxx-xxx',addr:'［收件地址］',items:'［社友商品名稱］ ×1',total:480,status:'待出貨'},{no:'IMC15-000125',time:'10/15 18:05',unit:'聯合會',name:'［訂購人］',tel:'09xx-xxx-xxx',addr:'［收件地址］',items:'黑木耳脆片 ×6',total:900,status:'已出貨'}];
+let prods=[{cat:'伴手禮',name:'堅果辣油禮盒',seller:'米樂家',price:420,unit:'組',qty:2,contact:'［LINE ID］',on:true},{cat:'餐桌點心',name:'黑木耳脆片 TaHes',seller:'金稼農業社',price:150,unit:'包',qty:9,contact:'［LINE ID］',on:true},{cat:'伴手禮',name:'［社友商品名稱］',seller:'［社友姓名］',price:480,unit:'盒',qty:1,contact:'［電話］',on:false}];
+let edms=[{member:'［贊助社友 1］',title:'［公司／品牌名稱］',link:'https://',on:true},{member:'［贊助社友 2］',title:'［公司／品牌名稱］',link:'—',on:false}];
+let cat='伴手禮';
+const ON='background:var(--greenbg);color:var(--green)',OFF='background:#FFF6F0;color:#8A3B1F';
+function show(t){document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id==='p-'+t));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));}
+function render(){
+  document.getElementById('orders').innerHTML=orders.map((o,i)=>'<tr><td style="font-weight:700">'+o.no+'</td><td style="white-space:nowrap;color:var(--muted2)">'+o.time+'</td><td>'+esc(o.unit)+'</td><td style="font-weight:700">'+esc(o.name)+'</td><td style="white-space:nowrap">'+esc(o.tel)+'</td><td style="min-width:180px">'+esc(o.addr)+'</td><td style="min-width:200px">'+esc(o.items)+'</td><td style="white-space:nowrap;font-weight:700;color:var(--rose)">NT$ '+o.total+'</td><td><select class="sel" onchange="orders['+i+'].status=this.value;render()">'+['待確認','待出貨','已出貨','已完成','取消'].map(s=>'<option'+(s===o.status?' selected':'')+'>'+s+'</option>').join('')+'</select></td></tr>').join('');
+  document.getElementById('prods').innerHTML=prods.map((p,i)=>'<tr><td><span class="st tag-gold">'+esc(p.cat)+'</span></td><td style="font-weight:700">'+esc(p.name)+'</td><td>'+esc(p.seller)+'</td><td style="white-space:nowrap">NT$ '+p.price+'／'+esc(p.unit)+'</td><td>'+p.qty+'</td><td style="color:var(--muted2)">'+esc(p.contact)+'</td><td><span class="st" style="'+(p.on?ON:OFF)+'">'+(p.on?'上架中':'待審核')+'</span></td><td><button type="button" class="btn btn-line sm" onclick="prods['+i+'].on=prods['+i+'].on===false;render()">'+(p.on?'下架':'核准上架')+'</button></td></tr>').join('');
+  document.getElementById('edms').innerHTML=edms.map((e,i)=>'<tr><td style="font-weight:700">'+esc(e.member)+'</td><td>'+esc(e.title)+'</td><td style="color:var(--muted2)">'+esc(e.link)+'</td><td><span style="display:inline-block;width:48px;height:64px;border-radius:6px;background:#E8D9B8"></span></td><td><span class="st" style="'+(e.on?ON:OFF)+'">'+(e.on?'刊登中':'待審核')+'</span></td><td><button type="button" class="btn btn-line sm" onclick="edms['+i+'].on=edms['+i+'].on===false;render()">'+(e.on?'下架':'核准刊登')+'</button></td></tr>').join('');
+  document.getElementById('kOrders').textContent=orders.length;document.getElementById('kSum').textContent=orders.filter(o=>o.status!=='取消').reduce((a,o)=>a+o.total,0);document.getElementById('kPending').textContent=orders.filter(o=>o.status==='待確認'||o.status==='待出貨').length;document.getElementById('kProd').textContent=prods.length;document.getElementById('kEdm').textContent=edms.length;
+  document.getElementById('cats').innerHTML=['伴手禮','餐桌點心','贊助廣告'].map(c=>'<button type="button" class="pill'+(c===cat?' on':'')+'" onclick="setCat(\''+c+'\')">'+c+'</button>').join('');
+  const ad=cat==='贊助廣告';document.getElementById('prodFields').style.display=ad?'none':'flex';document.getElementById('adFields').style.display=ad?'flex':'none';document.getElementById('n-seller-l').textContent=ad?'贊助社友姓名':'提供社友／商號';document.getElementById('nBtn').textContent=ad?'刊登 EDM':'上架商品';
+}
+function setCat(c){cat=c;render();}
+document.getElementById('nf').addEventListener('submit',e=>{e.preventDefault();const g=id=>document.getElementById(id).value.trim();
+  if(cat==='贊助廣告'){edms.push({member:g('n-seller'),title:g('a-title')||'（未填）',link:g('a-link')||'—',on:false});document.getElementById('nSaved').textContent='已登錄，待核准刊登（預覽版未寫入資料庫）。';}
+  else{prods.push({cat,name:g('n-name')||'（未填）',seller:g('n-seller'),price:Number(g('n-price'))||0,unit:g('n-unit')||'—',qty:0,contact:g('n-contact'),on:false});document.getElementById('nSaved').textContent='已登錄，待核准上架（預覽版未寫入資料庫）。'}
+  document.getElementById('nSaved').style.display='inline';render();});
+render();
+</script>
+</body>
+</html>
