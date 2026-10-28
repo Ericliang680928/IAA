@@ -120,6 +120,24 @@ nav .w{align-items:center;gap:2px}
 nav{background:rgba(18,38,71,.97);backdrop-filter:blur(12px)}
 section{scroll-margin-top:56px}
 nav a{padding:10px 6px;font-size:15px}.nlogo{width:64px;margin-right:4px}
+.live{position:relative;overflow:hidden;background:linear-gradient(135deg,#122647 0%,#1b3a6b 60%,#3b2a74 100%)}
+.live::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,#B31C83,#D45824,#BCCA29,#3EB5B0)}
+.live .tag{background:rgba(188,202,41,.2);color:#e6f07a}
+.live.run .tag{background:rgba(255,79,184,.22);color:#ffc2e6}
+.cdg div{border:0;color:#fff}
+.cdg div:nth-child(1){background:linear-gradient(160deg,#D45824,#e97b3f)}
+.cdg div:nth-child(2){background:linear-gradient(160deg,#B31C83,#d44aa8)}
+.cdg div:nth-child(3){background:linear-gradient(160deg,#2a9d98,#3EB5B0)}
+.cdg span{opacity:.95}
+.cdg b{font-size:34px}
+.live h2{color:#fff}
+.live .sub{color:#f4f7d0}
+.bar i{background:linear-gradient(90deg,#3EB5B0,#BCCA29,#D45824,#B31C83)}
+.ti:nth-child(4n+1) .dt{border-color:#3EB5B0}.ti:nth-child(4n+2) .dt{border-color:#B31C83}.ti:nth-child(4n+3) .dt{border-color:#D45824}.ti:nth-child(4n) .dt{border-color:#BCCA29}
+.ti:nth-child(4n+1) .bd{border-left-color:#3EB5B0}.ti:nth-child(4n+2) .bd{border-left-color:#B31C83}.ti:nth-child(4n+3) .bd{border-left-color:#D45824}.ti:nth-child(4n) .bd{border-left-color:#BCCA29}
+.ti.now .bd{border-left-color:var(--mg)}
+h2::after{content:"";display:block;width:44px;height:4px;border-radius:3px;margin-top:6px;background:linear-gradient(90deg,#B31C83,#D45824,#BCCA29)}
+.live h2::after{display:none}
 </style></head><body>
 <header class="hero"><div class="w">
 <div class="logo" role="img" aria-label="IAA 創新加速聯盟會"></div>
@@ -171,9 +189,9 @@ function curI(t){for(var i=0;i<SCH.length;i++){if(t>=dtm(SCH[i][0])&&t<dtm(SCH[i
 function renderLive(){
 var t=nowT(),box=document.getElementById("liveBox"),st=dtm(SCH[0][0]),h="";
 if(t<st){
-var ms=st-t,d=Math.floor(ms/86400000),hh=Math.floor(ms%86400000/3600000),mm=Math.floor(ms%3600000/60000),ss=Math.floor(ms%60000/1000);
+var ms=st-t,d=Math.floor(ms/86400000),hh=Math.floor(ms%86400000/3600000),mm=Math.floor(ms%3600000/60000);
 h='<div class="live"><span class="tag"><span class="dot"></span>活動尚未開始</span><h2>距離報到還有</h2>'
-+'<div class="cdg"><div><b>'+d+'</b><span>天</span></div><div><b>'+p2(hh)+'</b><span>時</span></div><div><b>'+p2(mm)+'</b><span>分</span></div><div><b>'+p2(ss)+'</b><span>秒</span></div></div>'
++'<div class="cdg"><div><b>'+d+'</b><span>天</span></div><div><b>'+p2(hh)+'</b><span>時</span></div><div><b>'+p2(mm)+'</b><span>分</span></div></div>'
 +'<div class="sub">12/4（五）13:00 報到　臻愛飯店 2F 維多利亞廳</div></div>';
 }else if(t>=END){
 h='<div class="live"><span class="tag"><span class="dot"></span>活動圓滿結束</span><h2>感謝您的參與！</h2><div class="sub">期待來年再相會</div></div>';
