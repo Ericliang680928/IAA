@@ -120,25 +120,21 @@ nav .w{align-items:center;gap:2px}
 nav{background:rgba(18,38,71,.97);backdrop-filter:blur(12px)}
 section{scroll-margin-top:56px}
 nav a{padding:10px 6px;font-size:15px}.nlogo{width:64px;margin-right:4px}
-.live{position:relative;overflow:hidden;background:linear-gradient(135deg,#122647 0%,#1b3a6b 60%,#3b2a74 100%)}
-.live::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,#B31C83,#D45824,#BCCA29,#3EB5B0)}
-.live .tag{background:rgba(188,202,41,.2);color:#e6f07a}
-.live.run .tag{background:rgba(255,79,184,.22);color:#ffc2e6}
-.cdg div{border:0;color:#fff}
-.cdg div:nth-child(1){background:linear-gradient(160deg,#D45824,#e97b3f)}
-.cdg div:nth-child(2){background:linear-gradient(160deg,#B31C83,#d44aa8)}
-.cdg div:nth-child(3){background:linear-gradient(160deg,#2a9d98,#3EB5B0)}
-.cdg span{opacity:.95}
-.cdg b{font-size:34px}
-.live h2{color:#fff}
-.live .sub{color:#f4f7d0}
-.bar i{background:linear-gradient(90deg,#3EB5B0,#BCCA29,#D45824,#B31C83)}
-.ti:nth-child(4n+1) .dt{border-color:#3EB5B0}.ti:nth-child(4n+2) .dt{border-color:#B31C83}.ti:nth-child(4n+3) .dt{border-color:#D45824}.ti:nth-child(4n) .dt{border-color:#BCCA29}
-.ti:nth-child(4n+1) .bd{border-left-color:#3EB5B0}.ti:nth-child(4n+2) .bd{border-left-color:#B31C83}.ti:nth-child(4n+3) .bd{border-left-color:#D45824}.ti:nth-child(4n) .bd{border-left-color:#BCCA29}
+.live{position:relative;overflow:hidden;background:linear-gradient(135deg,#122647,#1e3866)}
+.live::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#B31C83 0 25%,#D45824 25% 50%,#BCCA29 50% 75%,#3EB5B0 75%)}
+.live .tag{background:rgba(255,255,255,.14);color:#fff}
+.live.run .tag{background:rgba(179,28,131,.35);color:#fff}
+.cdg div{background:rgba(255,255,255,.1);border-bottom:4px solid var(--c)}
+.cdg div:nth-child(1){--c:#D45824}.cdg div:nth-child(2){--c:#B31C83}.cdg div:nth-child(3){--c:#3EB5B0}
+.cdg b{font-size:32px;color:#fff}
+.live .sub{color:rgba(255,255,255,.9)}
+.bar i{background:linear-gradient(90deg,#3EB5B0,#BCCA29)}
+.ti .dt{border-color:var(--tl)}
+.ti.now .dt{border-color:var(--mg)}
+.ti .bd{border-left-color:var(--tl)}
 .ti.now .bd{border-left-color:var(--mg)}
-h2::after{content:"";display:block;width:44px;height:4px;border-radius:3px;margin-top:6px;background:linear-gradient(90deg,#B31C83,#D45824,#BCCA29)}
+h2::after{content:"";display:block;width:36px;height:3px;border-radius:2px;margin-top:6px;background:var(--mg)}
 .live h2::after{display:none}
-.bio{margin:14px 0 0;font-size:16px;line-height:1.75;color:var(--fg)}
 </style></head><body>
 <header class="hero"><div class="w">
 <div class="logo" role="img" aria-label="IAA 創新加速聯盟會"></div>
