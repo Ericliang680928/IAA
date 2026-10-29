@@ -29,6 +29,8 @@ main{padding:18px 0 40px}
 .st{white-space:nowrap;font-size:12.5px;font-weight:700;border-radius:99px;padding:2px 11px}
 .s-done{background:var(--okbg);color:var(--ok)}.s-doing{background:var(--dgbg);color:var(--dg)}.s-todo{background:var(--tdbg);color:var(--td)}.s-conf{background:var(--cfbg);color:var(--cf)}.s-late{background:var(--latebg);color:var(--late)}
 .lockb{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:5px 16px;cursor:pointer}.sel{font:inherit;font-size:12.5px;font-weight:700;border:0;border-radius:99px;padding:3px 8px;cursor:pointer}
+.lk{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.lk a{font-size:12.5px;font-weight:700;color:var(--mg);background:var(--tdbg);border-radius:99px;padding:2px 11px;text-decoration:none}.lk a:hover{text-decoration:underline}
+.res{background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:16px;box-shadow:0 1px 3px rgba(18,38,71,.08)}.res h2{margin:0 0 8px;font-size:18px}.res .lk{margin:0}.res .lk a{font-size:13.5px;padding:4px 13px}
 .foot{color:var(--mute);font-size:12.5px;text-align:center;margin-top:8px}
 @media(max-width:520px){.it{grid-template-columns:52px 1fr}.it .st{grid-column:2;justify-self:start}h1{font-size:22px}.pct{font-size:44px}}
 </style></head><body>
@@ -37,6 +39,7 @@ main{padding:18px 0 40px}
 <main><div class="wrap">
 <div id="al"></div>
 <div class="flt" id="flt"><button data-f="all" class="on">全部</button><button data-f="open">未完成</button><button data-f="done">已完成</button><button data-f="late">已逾期</button></div>
+<section class="res"><h2>🔗 完成品連結</h2><div class="lk"><a href="https://ericliang680928.github.io/IAA/20261204/" target="_blank" rel="noopener">活動網頁</a><a href="https://forms.gle/c68MPEgx1E7mwaNw6" target="_blank" rel="noopener">報名表單</a><a href="https://ericliang680928.github.io/IAA/20261204/status/" target="_blank" rel="noopener">報名查詢頁</a><a href="https://reurl.cc/EY5j0v" target="_blank" rel="noopener">活動網頁（短網址）</a><a href="https://reurl.cc/LeKllK" target="_blank" rel="noopener">報名查詢（短網址）</a><a href="https://ericliang680928.github.io/IAA/20261204/og.jpg" target="_blank" rel="noopener">LINE 預覽圖</a></div></section>
 <div id="list"></div>
 <p class="foot"><button id="lock" class="lockb"></button></p><p class="foot" id="msg"></p><p class="foot" id="upd"></p>
 </div></main>
@@ -45,10 +48,10 @@ main{padding:18px 0 40px}
 var UPDATED="2026-10-29";
 var P=[
 ["10/31 前｜公告與報名",[
-["活動網頁、海報、講師海報","梁群儒","2026-10-29","done",""],
-["報名表單、報名查詢頁、LINE 預覽圖","梁群儒","2026-10-29","done","表單目前只有 1 筆測試資料"],
+["活動網頁、海報、講師海報","梁群儒","2026-10-29","done","",[["活動網頁","https://ericliang680928.github.io/IAA/20261204/"],["預覽圖","https://ericliang680928.github.io/IAA/20261204/og.jpg"]]],
+["報名表單、報名查詢頁、LINE 預覽圖","梁群儒","2026-10-29","done","表單目前只有 1 筆測試資料",[["報名表單","https://forms.gle/c68MPEgx1E7mwaNw6"],["報名查詢頁","https://ericliang680928.github.io/IAA/20261204/status/"],["查詢短網址","https://reurl.cc/LeKllK"]]],
 ["確認會費與來賓收費金額","梁群儒、沈香君","2026-10-27","done","會員 6,000／夫妻第二位 3,000／來賓 1,500"],
-["確認張永賢會員資格（納入新會友）","梁群儒","2026-10-29","done","2027 聯合會理事長；陳崇誠已是會友，不備入會禮"],
+["確認張永賢會員資格（納入新會友）","梁群儒","2026-10-29","done","2027 聯合會理事長；陳崇誠已是會友，不備入會禮",[["報名查詢頁（NEW 標示）","https://ericliang680928.github.io/IAA/20261204/status/"]]],
 ["取得匯款帳號、來賓費用包含項目","沈香君、林珮君","2026-10-29","todo","補進公告後才能發出"],
 ["LINE 公告文","梁群儒","2026-10-31","doing","已寫好，缺匯款資訊"],
 ["公告 12/04 年會、開放報名","梁群儒","2026-10-31","todo",""],
@@ -88,7 +91,7 @@ var WD=["日","一","二","三","四","五","六"];
 function fd(d){var a=d.split("-"),t=new Date(+a[0],+a[1]-1,+a[2]);return [(+a[1])+"/"+(+a[2]),"週"+WD[t.getDay()]];}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 var all=[],cn=0;
-P.forEach(function(g){g[1].forEach(function(x){cn++;all.push({id:"p"+p2(cn),g:g[0],t:x[0],o:x[1],d:x[2],s:x[3],n:x[4],by:"",at:""});});});
+P.forEach(function(g){g[1].forEach(function(x){cn++;all.push({id:"p"+p2(cn),g:g[0],t:x[0],o:x[1],d:x[2],s:x[3],n:x[4],l:x[5]||[]});});});
 var filt="all",edit=false,pass="";
 try{pass=sessionStorage.getItem("iaapw")||"";edit=pass?true:false;}catch(e){}
 function isLate(x){return x.s!=="done"&&x.d<today;}
@@ -111,7 +114,7 @@ function render(){
     h+='<section class="ph"><h2>'+esc(g[0])+'<em>'+d2+' / '+it.length+' 完成</em></h2><div class="pm"><i style="width:'+(d2/it.length*100)+'%"></i></div>';
     rows.forEach(function(x){var f=fd(x.d),k=isLate(x)?"late":x.s;
       var pill=edit?'<select class="sel s-'+k+'" data-id="'+x.id+'" aria-label="更新狀態">'+["todo","doing","conf","done"].map(function(v){return '<option value="'+v+'"'+(x.s===v?' selected':'')+'>'+LBL[v]+'</option>';}).join("")+'</select>':'<div class="st s-'+k+'">'+(isLate(x)?"已逾期":LBL[x.s])+'</div>';
-      h+='<div class="it '+(x.s==="done"?"done":"")+'"><div class="dt">'+f[0]+'<small>'+f[1]+'</small></div><div class="tx"><b>'+esc(x.t)+'</b><span>'+esc(x.o)+'</span>'+(x.n?'<span class="nt">'+esc(x.n)+'</span>':'')+'</div>'+pill+'</div>';});
+      h+='<div class="it '+(x.s==="done"?"done":"")+'"><div class="dt">'+f[0]+'<small>'+f[1]+'</small></div><div class="tx"><b>'+esc(x.t)+'</b><span>'+esc(x.o)+'</span>'+(x.n?'<span class="nt">'+esc(x.n)+'</span>':'')+(x.l.length?'<span class="lk">'+x.l.map(function(l){return '<a href="'+esc(l[1])+'" target="_blank" rel="noopener">🔗 '+esc(l[0])+'</a>';}).join("")+'</span>':'')+'</div>'+pill+'</div>';});
     h+='</section>';
   });
   document.getElementById("list").innerHTML=h||'<p class="foot">沒有符合的項目</p>';
