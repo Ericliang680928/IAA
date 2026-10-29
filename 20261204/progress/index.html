@@ -28,6 +28,7 @@ main{padding:18px 0 40px}
 .it.done .tx b{text-decoration:line-through;opacity:.6}
 .st{white-space:nowrap;font-size:12.5px;font-weight:700;border-radius:99px;padding:2px 11px}
 .s-done{background:var(--okbg);color:var(--ok)}.s-doing{background:var(--dgbg);color:var(--dg)}.s-todo{background:var(--tdbg);color:var(--td)}.s-conf{background:var(--cfbg);color:var(--cf)}.s-late{background:var(--latebg);color:var(--late)}
+.lockb{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:5px 16px;cursor:pointer}.sel{font:inherit;font-size:12.5px;font-weight:700;border:0;border-radius:99px;padding:3px 8px;cursor:pointer}
 .foot{color:var(--mute);font-size:12.5px;text-align:center;margin-top:8px}
 @media(max-width:520px){.it{grid-template-columns:52px 1fr}.it .st{grid-column:2;justify-self:start}h1{font-size:22px}.pct{font-size:44px}}
 </style></head><body>
@@ -37,7 +38,7 @@ main{padding:18px 0 40px}
 <div id="al"></div>
 <div class="flt" id="flt"><button data-f="all" class="on">全部</button><button data-f="open">未完成</button><button data-f="done">已完成</button><button data-f="late">已逾期</button></div>
 <div id="list"></div>
-<p class="foot" id="upd"></p>
+<p class="foot"><button id="lock" class="lockb"></button></p><p class="foot" id="msg"></p><p class="foot" id="upd"></p>
 </div></main>
 <script>
 (function(){
@@ -79,37 +80,67 @@ var P=[
 ["專題講師介紹","廖月照","2026-12-04","todo","當日"],
 ["會友串接系統示範（15:30–16:30 最後 15 分鐘）","林子騰","2026-12-04","todo","名單與現場人力待確認"]]]
 ];
+var SB="https://ahrgjhlfbrsfznvbokkf.supabase.co",KEY="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI";
 var LBL={done:"已完成",doing:"進行中",todo:"待辦",conf:"待確認",late:"已逾期"};
 function p2(n){return n<10?"0"+n:""+n;}
 var now=new Date(),today=now.getFullYear()+"-"+p2(now.getMonth()+1)+"-"+p2(now.getDate());
 var WD=["日","一","二","三","四","五","六"];
 function fd(d){var a=d.split("-"),t=new Date(+a[0],+a[1]-1,+a[2]);return [(+a[1])+"/"+(+a[2]),"週"+WD[t.getDay()]];}
-function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
-var all=[];P.forEach(function(g){g[1].forEach(function(x){var late=x[3]!=="done"&&x[2]<today;all.push({g:g[0],t:x[0],o:x[1],d:x[2],s:x[3],n:x[4],late:late});});});
-var n=all.length,dn=all.filter(function(x){return x.s==="done";}).length,dg=all.filter(function(x){return x.s==="doing";}).length;
-var score=(dn+dg*0.5)/n;
-document.getElementById("pc").textContent=Math.round(dn/n*100);
-document.getElementById("bf").style.width=(dn/n*100)+"%";
-var late=all.filter(function(x){return x.late;});
-document.getElementById("cnt").innerHTML='<span>共 '+n+' 項</span><span>已完成 '+dn+'</span><span>進行中 '+dg+'</span><span>待辦 '+all.filter(function(x){return x.s==="todo"||x.s==="conf";}).length+'</span>'+(late.length?'<span style="background:#c62828">已逾期 '+late.length+'</span>':'');
-if(late.length){document.getElementById("al").innerHTML='<div class="alert">⚠ 已逾期 '+late.length+' 項：'+late.map(function(x){return esc(x.t);}).join("、")+'</div>';}
-var filt="all";
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+var all=[],cn=0;
+P.forEach(function(g){g[1].forEach(function(x){cn++;all.push({id:"p"+p2(cn),g:g[0],t:x[0],o:x[1],d:x[2],s:x[3],n:x[4],by:"",at:""});});});
+var filt="all",edit=false,pass="";
+try{pass=sessionStorage.getItem("iaapw")||"";edit=pass?true:false;}catch(e){}
+function isLate(x){return x.s!=="done"&&x.d<today;}
+function summary(){
+  var n=all.length,dn=all.filter(function(x){return x.s==="done";}).length,dg=all.filter(function(x){return x.s==="doing";}).length;
+  var late=all.filter(isLate);
+  document.getElementById("pc").textContent=Math.round(dn/n*100);
+  document.getElementById("bf").style.width=(dn/n*100)+"%";
+  document.getElementById("cnt").innerHTML='<span>共 '+n+' 項</span><span>已完成 '+dn+'</span><span>進行中 '+dg+'</span><span>待辦 '+all.filter(function(x){return x.s==="todo"||x.s==="conf";}).length+'</span>'+(late.length?'<span style="background:#c62828">已逾期 '+late.length+'</span>':'');
+  document.getElementById("al").innerHTML=late.length?'<div class="alert">⚠ 已逾期 '+late.length+' 項：'+late.map(function(x){return esc(x.t);}).join("、")+'</div>':'';
+}
 function render(){
+  summary();
   var h="";
   P.forEach(function(g){
     var it=all.filter(function(x){return x.g===g[0];});
     var d2=it.filter(function(x){return x.s==="done";}).length;
-    var rows=it.filter(function(x){return filt==="all"||(filt==="open"&&x.s!=="done")||(filt==="done"&&x.s==="done")||(filt==="late"&&x.late);});
+    var rows=it.filter(function(x){return filt==="all"||(filt==="open"&&x.s!=="done")||(filt==="done"&&x.s==="done")||(filt==="late"&&isLate(x));});
     if(!rows.length){return;}
     h+='<section class="ph"><h2>'+esc(g[0])+'<em>'+d2+' / '+it.length+' 完成</em></h2><div class="pm"><i style="width:'+(d2/it.length*100)+'%"></i></div>';
-    rows.forEach(function(x){var f=fd(x.d),k=x.late?"late":x.s;
-      h+='<div class="it '+(x.s==="done"?"done":"")+'"><div class="dt">'+f[0]+'<small>'+f[1]+'</small></div><div class="tx"><b>'+esc(x.t)+'</b><span>'+esc(x.o)+'</span>'+(x.n?'<span class="nt">'+esc(x.n)+'</span>':'')+'</div><div class="st s-'+k+'">'+(x.late?"已逾期":LBL[x.s])+'</div></div>';});
+    rows.forEach(function(x){var f=fd(x.d),k=isLate(x)?"late":x.s;
+      var pill=edit?'<select class="sel s-'+k+'" data-id="'+x.id+'" aria-label="更新狀態">'+["todo","doing","conf","done"].map(function(v){return '<option value="'+v+'"'+(x.s===v?' selected':'')+'>'+LBL[v]+'</option>';}).join("")+'</select>':'<div class="st s-'+k+'">'+(isLate(x)?"已逾期":LBL[x.s])+'</div>';
+      h+='<div class="it '+(x.s==="done"?"done":"")+'"><div class="dt">'+f[0]+'<small>'+f[1]+'</small></div><div class="tx"><b>'+esc(x.t)+'</b><span>'+esc(x.o)+'</span>'+(x.n?'<span class="nt">'+esc(x.n)+'</span>':'')+'</div>'+pill+'</div>';});
     h+='</section>';
   });
   document.getElementById("list").innerHTML=h||'<p class="foot">沒有符合的項目</p>';
+  document.getElementById("lock").textContent=edit?"🔓 編輯中（點此登出）":"🔒 輸入密碼更新進度";
 }
-document.getElementById("flt").addEventListener("click",function(e){var b=e.target.closest("button");if(!b){return;}filt=b.getAttribute("data-f");[].forEach.call(this.children,function(c){c.className=c===b?"on":"";});render();});
-document.getElementById("upd").textContent="進度更新：2026/10/29（逾期依你開啟頁面當天的日期計算）";
-render();
+function msg(t,bad){var m=document.getElementById("msg");m.textContent=t;m.style.color=bad?"var(--late)":"var(--mute)";}
+function load(){
+  var x=new XMLHttpRequest();x.open("GET",SB+"/rest/v1/iaa_progress?select=id,status,updated_at,updated_by");x.setRequestHeader("apikey",KEY);x.setRequestHeader("Authorization","Bearer "+KEY);
+  x.onload=function(){if(x.status===200){var rows=JSON.parse(x.responseText),m={},last="";rows.forEach(function(r){m[r.id]=r;if(r.updated_at>last){last=r.updated_at;}});
+    all.forEach(function(a){if(m[a.id]){a.s=m[a.id].status;}});
+    var t=new Date();document.getElementById("upd").textContent="線上同步 "+p2(t.getHours())+":"+p2(t.getMinutes())+(last?"・最近更新 "+(new Date(last).getMonth()+1)+"/"+new Date(last).getDate()+" "+p2(new Date(last).getHours())+":"+p2(new Date(last).getMinutes()):"");
+    if(document.activeElement&&document.activeElement.className.indexOf("sel")>=0){summary();}else{render();}}else{document.getElementById("upd").textContent="無法連線，顯示預設進度";}};
+  x.onerror=function(){document.getElementById("upd").textContent="無法連線，顯示預設進度";};x.send();
+}
+function save(id,val,sel){
+  var x=new XMLHttpRequest();x.open("POST",SB+"/rest/v1/rpc/iaa_set_progress");x.setRequestHeader("apikey",KEY);x.setRequestHeader("Authorization","Bearer "+KEY);x.setRequestHeader("Content-Type","application/json");
+  x.onload=function(){var r={};try{r=JSON.parse(x.responseText);}catch(e){}
+    if(r.ok===true){all.forEach(function(a){if(a.id===id){a.s=val;}});msg("已更新",false);render();}
+    else if(r.error==="bad_password"){edit=false;pass="";try{sessionStorage.removeItem("iaapw");}catch(e){}msg("密碼不正確，已退出編輯",true);load();render();}
+    else{msg("更新失敗，請稍後再試",true);load();}};
+  x.onerror=function(){msg("連線失敗，請稍後再試",true);load();};
+  x.send(JSON.stringify({p_pass:pass,p_id:id,p_status:val,p_by:null}));
+}
+document.getElementById("list").addEventListener("change",function(e){var t=e.target;if(t.getAttribute&&t.getAttribute("data-id")){save(t.getAttribute("data-id"),t.value,t);}});
+document.getElementById("lock").addEventListener("click",function(){
+  if(edit){edit=false;pass="";try{sessionStorage.removeItem("iaapw");}catch(e){}msg("",false);render();return;}
+  var v=window.prompt("請輸入更新密碼");if(v){pass=v.trim();edit=true;try{sessionStorage.setItem("iaapw",pass);}catch(e){}msg("編輯模式：用每項右側的下拉選單更改狀態",false);render();}
+});
+document.getElementById("flt").addEventListener("click",function(e){var b=e.target.closest("button");if(b===null){return;}filt=b.getAttribute("data-f");[].forEach.call(this.children,function(c){c.className=c===b?"on":"";});render();});
+render();load();setInterval(function(){if(document.activeElement&&document.activeElement.tagName==="SELECT"){return;}load();},30000);
 })();
 </script></body></html>
