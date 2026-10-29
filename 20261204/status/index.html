@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta property="og:type" content="website"><meta property="og:title" content="IAA 2026 年會｜報名查詢"><meta property="og:description" content="查詢你有沒有報名成功，並看目前報名人數與名單。"><meta property="og:image" content="https://ericliang680928.github.io/IAA/20261204/og.jpg?v=2"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:url" content="https://ericliang680928.github.io/IAA/20261204/status/"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="website"><meta property="og:title" content="IAA 2026 年會｜報名查詢"><meta property="og:description" content="查詢你有沒有報名成功，並看目前報名人數與名單。"><meta property="og:image" content="https://ericliang680928.github.io/IAA/20261204/og.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:url" content="https://ericliang680928.github.io/IAA/20261204/status/"><meta name="twitter:card" content="summary_large_image">
 <title>2026 IAA 年會 報名查詢</title>
 <meta name="description" content="IAA 創新加速聯盟會 第四屆會員大會暨第三屆、第四屆會長交接典禮 報名狀況查詢">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -196,7 +196,7 @@ function parseRoster(res){
     for(j=0;j<3;j++){
       var v=(m[i][c0+j]||"").trim();
       if(!v||v.indexOf("<<")===0){continue;}
-      var nm=bare(v);if(!nm||seen[nm]){continue;}
+      var nm=bare(v);if(!nm||seen[nm]||/^[A-Za-z]+\d+(:[A-Za-z]+\d+)?$/.test(chapOf(v))){continue;}
       seen[nm]=1;list.push({name:nm,chap:chapOf(v),region:REGIONS[j]});
     }
   }
@@ -267,7 +267,12 @@ function render(){
 
   var chaps={},order=[];
   roster.forEach(function(r){var c=r.chap||"其他";if(!chaps[c]){chaps[c]={t:0,a:0,l:0};order.push(c);}chaps[c].t++;var p=people["m:"+r.name];if(p){if(p.st==="參加"){chaps[c].a++;}else if(p.st==="請假"){chaps[c].l++;}}});
-  $("chap").innerHTML=order.map(function(c){var o=chaps[c];return '<tr><td><b>'+esc(c)+'</b></td><td>'+o.a+' / '+o.t+'</td><td>'+o.l+'</td><td>'+(o.t-o.a-o.l)+'</td></tr>';}).join("")||'<tr><td colspan="4" class="note">名冊讀取中…</td></tr>';
+  var NS=["基隆社","台北社","宜蘭社","桃園社","新竹社","苗栗社","台中社","彰化社","南投社","雲林社","嘉義社","南瀛社","台南市社","高雄社","屏東社"];
+  order.sort(function(x,y){var i=NS.indexOf(x),j=NS.indexOf(y);return (i<0?99:i)-(j<0?99:j);});
+  var sa=0,sl=0,st=0;order.forEach(function(c){sa+=chaps[c].a;sl+=chaps[c].l;st+=chaps[c].t;});
+  var rows=order.map(function(c){var o=chaps[c];return '<tr><td><b>'+esc(c)+'</b></td><td>'+o.a+' / '+o.t+'</td><td>'+o.l+'</td><td>'+(o.t-o.a-o.l)+'</td></tr>';}).join("");
+  if(rows){rows+='<tr style="border-top:2px solid #cfd6e4"><td><b>合計</b></td><td><b>'+sa+' / '+st+'</b></td><td><b>'+sl+'</b></td><td><b>'+(st-sa-sl)+'</b></td></tr>';}
+  $("chap").innerHTML=rows||'<tr><td colspan="4" class="note">名冊讀取中…</td></tr>';
 
   var rh="";
   REGIONS.forEach(function(rg){
