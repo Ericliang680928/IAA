@@ -70,6 +70,7 @@ summary::-webkit-details-marker{display:none}
 summary::after{content:"＋";color:var(--mute);font-weight:400}details[open] summary::after{content:"－"}
 .chips{margin-top:10px;line-height:2.2}
 .mc{display:inline-block;border-radius:99px;padding:1px 10px;margin:0 5px 5px 0;font-size:13px;border:1px solid var(--line);background:var(--pendbg);color:var(--pend)}
+.mc.nw{border:2px solid #D45824;box-shadow:0 0 0 2px rgba(212,88,36,.18);font-weight:700}.nw-b{display:inline-block;background:#D45824;color:#fff;border-radius:6px;padding:0 5px;margin-left:5px;font-size:10.5px;font-weight:900;letter-spacing:.04em;vertical-align:1px}
 .mc.ok{background:var(--okbg);color:var(--ok);border-color:transparent;font-weight:700}.mc.lv{background:var(--leavebg);color:var(--leave);border-color:transparent}
 .legend{font-size:12.5px;color:var(--mute);margin:0 0 6px}
 .legend .mc{margin:0 4px 0 0;font-size:12px}
@@ -144,7 +145,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 
 <div class="card">
 <h2><i>5</i>會友名冊與回覆狀態</h2>
-<p class="legend"><span class="mc ok">已報名</span><span class="mc lv">請假</span><span class="mc">尚未回覆</span>點區名展開。</p>
+<p class="legend"><span class="mc ok">已報名</span><span class="mc lv">請假</span><span class="mc">尚未回覆</span><span class="mc nw">新會友<span class="nw-b">NEW</span></span>點區名展開。</p>
 <div id="roster"></div>
 </div>
 
@@ -162,6 +163,7 @@ var SHEET="1mNXScGB7Gn3wE32R8zFa1B0VhOSbty8J7hEYfAQHHJY";
 var TAB_RESP="回",TAB_ROSTER="分組名單";
 var CAP=120,POLL=30000;
 var DEADLINE=new Date(2026,10,20,23,59,59);
+var NEWM={"陳定閒":1,"吳連杰":1,"方榮傑":1,"林睦峰":1,"陳珠璜":1,"吳崇愷":1,"黃敏傑":1,"蕭軍平":1,"張永賢":1};
 var REGIONS=["北區","中區","南區"];
 var roster=[],byName={},people={},seq=0,loadedRoster=false;
 
@@ -277,7 +279,7 @@ function render(){
   var rh="";
   REGIONS.forEach(function(rg){
     var list=roster.filter(function(r){return r.region===rg;});if(!list.length){return;}
-    var a=0,l=0,chips=list.map(function(r){var p=people["m:"+r.name],cl="";if(p){if(p.st==="參加"){a++;cl=" ok";}else if(p.st==="請假"){l++;cl=" lv";}}return '<span class="mc'+cl+'">'+esc(r.name)+(r.chap?'<small style="opacity:.7">・'+esc(r.chap.replace("社",""))+'</small>':'')+'</span>';}).join("");
+    var a=0,l=0,chips=list.map(function(r){var p=people["m:"+r.name],cl="";if(p){if(p.st==="參加"){a++;cl=" ok";}else if(p.st==="請假"){l++;cl=" lv";}}var nw=NEWM[r.name]?" nw":"";return '<span class="mc'+cl+nw+'">'+esc(r.name)+(NEWM[r.name]?'<span class="nw-b">NEW</span>':'')+(r.chap?'<small style="opacity:.7">・'+esc(r.chap.replace("社",""))+'</small>':'')+'</span>';}).join("");
     rh+='<details'+(rg===REGIONS[0]?'':'')+'><summary><span>'+rg+'（'+list.length+' 人）</span><span class="note">已報名 '+a+'・請假 '+l+'・未回覆 '+(list.length-a-l)+'</span></summary><div class="chips">'+chips+'</div></details>';
   });
   $("roster").innerHTML=rh||'<p class="note">名冊讀取中…</p>';
@@ -294,7 +296,7 @@ function doSearch(){
   roster.forEach(function(r){if(r.name.indexOf(t)>=0){var p=people["m:"+r.name];hits.push({name:r.name,chap:r.chap,st:p?p.st:"",meal:p&&p.st==="參加"?p.meal:""});}});
   Object.keys(people).forEach(function(k){var p=people[k];if(p.kind!=="m"&&p.name.indexOf(t)>=0){hits.push({name:p.name,chap:p.kind==="g"?"來賓":"工作人員",st:p.st,meal:p.meal});}});
   if(!hits.length){box.innerHTML='<p class="note">找不到「'+esc(t)+'」。請確認姓名，或名冊尚在讀取中。</p>';return;}
-  box.innerHTML=hits.slice(0,10).map(function(h){return '<div class="it"><div><span class="nm">'+esc(h.name)+'</span><span class="ch">'+esc(h.chap)+'</span></div><div>'+(h.meal?'<span class="note" style="margin-right:8px">晚宴：'+esc(h.meal)+'</span>':'')+chipFor(h.st)+'</div></div>';}).join("");
+  box.innerHTML=hits.slice(0,10).map(function(h){return '<div class="it"><div><span class="nm">'+esc(h.name)+(NEWM[h.name]?'<span class="nw-b">NEW</span>':'')+'</span><span class="ch">'+esc(h.chap)+'</span></div><div>'+(h.meal?'<span class="note" style="margin-right:8px">晚宴：'+esc(h.meal)+'</span>':'')+chipFor(h.st)+'</div></div>';}).join("");
 }
 
 function status(ok){
