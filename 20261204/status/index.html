@@ -76,7 +76,7 @@ summary::after{content:"＋";color:var(--mute);font-weight:400}details[open] sum
 .legend .mc{margin:0 4px 0 0;font-size:12px}
 table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font-size:12px;color:var(--mute);border-bottom:1px solid var(--line);padding:6px 8px}td{padding:8px;border-bottom:1px solid var(--line)}tr:last-child td{border-bottom:0}
 .foot{font-size:12px;color:var(--mute);margin-top:20px;text-align:center}
-</style>
+.rt-b{background:#2E7D6B}</style>
 </head>
 <body>
 <header class="hero"><div class="in">
@@ -145,7 +145,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 
 <div class="card">
 <h2><i>5</i>會友名冊與回覆狀態</h2>
-<p class="legend"><span class="mc ok">已報名</span><span class="mc lv">請假</span><span class="mc">尚未回覆</span><span class="mc nw">新會友<span class="nw-b">NEW</span></span>點區名展開。</p>
+<p class="legend"><span class="mc ok">已報名</span><span class="mc lv">請假</span><span class="mc">尚未回覆</span><span class="mc nw">新會友<span class="nw-b">NEW</span></span><span class="mc">回歸會友<span class="nw-b rt-b">回歸</span></span>點區名展開。</p>
 <div id="roster"></div>
 </div>
 
@@ -279,7 +279,7 @@ function render(){
   var rh="";
   REGIONS.forEach(function(rg){
     var list=roster.filter(function(r){return r.region===rg;});if(!list.length){return;}
-    var a=0,l=0,chips=list.map(function(r){var p=people["m:"+r.name],cl="";if(p){if(p.st==="參加"){a++;cl=" ok";}else if(p.st==="請假"){l++;cl=" lv";}}var nw=NEWM[r.name]?" nw":"";return '<span class="mc'+cl+nw+'">'+esc(r.name)+(NEWM[r.name]?'<span class="nw-b">NEW</span>':'')+(r.chap?'<small style="opacity:.7">・'+esc(r.chap.replace("社",""))+'</small>':'')+'</span>';}).join("");
+    var a=0,l=0,chips=list.map(function(r){var p=people["m:"+r.name],cl="";if(p){if(p.st==="參加"){a++;cl=" ok";}else if(p.st==="請假"){l++;cl=" lv";}}var nw=NEWM[r.name]?" nw":"";return '<span class="mc'+cl+nw+'">'+esc(r.name)+(NEWM[r.name]?'<span class="nw-b">NEW</span>':'')+(RTN[r.name]?'<span class="nw-b rt-b">回歸</span>':'')+(r.chap?'<small style="opacity:.7">・'+esc(r.chap.replace("社",""))+'</small>':'')+'</span>';}).join("");
     rh+='<details'+(rg===REGIONS[0]?'':'')+'><summary><span>'+rg+'（'+list.length+' 人）</span><span class="note">已報名 '+a+'・請假 '+l+'・未回覆 '+(list.length-a-l)+'</span></summary><div class="chips">'+chips+'</div></details>';
   });
   $("roster").innerHTML=rh||'<p class="note">名冊讀取中…</p>';
@@ -296,7 +296,7 @@ function doSearch(){
   roster.forEach(function(r){if(r.name.indexOf(t)>=0){var p=people["m:"+r.name];hits.push({name:r.name,chap:r.chap,st:p?p.st:"",meal:p&&p.st==="參加"?p.meal:""});}});
   Object.keys(people).forEach(function(k){var p=people[k];if(p.kind!=="m"&&p.name.indexOf(t)>=0){hits.push({name:p.name,chap:p.kind==="g"?"來賓":"工作人員",st:p.st,meal:p.meal});}});
   if(!hits.length){box.innerHTML='<p class="note">找不到「'+esc(t)+'」。請確認姓名，或名冊尚在讀取中。</p>';return;}
-  box.innerHTML=hits.slice(0,10).map(function(h){return '<div class="it"><div><span class="nm">'+esc(h.name)+(NEWM[h.name]?'<span class="nw-b">NEW</span>':'')+'</span><span class="ch">'+esc(h.chap)+'</span></div><div>'+(h.meal?'<span class="note" style="margin-right:8px">晚宴：'+esc(h.meal)+'</span>':'')+chipFor(h.st)+'</div></div>';}).join("");
+  box.innerHTML=hits.slice(0,10).map(function(h){return '<div class="it"><div><span class="nm">'+esc(h.name)+(NEWM[h.name]?'<span class="nw-b">NEW</span>':'')+(RTN[h.name]?'<span class="nw-b rt-b">回歸</span>':'')+'</span><span class="ch">'+esc(h.chap)+'</span></div><div>'+(h.meal?'<span class="note" style="margin-right:8px">晚宴：'+esc(h.meal)+'</span>':'')+chipFor(h.st)+'</div></div>';}).join("");
 }
 
 function status(ok){
@@ -311,13 +311,32 @@ function ddl(){
   el.textContent="報名截止：11 月 20 日（五）・尚餘 "+Math.ceil(d/86400000)+" 天";
 }
 
+var RTN={},SBU="https://ahrgjhlfbrsfznvbokkf.supabase.co",SBK="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI";
+function loadMembers(cb){
+  var x=new XMLHttpRequest();
+  x.open("GET",SBU+"/rest/v1/iaa_members?select=name,chapter,region,status,is_new&order=id");
+  x.setRequestHeader("apikey",SBK);
+  x.onload=function(){
+    var l=null;try{l=JSON.parse(x.responseText);}catch(e){l=null;}
+    if(x.status===200&&l&&l.length){
+      roster=l.map(function(m){return {name:m.name,chap:m.chapter,region:m.region};});
+      NEWM={};RTN={};l.forEach(function(m){if(m.is_new){NEWM[m.name]=1;}if(m.status==="回歸"){RTN[m.name]=1;}});
+      byName={};roster.forEach(function(r){byName[r.name]=r;});loadedRoster=true;cb(true);
+    }else{fallback(cb);}
+  };
+  x.onerror=function(){fallback(cb);};
+  x.send();
+}
+function fallback(cb){
+  gviz(TAB_ROSTER,function(ok,res){
+    if(ok){var l=parseRoster(res);if(l&&l.length){roster=l;byName={};l.forEach(function(r){byName[r.name]=r;});loadedRoster=true;cb(true);return;}}
+    cb(false);
+  });
+}
 function sync(){
   var okR=true,okP=true,pending=2;
   function fin(){if(--pending===0){status(okR&&okP);render();}}
-  gviz(TAB_ROSTER,function(ok,res){
-    if(ok){var l=parseRoster(res);if(l&&l.length){roster=l;byName={};l.forEach(function(r){byName[r.name]=r;});loadedRoster=true;}else{okR=loadedRoster;}}else{okR=loadedRoster;}
-    fin();
-  });
+  loadMembers(function(ok){if(!ok){okR=loadedRoster;}fin();});
   gviz(TAB_RESP,function(ok,res){
     if(ok){var o=parseResp(res);if(o){people=o;}else{okP=false;}}else{okP=false;}
     fin();

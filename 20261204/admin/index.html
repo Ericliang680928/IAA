@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>IAA 會友後台</title>
+<style>
+:root{--ink:#1a2547;--mut:#6b7390;--line:#e2e6f0;--pk:#B3267F;--bg:#f5f6fb}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink)}
+.w{max-width:980px;margin:0 auto;padding:16px}h1{font-size:22px;margin:8px 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+input,select,button{font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700}button.g{background:#fff;color:var(--ink);border-color:var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--mut);font-weight:500}
+.b{display:inline-block;border-radius:6px;padding:0 6px;font-size:12px;font-weight:700;color:#fff;margin-left:4px}.n{background:#D45824}.r{background:#2E7D6B}.q{background:#8a90a8}
+.out td{opacity:.5}.msg{min-height:22px;color:var(--mut);font-size:13px}.err{color:#c0392b}
+.sum{display:flex;gap:10px;flex-wrap:wrap}.sum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px}.sum b{font-size:20px;display:block}
+@media(max-width:640px){.hm{display:none}}
+</style></head><body><div class="w">
+<h1>IAA 會友後台</h1>
+<div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="後台密碼" autocomplete="current-password"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
+<div id="app" hidden>
+<div class="sum" id="sum"></div>
+<div class="card"><div class="row"><b id="ft">新增會友</b></div>
+<div class="row" style="margin-top:8px"><input id="fn" placeholder="姓名" size="8"><input id="fc" placeholder="社別，如 雲林社" size="12" list="cl"><select id="fr"><option>北區</option><option>中區</option><option>南區</option></select>
+<select id="fs"><option>有效</option><option>回歸</option><option>退會</option></select><label><input type="checkbox" id="fw"> 新會友 NEW</label></div>
+<div class="row" style="margin-top:8px"><input id="fo" placeholder="備註（只有後台看得到）" style="flex:1;min-width:200px"><button id="sv">儲存</button><button class="g" id="cx" hidden>取消編輯</button></div>
+<div class="msg" id="m1"></div></div>
+<div class="card"><div class="row"><input id="q" placeholder="搜尋姓名或社別" style="flex:1;min-width:160px"><select id="sf"><option value="">全部狀態</option><option>有效</option><option>回歸</option><option>退會</option></select></div>
+<table style="margin-top:8px"><thead><tr><th>姓名</th><th>社別</th><th class="hm">區域</th><th>狀態</th><th class="hm">備註</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+<p class="msg">儲存後，報名查詢頁約 30 秒內自動同步。退會者不會出現在公開頁面。</p>
+</div><datalist id="cl"></datalist></div>
+<script>
+(function(){
+var U="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",rows=[],eid=null;
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function rpc(fn,body,cb){
+  var x=new XMLHttpRequest();x.open("POST",U+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
+  x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status===200,j,x.responseText);};
+  x.onerror=function(){cb(false,null,"network");};x.send(JSON.stringify(body));
+}
+function load(cb){rpc("iaa_member_list",{p:pw},function(ok,j,t){if(ok&&j){rows=j;draw();}cb(ok,t);});}
+function draw(){
+  var q=$("q").value.trim(),sf=$("sf").value,act=0,rt=0,out=0,nw=0,cs={};
+  rows.forEach(function(r){if(r.status==="退會"){out++;}else{act++;}if(r.status==="回歸"){rt++;}if(r.is_new){nw++;}cs[r.chapter]=1;});
+  $("sum").innerHTML='<div><b>'+act+'</b>目前會友</div><div><b>'+rt+'</b>回歸</div><div><b>'+nw+'</b>新會友</div><div><b>'+out+'</b>退會</div>';
+  $("cl").innerHTML=Object.keys(cs).map(function(c){return '<option value="'+esc(c)+'">';}).join("");
+  var list=rows.filter(function(r){return (!sf||r.status===sf)&&(!q||r.name.indexOf(q)>=0||r.chapter.indexOf(q)>=0);});
+  $("tb").innerHTML=list.map(function(r){
+    var b=(r.is_new?'<span class="b n">NEW</span>':'')+(r.status==="回歸"?'<span class="b r">回歸</span>':'')+(r.status==="退會"?'<span class="b q">退會</span>':'');
+    return '<tr class="'+(r.status==="退會"?"out":"")+'"><td>'+esc(r.name)+b+'</td><td>'+esc(r.chapter)+'</td><td class="hm">'+esc(r.region)+'</td><td>'+esc(r.status)+'</td><td class="hm">'+esc(r.note)+'</td><td><button class="g" data-id="'+r.id+'">編輯</button></td></tr>';
+  }).join("");
+}
+function clear(){eid=null;$("fn").value="";$("fc").value="";$("fo").value="";$("fw").checked=false;$("fs").value="有效";$("ft").textContent="新增會友";$("cx").hidden=true;}
+$("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";load(function(ok){if(ok){$("lg").hidden=true;$("app").hidden=false;}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
+$("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
+$("q").oninput=draw;$("sf").onchange=draw;
+$("tb").onclick=function(e){var id=e.target.getAttribute("data-id");if(!id){return;}
+  var r=rows.filter(function(x){return String(x.id)===id;})[0];if(!r){return;}
+  eid=r.id;$("fn").value=r.name;$("fc").value=r.chapter;$("fr").value=r.region;$("fs").value=r.status;$("fw").checked=!!r.is_new;$("fo").value=r.note;
+  $("ft").textContent="編輯：未儲存前不會生效";$("cx").hidden=false;window.scrollTo(0,0);};
+$("cx").onclick=clear;
+$("sv").onclick=function(){
+  var n=$("fn").value.trim(),c=$("fc").value.trim();
+  if(!n||!c){$("m1").className="msg err";$("m1").textContent="姓名與社別必填";return;}
+  $("m1").className="msg";$("m1").textContent="儲存中…";
+  rpc("iaa_member_save",{p:pw,i:eid,n:n,c:c,r:$("fr").value,s:$("fs").value,nw:$("fw").checked,nt:$("fo").value.trim()},function(ok,j,t){
+    if(ok){$("m1").textContent="已儲存："+n;clear();load(function(){});}
+    else{$("m1").className="msg err";$("m1").textContent=t.indexOf("duplicate")>=0?"已有同名會友，請改用編輯":"儲存失敗："+t.slice(0,80);}
+  });
+};
+})();
+</script></body></html>
