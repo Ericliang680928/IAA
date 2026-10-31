@@ -20,7 +20,8 @@ button{background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700;cu
 <div class="card bank">收款帳戶：玉山銀行（808）後龍分行<br>帳號：<b>1296-979-177541</b><br>戶名：沈香君</div>
 <div class="warn"><b>請注意：</b>回報後需由<b>財務長審核確認</b>，確認完成才會更新到「報名查詢」頁的繳費標記，<b>不是即時更新</b>。審核通常需要一點時間，請勿重複回報。</div>
 <div class="card">
-<label for="nm">會友姓名</label><input id="nm" list="nl" placeholder="輸入姓名，從清單選取" autocomplete="off"><datalist id="nl"></datalist>
+<label for="ch">① 先選社別</label><select id="ch"><option value="">請選擇社別</option></select>
+<label for="nm">② 再選姓名</label><select id="nm" disabled><option value="">請先選社別</option></select>
 <label>繳費方式</label>
 <div class="opt"><label><input type="radio" name="m" value="匯款" checked> 匯款</label><label><input type="radio" name="m" value="現金"> 現金</label></div>
 <div id="l5w"><label for="l5">匯出帳號後 5 碼（匯款必填）</label><input id="l5" inputmode="numeric" maxlength="5" placeholder="例如 12345"></div>
@@ -37,7 +38,14 @@ function $(i){return document.getElementById(i);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function call(method,path,body,cb){var x=new XMLHttpRequest();x.open(method,B+path);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
  x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(body?JSON.stringify(body):null);}
-call("GET","iaa_members?select=name,chapter&order=name",null,function(ok,l){if(ok&&l){$("nl").innerHTML=l.map(function(m){return '<option value="'+esc(m.name)+'">'+esc(m.chapter)+'</option>';}).join("");}});
+var NS=["基隆社","台北社","宜蘭社","桃園社","新竹社","苗栗社","台中社","彰化社","南投社","雲林社","嘉義社","南瀛社","台南市社","高雄社","屏東社"],MEM=[];
+call("GET","iaa_members?select=name,chapter&order=name",null,function(ok,l){if(ok&&l){MEM=l;
+ var have={};l.forEach(function(m){have[m.chapter]=1;});
+ var cs=NS.filter(function(c){return have[c]===1;});Object.keys(have).forEach(function(c){if(NS.indexOf(c)<0){cs.push(c);}});
+ $("ch").innerHTML='<option value="">請選擇社別</option>'+cs.map(function(c){return '<option>'+esc(c)+'</option>';}).join("");}});
+$("ch").onchange=function(){var c=$("ch").value;
+ if(c===""){$("nm").disabled=true;$("nm").innerHTML='<option value="">請先選社別</option>';return;}
+ $("nm").disabled=false;$("nm").innerHTML='<option value="">請選擇姓名</option>'+MEM.filter(function(m){return m.chapter===c;}).map(function(m){return '<option>'+esc(m.name)+'</option>';}).join("");};
 $("dt").value=new Date(Date.now()+288e5).toISOString().slice(0,10);
 function meth(){return document.querySelector('input[name="m"]:checked').value;}
 function tog(){$("l5w").hidden=(meth()==="匯款")?false:true;}
