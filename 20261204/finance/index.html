@@ -2,18 +2,18 @@
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>IAA 財務長後台</title>
 <style>
 :root{--ink:#1a2547;--mut:#6b7390;--line:#e2e6f0;--bg:#f5f6fb;--bad:#c0392b}
-*{box-sizing:border-box}html,body{height:100%}body{margin:0;font:17px/1.55 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);display:flex;flex-direction:column}
+*{box-sizing:border-box}body{margin:0;font:17px/1.55 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);overflow-y:scroll}
 .top{padding:12px 16px 0;max-width:1100px;width:100%;margin:0 auto}h1{font-size:23px;margin:4px 0 2px}.sub{color:var(--mut);font-size:14px;margin:0 0 8px}
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 16px;max-width:600px}
 input,button{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
 button{cursor:pointer;background:#B3267F;color:#fff;border-color:#B3267F;font-weight:700}
 .row{display:flex;gap:8px;flex-wrap:wrap}.tabs button{background:#fff;color:var(--ink);border-color:var(--line)}.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .msg{min-height:22px;color:var(--mut);font-size:14px;margin-top:6px}.err{color:var(--bad)}
-iframe{flex:1;width:100%;max-width:1100px;margin:6px auto 0;border:0;display:block;min-height:0}iframe[hidden]{display:none}
+iframe{width:100%;max-width:1100px;margin:6px auto 0;border:0;display:block;height:600px}iframe[hidden]{display:none}
 </style></head><body>
 <div class="top"><h1>財務長後台</h1><p class="sub">會費審核・收支登記・預算對照（登入一次即可）</p></div>
 <div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="財務長密碼" autocomplete="current-password" style="flex:1"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
-<div id="app" hidden style="display:none;flex-direction:column;flex:1;min-height:0">
+<div id="app" hidden style="display:none">
 <div class="top"><div class="row tabs"><button id="t1" class="on">會費審核</button><button id="t2">收支與預算</button></div></div>
 <iframe id="f1" title="會費審核"></iframe><iframe id="f2" title="收支與預算" hidden></iframe>
 </div>
@@ -22,12 +22,14 @@ iframe{flex:1;width:100%;max-width:1100px;margin:6px auto 0;border:0;display:blo
 var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",cur=1;
 function $(i){return document.getElementById(i);}
 function chk(pw,cb){var x=new XMLHttpRequest();x.open("POST",B+"iaa_dues_list");x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");x.onload=function(){cb(x.status>=200&&x.status<300);};x.onerror=function(){cb(false);};x.send(JSON.stringify({p:pw}));}
-function tidy(f){try{var d=f.contentDocument;var h=d.querySelector("h1");if(h){h.style.display="none";}var s=d.querySelector(".sub");if(s){s.style.display="none";}}catch(e){}}
+function fit(){["f1","f2"].forEach(function(id){var f=$(id);if(f.hidden){return;}try{var d=f.contentDocument;var h=Math.ceil(d.body.getBoundingClientRect().height)+40;if(Math.abs(f.offsetHeight-h)>4){f.style.height=h+"px";}}catch(e){}});}
+setInterval(fit,400);
+function tidy(f){try{f.contentDocument.documentElement.style.overflow="hidden";}catch(e){}try{var d=f.contentDocument;var h=d.querySelector("h1");if(h){h.style.display="none";}var s=d.querySelector(".sub");if(s){s.style.display="none";}}catch(e){}}
 function show(n){cur=n;$("t1").className=n===1?"on":"";$("t2").className=n===2?"on":"";$("f1").hidden=(n===1?false:true);$("f2").hidden=(n===2?false:true);
  var f=$("f"+n);if(f.getAttribute("data-ld")==="1"){try{f.contentWindow.location.reload();}catch(e){}}else{f.setAttribute("data-ld","1");f.src=(n===1?"dues.html":"../books/");}}
 $("f1").onload=function(){tidy($("f1"));};$("f2").onload=function(){tidy($("f2"));};
 $("t1").onclick=function(){show(1);};$("t2").onclick=function(){show(2);};
-function enter(pw){try{window.sessionStorage.setItem("iaa_fin_pw",pw);}catch(e){}$("lg").style.display="none";$("app").hidden=false;$("app").style.display="flex";
+function enter(pw){try{window.sessionStorage.setItem("iaa_fin_pw",pw);}catch(e){}$("lg").style.display="none";$("app").hidden=false;$("app").style.display="block";
  var t=new URLSearchParams(location.search).get("t");show(t==="books"?2:1);}
 $("go").onclick=function(){var pw=$("pw").value;$("m0").className="msg";$("m0").textContent="登入中…";chk(pw,function(ok){if(ok){enter(pw);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
