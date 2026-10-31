@@ -22,6 +22,7 @@ button{background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700;cu
 <div class="card">
 <label for="ch">① 先選社別</label><select id="ch"><option value="">請選擇社別</option></select>
 <label for="nm">② 再選姓名</label><select id="nm" disabled><option value="">請先選社別</option></select>
+<label for="ft">繳費項目</label><select id="ft"><option value="常年會費">常年會費</option><option value="入會費">入會費（新會友／回歸）</option></select>
 <label>繳費方式</label>
 <div class="opt"><label><input type="radio" name="m" value="匯款" checked> 匯款</label><label><input type="radio" name="m" value="現金"> 現金</label></div>
 <div id="l5w"><label for="l5">匯出帳號後 5 碼（匯款必填）</label><input id="l5" inputmode="numeric" maxlength="5" placeholder="例如 12345"></div>
@@ -57,7 +58,7 @@ $("sub").onclick=function(){
  if(m==="匯款"&&/^[0-9]{5}$/.test(l5)===false){$("msg").className="msg err";$("msg").textContent="匯款請填 5 位數字的帳號後 5 碼";return;}
  if(am===""){$("msg").className="msg err";$("msg").textContent="請填寫金額";return;}
  $("sub").disabled=true;$("msg").textContent="送出中…";
- call("POST","rpc/iaa_dues_submit",{n:n,m:m,amt:parseInt(am,10),l5:l5,d:$("dt").value||null,nt:$("nt").value},function(ok,j){
+ call("POST","rpc/iaa_dues_submit",{n:n,m:m,amt:parseInt(am,10),l5:l5,d:$("dt").value||null,nt:$("nt").value,ft:$("ft").value},function(ok,j){
   $("sub").disabled=false;
   if(ok){$("msg").className="msg ok";$("msg").textContent="已送出，等待財務長審核確認。確認後報名查詢頁才會顯示已繳費。";$("l5").value="";$("am").value="";$("nt").value="";}
   else{$("msg").className="msg err";$("msg").textContent=(j&&j.message)?j.message:"送出失敗，請稍後再試";}
@@ -68,7 +69,7 @@ function q(){var n=$("qn").value.trim();if(n===""){return;}$("qr").innerHTML="�
   if(ok===false){$("qr").innerHTML="查詢失敗";return;}
   if(l.length===0){$("qr").innerHTML='<div class="st">查無回報紀錄</div>';return;}
   $("qr").innerHTML=l.map(function(r){var c=r.status==="已確認"?"p2":(r.status==="退回"?"p3":"p1");
-   return '<div class="st"><span class="pill '+c+'">'+esc(r.status)+'</span> '+esc(r.method)+'・'+esc(r.submitted_at.slice(0,10))+(r.review_note?'<br><small>財務長備註：'+esc(r.review_note)+'</small>':'')+'</div>';}).join("");
+   return '<div class="st"><span class="pill '+c+'">'+esc(r.status)+'</span> '+esc(r.fee_type||'常年會費')+'・'+esc(r.method)+'・'+esc(r.submitted_at.slice(0,10))+(r.review_note?'<br><small>財務長備註：'+esc(r.review_note)+'</small>':'')+'</div>';}).join("");
  });}
 $("qb").onclick=q;
 })();

@@ -38,12 +38,12 @@ function pc(s){return s==="已確認"?"p2":(s==="退回"?"p3":"p1");}
 function load(cb){call("POST","rpc/iaa_dues_list",{p:pw},function(ok,j){if(ok&&j){rows=j;draw();}cb(ok);});}
 function draw(){
  var pend=0,okn=0,rej=0,amt=0,paid={};
- rows.forEach(function(r){if(r.status==="待審核"){pend++;}else if(r.status==="已確認"){okn++;amt+=(r.amount||0);paid[r.member_name]=1;}else{rej++;}});
+ rows.forEach(function(r){if(r.status==="待審核"){pend++;}else if(r.status==="已確認"){okn++;amt+=(r.amount||0);if((r.fee_type||'常年會費')==='常年會費'){paid[r.member_name]=1;}}else{rej++;}});
  $("sum").innerHTML='<div><b>'+pend+'</b>待審核</div><div><b>'+okn+'</b>已確認</div><div><b>'+(mem.length-Object.keys(paid).length)+'</b>尚未繳費</div><div><b>'+amt.toLocaleString()+'</b>已確認金額（元）</div><div><b>'+rej+'</b>退回</div>';
  var list=rows.filter(function(r){return tab===1?r.status==="待審核":true;});
  $("tb").innerHTML=list.length?list.map(function(r){
   var act=r.status==="待審核"?'<button class="s ok" data-a="ok" data-id="'+r.id+'">確認</button> <button class="s no" data-a="no" data-id="'+r.id+'">退回</button>':'<button class="s g" data-a="re" data-id="'+r.id+'">改回待審</button>';
-  return '<tr><td><b>'+esc(r.member_name)+'</b></td><td>'+esc(r.method)+'</td><td>'+(r.amount==null?"":r.amount.toLocaleString())+'</td><td>'+esc(r.last5)+'</td><td class="hm">'+esc(r.paid_date||"")+'</td><td class="hm">'+esc(r.note)+(r.review_note?'<br><small>審核備註：'+esc(r.review_note)+'</small>':'')+'</td><td><span class="pill '+pc(r.status)+'">'+esc(r.status)+'</span></td><td>'+act+'</td></tr>';}).join(""):'<tr><td colspan="8" style="color:#6b7390">沒有資料</td></tr>';
+  return '<tr><td><b>'+esc(r.member_name)+'</b><br><small>'+esc(r.fee_type||'常年會費')+'</small></td><td>'+esc(r.method)+'</td><td>'+(r.amount==null?"":r.amount.toLocaleString())+'</td><td>'+esc(r.last5)+'</td><td class="hm">'+esc(r.paid_date||"")+'</td><td class="hm">'+esc(r.note)+(r.review_note?'<br><small>審核備註：'+esc(r.review_note)+'</small>':'')+'</td><td><span class="pill '+pc(r.status)+'">'+esc(r.status)+'</span></td><td>'+act+'</td></tr>';}).join(""):'<tr><td colspan="8" style="color:#6b7390">沒有資料</td></tr>';
  var un=mem.filter(function(m){return (paid[m.name]===1)===false;});
  $("unp").innerHTML='<b>尚未確認繳費（'+un.length+' 位）</b><div class="chips">'+un.map(function(m){return '<span>'+esc(m.name)+'・'+esc(m.chapter.replace("社",""))+'</span>';}).join("")+'</div>';
  $("nl").innerHTML=mem.map(function(m){return '<option value="'+esc(m.name)+'">';}).join("");
