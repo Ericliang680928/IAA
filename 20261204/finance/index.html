@@ -51,7 +51,7 @@ function draw(){
 function show(n){tab=n;["t1","t2","t3","t4"].forEach(function(id,i){$(id).className=(i+1===n)?"on":"";});$("v1").hidden=(n===3||n===4);$("v3").hidden=(n===3)?false:true;$("v4").hidden=(n===4)?false:true;draw();}
 $("t1").onclick=function(){show(1);};$("t2").onclick=function(){show(2);};$("t3").onclick=function(){show(3);};$("t4").onclick=function(){show(4);};
 $("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";
- call("GET","iaa_members?select=name,chapter&order=name",null,function(ok,l){if(ok&&l){mem=l;}
+ call("GET","iaa_members?select=name,chapter&status=neq.%E6%9C%89%E6%9C%9B&order=name",null,function(ok,l){if(ok&&l){mem=l;}
   load(function(ok2){if(ok2){$("lg").hidden=true;$("app").hidden=false;$("ad").value=new Date(Date.now()+288e5).toISOString().slice(0,10);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
 $("tb").onclick=function(e){var a=e.target.getAttribute("data-a"),id=e.target.getAttribute("data-id");if(a===null){return;}
