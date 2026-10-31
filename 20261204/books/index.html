@@ -23,7 +23,7 @@ h2{font-size:18px;margin:4px 0 8px}
 <div id="app" hidden>
 <div class="warn" style="margin-top:12px">預算依 115.10.11 常發會審核版「116 年度預算表」建入，若預算案後續有調整，請到「預算項目」分頁修改。本頁資料只有登入後看得到，不會公開。</div>
 <div class="sum" id="sum" style="margin-top:12px"></div>
-<div class="card"><div class="row tabs"><button id="t1" class="on">預算對照</button><button id="t2">記一筆</button><button id="t3">流水帳</button><button id="t4">預算項目</button><button class="g" id="csv" style="margin-left:auto">匯出流水帳 CSV</button></div></div>
+<div class="card"><div class="row tabs"><button id="t1" class="on">預算對照</button><button id="t2">記一筆</button><button id="t3">流水帳</button><button id="t4">預算項目</button><button id="xls" style="margin-left:auto">匯出 Excel（預算表格式）</button><button class="g" id="csv">匯出 CSV</button></div></div>
 <div class="card" id="v1"></div>
 <div class="card f" id="v2" hidden><h2 id="ft">記一筆收支</h2>
 <div class="g2"><div><label>日期</label><input id="fd" type="date"></div><div><label>收支</label><select id="fk"><option>支出</option><option>收入</option></select></div><div><label>預算科目</label><select id="fb"></select></div><div><label>金額（元）</label><input id="fa" type="number" inputmode="numeric" min="0"></div></div>
@@ -33,6 +33,7 @@ h2{font-size:18px;margin:4px 0 8px}
 <div class="card f" id="v4" hidden><h2>預算項目（數量 × 單價 ＝ 預算金額）</h2><table><thead><tr><th>收支</th><th>項目</th><th class="n">數量</th><th>單位</th><th class="n">單價</th><th class="n">金額</th><th>備註</th><th></th></tr></thead><tbody id="bt"></tbody></table>
 <h2 style="margin-top:16px" id="bft">新增預算項目</h2><div class="g2"><div><label>收支</label><select id="bk"><option>支出</option><option>收入</option></select></div><div><label>項目</label><input id="bi"></div><div><label>數量</label><input id="bq" type="number" value="1"></div><div><label>單位</label><input id="bu" value="式"></div><div><label>單價</label><input id="bp" type="number"></div></div><label>備註</label><input id="bn"><div class="row" style="margin-top:12px"><button id="bs">儲存預算項目</button><button class="g" id="bc" hidden>取消</button></div><div class="msg" id="m3"></div></div>
 </div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script>
 (function(){
 var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",bud=[],led=[],tab=1,eid=null,bid=null;
@@ -95,5 +96,73 @@ $("csv").onclick=function(){var h=["日期","收支","科目","摘要","金額",
  var t=[h].concat(led.map(function(r){return [r.entry_date,r.kind,bname(r.budget_id),r.description,r.amount,r.method,r.counterparty,r.voucher,r.note,r.voided?"是":""];}));
  var s="﻿"+t.map(function(r){return r.map(function(c){return '"'+String(c==null?"":c).replace(/"/g,'""')+'"';}).join(",");}).join("\r\n");
  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/csv;charset=utf-8"}));a.download="IAA116年流水帳.csv";document.body.appendChild(a);a.click();document.body.removeChild(a);};
+
+$("xls").onclick=function(){
+ if(typeof ExcelJS==="undefined"){window.alert("Excel 元件載入失敗，請檢查網路後重新整理");return;}
+ var wb=new ExcelJS.Workbook();wb.creator="IAA 財務長";wb.created=new Date();
+ var FONT="微軟正黑體",NAVY="FF1A2547",PINK="FFB3267F",LT="FFEEF1F8",thin={style:"thin",color:{argb:"FFB8BFD3"}},BD={top:thin,left:thin,bottom:thin,right:thin};
+ var today=new Date(Date.now()+288e5).toISOString().slice(0,10);
+ var NA="（未歸類）";
+ function live(k){return led.filter(function(r){return r.kind===k&&r.voided===false;});}
+ function setup(ws,landscape){ws.pageSetup={paperSize:9,orientation:landscape?"landscape":"portrait",fitToPage:true,fitToWidth:1,fitToHeight:0,margins:{left:0.4,right:0.4,top:0.5,bottom:0.5,header:0.2,footer:0.2}};ws.headerFooter={oddFooter:"&C第 &P 頁／共 &N 頁"};}
+ function cell(c,v,o){c.value=v;c.font={name:FONT,size:(o&&o.size)||11,bold:Boolean(o&&o.bold),color:{argb:(o&&o.color)||"FF1A2547"}};if(o&&o.fill){c.fill={type:"pattern",pattern:"solid",fgColor:{argb:o.fill}};}c.alignment={vertical:"middle",horizontal:(o&&o.h)||"left",wrapText:Boolean(o&&o.wrap)};if(o&&o.nf){c.numFmt=o.nf;}if(o&&o.bd){c.border=BD;}}
+ // ---- detail sheets
+ var ws=wb.addWorksheet("預算執行對照",{views:[{state:"frozen",ySplit:3}]});setup(ws,true);wb.views=[{activeTab:0}];
+ var det={};
+ ["收入","支出"].forEach(function(k){
+  var ws=wb.addWorksheet(k+"明細",{views:[{state:"frozen",ySplit:4}]});setup(ws,true);det[k]=ws;
+  [6,12,24,34,18,13,10,18,30].forEach(function(w,i){ws.getColumn(i+1).width=w;});
+  ws.mergeCells("A1:I1");cell(ws.getCell("A1"),"IAA創新加速聯盟會第四屆　"+k+"明細表",{size:16,bold:true,h:"center"});ws.getRow(1).height=30;
+  ws.mergeCells("A2:I2");cell(ws.getCell("A2"),"民國116年1月1日至12月31日　製表日期："+today+"（已作廢紀錄不列入）",{size:10,color:"FF6B7390",h:"center"});
+  ["序","日期","預算科目","摘要／用途","對象","金額","方式","憑證","備註"].forEach(function(t,i){cell(ws.getRow(4).getCell(i+1),t,{bold:true,color:"FFFFFFFF",fill:NAVY,h:"center",bd:true});});
+  var rows=live(k).slice().sort(function(a,b){var x=bname(a.budget_id),y=bname(b.budget_id);return x===y?(a.entry_date<b.entry_date?-1:1):(x<y?-1:1);});
+  rows.forEach(function(r,i){var rw=ws.getRow(5+i);
+   cell(rw.getCell(1),i+1,{h:"center",bd:true});cell(rw.getCell(2),new Date(r.entry_date+"T00:00:00"),{nf:"yyyy/mm/dd",h:"center",bd:true});
+   cell(rw.getCell(3),r.budget_id===null?NA:bname(r.budget_id),{bd:true});cell(rw.getCell(4),r.description,{wrap:true,bd:true});cell(rw.getCell(5),r.counterparty,{bd:true});
+   cell(rw.getCell(6),Number(r.amount),{nf:"#,##0",h:"right",bd:true});cell(rw.getCell(7),r.method,{h:"center",bd:true});cell(rw.getCell(8),r.voucher,{bd:true});cell(rw.getCell(9),r.note,{wrap:true,bd:true});
+   if(i%2===1){for(var c=1;c<=9;c++){rw.getCell(c).fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFF8F9FD"}};}}});
+  var tr=5+rows.length;ws.mergeCells("A"+tr+":E"+tr);cell(ws.getCell("A"+tr),k+"合計（"+rows.length+" 筆）",{bold:true,fill:LT,h:"right",bd:true});
+  cell(ws.getCell("F"+tr),rows.length?{formula:"SUM(F5:F"+(tr-1)+")"}:0,{bold:true,fill:LT,nf:"#,##0",h:"right",bd:true});
+  ["G","H","I"].forEach(function(c){cell(ws.getCell(c+tr),"",{fill:LT,bd:true});});
+ });
+ // ---- summary sheet (first)
+ ws=wb.worksheets[0];
+ [5,24,8,7,12,14,14,14,9,40,50].forEach(function(w,i){ws.getColumn(i+1).width=w;});
+ ws.mergeCells("A1:K1");cell(ws.getCell("A1"),"IAA創新加速聯盟會第四屆　經費收支預算與執行對照表",{size:18,bold:true,h:"center"});ws.getRow(1).height=34;
+ ws.mergeCells("A2:K2");cell(ws.getCell("A2"),"民國116年1月1日至12月31日　製表日期："+today+"　實際金額為截至製表日已登記之收支",{size:10,color:"FF6B7390",h:"center"});
+ var tot={};var row=4;
+ ["收入","支出"].forEach(function(k){
+  ws.mergeCells("A"+row+":K"+row);cell(ws.getCell("A"+row),"116年"+k+"預算與實際",{bold:true,size:13,color:"FFFFFFFF",fill:(k==="收入"?"FF2E7D6B":PINK)});ws.getRow(row).height=24;row++;
+  ["序","項目","數量","單位","單價","預算金額","實際金額",(k==="支出"?"尚餘預算":"差額（實際－預算）"),"執行率","預算說明（編列依據）","實際"+k+"說明（已登記明細摘要）"].forEach(function(t,i){cell(ws.getRow(row).getCell(i+1),t,{bold:true,color:"FFFFFFFF",fill:NAVY,h:"center",wrap:true,bd:true});});ws.getRow(row).height=32;row++;
+  var first=row,items=bud.filter(function(b){return b.kind===k;}).map(function(b){return {id:b.id,item:b.item,qty:Number(b.qty),unit:b.unit,price:Number(b.unit_price),note:b.note};});
+  if(live(k).some(function(r){return r.budget_id===null;})){items.push({id:null,item:NA,qty:0,unit:"",price:0,note:"尚未歸入預算科目的收支，請至後台補歸類"});}
+  items.forEach(function(it,i){
+   var ent=live(k).filter(function(r){return r.budget_id===it.id;});
+   var sum=ent.slice(0,6).map(function(r){return r.description+"（"+N(r.amount)+"）";}).join("；");
+   if(ent.length>6){sum+="…等共 "+ent.length+" 筆";}
+   var rw=ws.getRow(row);
+   cell(rw.getCell(1),i+1,{h:"center",bd:true});cell(rw.getCell(2),it.item,{bold:true,bd:true,wrap:true});cell(rw.getCell(3),it.qty,{nf:"#,##0",h:"right",bd:true});cell(rw.getCell(4),it.unit,{h:"center",bd:true});cell(rw.getCell(5),it.price,{nf:"#,##0",h:"right",bd:true});
+   cell(rw.getCell(6),{formula:"C"+row+"*E"+row},{nf:"#,##0",h:"right",bd:true});
+   cell(rw.getCell(7),{formula:"SUMIFS('"+k+"明細'!$F:$F,'"+k+"明細'!$C:$C,B"+row+")"},{nf:"#,##0",h:"right",bd:true});
+   cell(rw.getCell(8),{formula:(k==="支出"?"F"+row+"-G"+row:"G"+row+"-F"+row)},{nf:"#,##0;[Red]-#,##0",h:"right",bd:true});
+   cell(rw.getCell(9),{formula:"IF(F"+row+"=0,0,G"+row+"/F"+row+")"},{nf:"0%",h:"center",bd:true});
+   cell(rw.getCell(10),it.note,{wrap:true,bd:true,size:10});cell(rw.getCell(11),ent.length?("共 "+ent.length+" 筆："+sum):"尚無登記",{wrap:true,bd:true,size:10,color:(ent.length?"FF1A2547":"FF8A90A8")});
+   rw.height=Math.max(30,Math.ceil(Math.max(String(it.note).length/22,String(sum).length/30))*15);row++;});
+  var last=row-1;
+  cell(ws.getCell("A"+row),"",{fill:LT,bd:true});ws.mergeCells("A"+row+":E"+row);cell(ws.getCell("A"+row),k+"合計",{bold:true,fill:LT,h:"right",bd:true});
+  ["F","G","H"].forEach(function(c){cell(ws.getCell(c+row),{formula:"SUM("+c+first+":"+c+last+")"},{bold:true,fill:LT,nf:"#,##0;[Red]-#,##0",h:"right",bd:true});});
+  cell(ws.getCell("I"+row),{formula:"IF(F"+row+"=0,0,G"+row+"/F"+row+")"},{bold:true,fill:LT,nf:"0%",h:"center",bd:true});
+  ["J","K"].forEach(function(c){cell(ws.getCell(c+row),"",{fill:LT,bd:true});});
+  if(k==="支出"){ws.addConditionalFormatting({ref:"H"+first+":H"+last,rules:[{type:"expression",formulae:["H"+first+"<0"],style:{font:{color:{argb:"FFC0392B"},bold:true},fill:{type:"pattern",pattern:"solid",bgColor:{argb:"FFFDE8E6"}}}}]});}
+  tot[k]=row;row+=2;});
+ ws.mergeCells("A"+row+":E"+row);cell(ws.getCell("A"+row),"收支結餘（收入－支出）",{bold:true,size:12,color:"FFFFFFFF",fill:NAVY,h:"right",bd:true});
+ ["F","G"].forEach(function(c){cell(ws.getCell(c+row),{formula:c+tot["收入"]+"-"+c+tot["支出"]},{bold:true,size:12,color:"FFFFFFFF",fill:NAVY,nf:"#,##0;-#,##0",h:"right",bd:true});});
+ ["H","I","J","K"].forEach(function(c){cell(ws.getCell(c+row),"",{fill:NAVY,bd:true});});
+ cell(ws.getCell("J"+row),"預算結餘應為 0；實際結餘＝已收入－已支出",{size:10,color:"FFFFFFFF",fill:NAVY,bd:true});
+ row+=2;ws.mergeCells("A"+row+":K"+row);cell(ws.getCell("A"+row),"會長：張金泉　　　執行長：陳信宏　　　秘書長：梁群儒　　　財務長：沈香君",{size:12,h:"center"});
+ row+=1;ws.mergeCells("A"+row+":K"+row);cell(ws.getCell("A"+row),"說明：預算依 115.10.11 常發會審核版「116 年度預算表」；實際金額由「收入明細」「支出明細」兩分頁自動加總，修改明細後本表同步更新。",{size:9,color:"FF6B7390",h:"center"});
+ wb.calcProperties={fullCalcOnLoad:true};
+ wb.xlsx.writeBuffer().then(function(buf){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));a.download="IAA116年度收支預算執行表_"+today+".xlsx";document.body.appendChild(a);a.click();document.body.removeChild(a);});
+};
 })();
 </script></body></html>
