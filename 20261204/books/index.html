@@ -34,7 +34,7 @@ h2{font-size:18px;margin:4px 0 8px}
 <h2 style="margin-top:16px" id="bft">新增預算項目</h2><div class="g2"><div><label>收支</label><select id="bk"><option>支出</option><option>收入</option></select></div><div><label>項目</label><input id="bi"></div><div><label>數量</label><input id="bq" type="number" value="1"></div><div><label>單位</label><input id="bu" value="式"></div><div><label>單價</label><input id="bp" type="number"></div></div><label>備註</label><input id="bn"><div class="row" style="margin-top:12px"><button id="bs">儲存預算項目</button><button class="g" id="bc" hidden>取消</button></div><div class="msg" id="m3"></div></div>
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
-<script>
+<script>if(window.top===window){location.replace("../finance/?t=books");}
 (function(){
 var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",bud=[],led=[],tab=1,eid=null,bid=null;
 function $(i){return document.getElementById(i);}
@@ -164,5 +164,6 @@ $("xls").onclick=function(){
  wb.calcProperties={fullCalcOnLoad:true};
  wb.xlsx.writeBuffer().then(function(buf){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));a.download="IAA116年度收支預算執行表_"+today+".xlsx";document.body.appendChild(a);a.click();document.body.removeChild(a);});
 };
+try{var sp=window.sessionStorage.getItem("iaa_fin_pw");if(sp){$("pw").value=sp;$("go").onclick();}}catch(e){}
 })();
 </script></body></html>
