@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>IAA 人資組後台</title>
+<style>
+:root{--ink:#1a2547;--mut:#6b7390;--line:#e2e6f0;--pk:#B3267F;--bg:#f5f6fb;--ok:#2E7D6B;--bad:#c0392b;--wr:#d98a00}
+*{box-sizing:border-box}body{margin:0;font:17px/1.55 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink)}
+.w{max-width:1040px;margin:0 auto;padding:16px}h1{font-size:25px;margin:8px 0 2px}.sub{color:var(--mut);font-size:15px;margin:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+input,select,button,textarea{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700}button.g{background:#fff;color:var(--ink);border-color:var(--line)}button.ok{background:var(--ok);border-color:var(--ok)}button.s{padding:5px 10px;font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tabs button{background:#fff;color:var(--ink);border-color:var(--line)}.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.sum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px}.sum small{color:var(--mut);display:block;font-size:14px}.sum b{font-size:24px}
+.role{background:#EEF3FF;border:1px solid #C9D8F5;border-radius:12px;padding:10px 14px;font-size:15px;line-height:1.8}
+table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);font-size:15px;vertical-align:top}th{color:var(--mut);font-weight:500}.sc{overflow-x:auto}
+.tag{display:inline-block;border-radius:999px;padding:0 9px;font-size:13px;font-weight:700;color:#fff;white-space:nowrap}.s-a{background:#8a90a8}.s-b{background:var(--wr)}.s-c{background:#1F5FBF}.s-d{background:var(--ok)}.s-e{background:var(--bad)}.s-f{background:#6b7390}
+.fee{font-size:13px;color:var(--mut)}.fee b.o{color:var(--ok)}.fee b.w{color:var(--wr)}
+.reg{border-left:6px solid var(--pk);padding-left:12px;margin:16px 0 6px;font-size:19px;font-weight:700}.chp{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}.chp h3{margin:0 0 6px;font-size:17px}.chp h3 span{font-weight:400;color:var(--mut);font-size:14px}
+.pp{display:inline-flex;gap:6px;align-items:center;background:#f3f5fb;border-radius:10px;padding:4px 10px;margin:3px 6px 3px 0;font-size:15px;cursor:pointer}
+.msg{min-height:22px;color:var(--mut);font-size:14px}.err{color:var(--bad)}
+.f label{display:block;font-weight:700;font-size:14px;margin:8px 0 3px}.f .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}.f input,.f select{width:100%}
+textarea{width:100%;min-height:240px;font-size:15px}
+h2{font-size:18px;margin:4px 0 8px}
+</style></head><body><div class="w">
+<h1>人資組後台</h1><p class="sub">IAA 第四屆・新會友與原退會會友的邀約、入會、繳費追蹤</p>
+<div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="人資組密碼" autocomplete="current-password"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
+<div id="app" hidden>
+<div class="role"><b>責任分工</b><br>・<b>社召集人</b>：負責聯繫該社的新會友與原退會會友，回報邀約結果與繳費。<br>・<b>區總召</b>：督導所轄各社的進度。<br>・<b>人資長（李敏妃）與副人資長</b>：統籌名單、辦理入會作業（按「完成入會」才會進入會友名冊）。<br>・<b>財務長</b>：審核入會費與常年會費，確認後才算已繳。</div>
+<div class="sum" id="sum" style="margin-top:12px"></div>
+<div class="card"><div class="row tabs"><button id="t1" class="on">責任分配</button><button id="t2">全部名單</button><button id="t3">新增／編輯</button><button id="t4">產生分派訊息</button>
+<select id="fr" style="margin-left:auto"><option value="">全部區域</option><option>北區</option><option>中區</option><option>南區</option></select></div></div>
+<div id="v1"></div>
+<div class="card sc" id="v2" hidden><div class="row" style="margin-bottom:8px"><select id="fs"><option value="">全部進度</option><option>待邀請</option><option>邀請中</option><option>已同意</option><option>已入會</option><option>婉拒</option><option>暫緩</option></select><select id="fk"><option value="">新會友＋回歸</option><option>新會友</option><option>回歸</option></select></div>
+<table><thead><tr><th>姓名</th><th>社別／負責</th><th>類別</th><th>進度</th><th>繳費（入會費／常年會費）</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="card f" id="v3" hidden><h2 id="et">新增名單</h2>
+<div class="g2"><div><label>姓名</label><input id="en"></div><div><label>社別</label><select id="ec"></select></div><div><label>類別</label><select id="ek"><option>新會友</option><option>回歸</option></select></div><div><label>進度</label><select id="es"><option>待邀請</option><option>邀請中</option><option>已同意</option><option>已入會</option><option>婉拒</option><option>暫緩</option></select></div></div>
+<div class="g2"><div><label>來源</label><input id="eo" placeholder="例如 創新獎得獎者／會友推薦"></div><div><label>邀約人</label><input id="ei" placeholder="預設為該社召集人"></div><div><label>邀約日期</label><input id="ed" type="date"></div></div>
+<label>備註</label><input id="eb" maxlength="300"><div class="row" style="margin-top:12px"><button id="sv">儲存</button><button class="g" id="cx">清除</button></div><div class="msg" id="m1"></div></div>
+<div class="card" id="v4" hidden><h2>產生給召集人／總召的分派訊息</h2><div class="row"><select id="ms"></select><button id="mk">產生</button><button class="g" id="cp">複製</button></div><textarea id="mt" style="margin-top:10px"></textarea><div class="msg" id="m4"></div></div>
+<div class="card f" id="pd" hidden><h2 id="pt">代為回報繳費</h2><div class="g2"><div><label>項目</label><select id="pf"><option>入會費</option><option>常年會費</option></select></div><div><label>方式</label><select id="pm"><option>匯款</option><option>現金</option></select></div><div><label>金額</label><input id="pa" type="number"></div><div><label>匯款後5碼</label><input id="pl" maxlength="5"></div><div><label>日期</label><input id="pe" type="date"></div></div><label>備註</label><input id="pn" maxlength="100"><div class="row" style="margin-top:12px"><button id="ps">送出給財務長審核</button><button class="g" id="pc">取消</button></div><div class="msg" id="m5"></div></div>
+</div></div>
+<script>
+(function(){
+var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",rows=[],tab=1,eid=null,pname="";
+var NS=["基隆社","台北社","宜蘭社","桃園社","新竹社","苗栗社","台中社","彰化社","南投社","雲林社","嘉義社","南瀛社","台南市社","高雄社","屏東社"];
+var REG={"北區":["基隆社","台北社","宜蘭社","桃園社","新竹社"],"中區":["苗栗社","台中社","彰化社","南投社"],"南區":["雲林社","嘉義社","南瀛社","台南市社","高雄社","屏東社"]};
+var LEAD={},CONV={};
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function call(fn,body,cb){body.p=pw;var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
+ x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
+function sc(s){return {"待邀請":"s-a","邀請中":"s-b","已同意":"s-c","已入會":"s-d","婉拒":"s-e","暫緩":"s-f"}[s]||"s-a";}
+function fee(r){function f(v){return v==="已確認"?'<b class="o">已確認</b>':(v==="待審核"?'<b class="w">待審核</b>':v);}return '<span class="fee">'+f(r.entry_fee)+' ／ '+f(r.annual_fee)+'</span>';}
+function load(cb){call("iaa_hr_list",{},function(ok,l){if(ok===false||l===null){cb(false);return;}rows=l;rows.forEach(function(r){if(r.convener){CONV[r.chapter]=r.convener;}if(r.region_lead){LEAD[r.region]=r.region_lead;}});draw();cb(true);});}
+function vis(){var rg=$("fr").value;return rows.filter(function(r){return rg===""||r.region===rg;});}
+function draw(){
+ var v=vis(),c={n:0,a:0,j:0,d:0,pf:0};
+ v.forEach(function(r){c.n+=1;if(r.status==="待邀請"||r.status==="邀請中"){c.a+=1;}if(r.status==="已同意"){c.j+=1;}if(r.status==="已入會"){c.d+=1;}if(r.status==="已入會"&&(r.annual_fee==="已確認"?false:true)){c.pf+=1;}});
+ $("sum").innerHTML='<div><small>名單總數</small><b>'+c.n+'</b></div><div><small>待邀請／邀請中</small><b>'+c.a+'</b></div><div><small>已同意（待入會）</small><b>'+c.j+'</b></div><div><small>已入會</small><b>'+c.d+'</b></div><div><small>已入會、年費未確認</small><b>'+c.pf+'</b></div>';
+ var h="";
+ Object.keys(REG).forEach(function(rg){if($("fr").value===""||$("fr").value===rg){}else{return;}
+  h+='<div class="reg">'+rg+'　<span style="font-weight:400;font-size:15px">區總召：'+esc(LEAD[rg]||"待指定")+'</span></div>';
+  REG[rg].forEach(function(ch){var l=rows.filter(function(r){return r.chapter===ch;});
+   h+='<div class="chp"><h3>'+ch+' <span>召集人：'+esc(CONV[ch]||"尚未指定（由人資長統籌）")+'・'+l.length+' 位</span></h3>'+(l.length?l.map(function(r){return '<span class="pp" data-id="'+r.id+'">'+esc(r.name)+' <span class="tag '+sc(r.status)+'">'+esc(r.status)+'</span> <small>'+(r.kind==="回歸"?"回歸":"新")+'</small> '+fee(r)+'</span>';}).join(""):'<span class="fee">目前沒有名單</span>')+'</div>';});});
+ $("v1").innerHTML=h;
+ var fs=$("fs").value,fk=$("fk").value;
+ var list=v.filter(function(r){return (fs===""||r.status===fs)&&(fk===""||r.kind===fk);});
+ $("tb").innerHTML=list.map(function(r){var act='<button class="s g" data-a="e" data-id="'+r.id+'">編輯</button>';
+  if(r.status==="已同意"||(r.status==="邀請中"&&false)){act+=' <button class="s ok" data-a="j" data-id="'+r.id+'">完成入會</button>';}
+  if(r.status==="已入會"){act+=' <button class="s g" data-a="p" data-id="'+r.id+'">代回報繳費</button>';}
+  return '<tr><td><b>'+esc(r.name)+'</b><br><small style="color:#6b7390">'+esc(r.source)+'</small></td><td>'+esc(r.chapter)+'<br><small style="color:#6b7390">召集人 '+esc(r.convener||"—")+'／總召 '+esc(r.region_lead||"—")+'</small></td><td>'+esc(r.kind)+'</td><td><span class="tag '+sc(r.status)+'">'+esc(r.status)+'</span></td><td>'+fee(r)+'</td><td>'+act+'</td></tr>';}).join("")||'<tr><td colspan="6" style="color:#6b7390">沒有資料</td></tr>';
+}
+function opts(){$("ec").innerHTML='<option value="">請選擇社別</option>'+NS.map(function(c){return '<option>'+c+'</option>';}).join("");
+ $("ms").innerHTML=Object.keys(REG).map(function(r){return '<option value="R:'+r+'">'+r+'總召（全區）</option>';}).join("")+NS.map(function(c){return '<option value="C:'+c+'">'+c+'召集人</option>';}).join("");}
+function show(n){tab=n;["t1","t2","t3","t4"].forEach(function(id,i){$(id).className=(i+1===n)?"on":"";});$("v1").hidden=(n===1)?false:true;$("v2").hidden=(n===2)?false:true;$("v3").hidden=(n===3)?false:true;$("v4").hidden=(n===4)?false:true;$("pd").hidden=true;}
+["t1","t2","t3","t4"].forEach(function(id,i){$(id).onclick=function(){show(i+1);};});
+$("fr").onchange=draw;$("fs").onchange=draw;$("fk").onchange=draw;
+$("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";load(function(ok){if(ok){$("lg").hidden=true;$("app").hidden=false;opts();var q=new URLSearchParams(location.search);if(q.get("region")){$("fr").value=q.get("region");draw();}$("pe").value=new Date(Date.now()+288e5).toISOString().slice(0,10);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
+$("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
+function byId(id){return rows.filter(function(r){return r.id===id;})[0];}
+function edit(id){var r=byId(id);if(r===undefined){return;}eid=id;$("en").value=r.name;$("ec").value=r.chapter;$("ek").value=r.kind;$("es").value=r.status;$("eo").value=r.source;$("ei").value=r.inviter;$("ed").value=r.invited_date||"";$("eb").value=r.note;$("et").textContent="編輯：「"+r.name+"」";show(3);window.scrollTo(0,0);}
+$("v1").onclick=function(e){var el=e.target;while(el&&el.getAttribute&&el.getAttribute("data-id")===null){el=el.parentNode;}if(el&&el.getAttribute){edit(parseInt(el.getAttribute("data-id"),10));}};
+$("tb").onclick=function(e){var a=e.target.getAttribute("data-a"),id=parseInt(e.target.getAttribute("data-id"),10);if(a===null){return;}
+ if(a==="e"){edit(id);return;}
+ if(a==="j"){call("iaa_hr_join",{i:id},function(ok,j){if(ok){window.alert(j);load(function(){});}else{window.alert((j&&j.message)?j.message:"失敗");}});return;}
+ if(a==="p"){var r=byId(id);pname=r.name;$("pt").textContent="代為回報繳費：「"+pname+"」";$("pa").value=$("pf").value==="入會費"?1000:6000;$("m5").textContent="";$("pd").hidden=false;$("pd").scrollIntoView();}};
+$("pf").onchange=function(){$("pa").value=$("pf").value==="入會費"?1000:6000;};
+$("pc").onclick=function(){$("pd").hidden=true;};
+$("ps").onclick=function(){$("m5").className="msg";call("iaa_hr_dues",{n:pname,ft:$("pf").value,m:$("pm").value,amt:parseInt($("pa").value||"0",10),l5:$("pl").value,d:$("pe").value||null,nt:$("pn").value},function(ok,j){
+ if(ok){$("m5").textContent="已送出，等財務長審核確認後會顯示「已確認」";$("pl").value="";load(function(){});}else{$("m5").className="msg err";$("m5").textContent=(j&&j.message)?j.message:"送出失敗";}});};
+function clr(){eid=null;$("en").value="";$("ec").value="";$("eo").value="";$("ei").value="";$("ed").value="";$("eb").value="";$("es").value="待邀請";$("ek").value="新會友";$("et").textContent="新增名單";$("m1").textContent="";}
+$("cx").onclick=clr;
+$("sv").onclick=function(){$("m1").className="msg";if($("en").value.trim()===""||$("ec").value===""){$("m1").className="msg err";$("m1").textContent="姓名與社別必填";return;}
+ call("iaa_hr_save",{i:eid,n:$("en").value,c:$("ec").value,k:$("ek").value,s:$("eo").value,iv:$("ei").value,st:$("es").value,nt:$("eb").value,d:$("ed").value||null},function(ok,j){
+  if(ok){$("m1").textContent="已儲存："+$("en").value+"。若進度為「已同意」，請在全部名單按「完成入會」。";clr();load(function(){});}else{$("m1").className="msg err";$("m1").textContent=(j&&j.message)?(j.message.indexOf("duplicate")>=0?"名單已有同名者，請用編輯":j.message):"儲存失敗";}});};
+function build(){var v=$("ms").value,isR=v.slice(0,2)==="R:",nm=v.slice(2),list=rows.filter(function(r){return isR?r.region===nm:r.chapter===nm;});
+ var who=isR?(LEAD[nm]||"總召"):(CONV[nm]||"召集人"),t=who+(isR?" 總召":" 召集人")+"您好，以下是"+nm+(isR?"所轄各社":"")+"需要您協助跟進的新會友與原退會會友名單（人資組 "+new Date(Date.now()+288e5).toISOString().slice(0,10)+"）：\n";
+ ["待邀請","邀請中","已同意","已入會"].forEach(function(st){var l=list.filter(function(r){return r.status===st;});if(l.length===0){return;}
+  t+="\n【"+(st==="待邀請"?"請協助邀約":(st==="邀請中"?"邀約中，請回報結果":(st==="已同意"?"已同意，待人資辦入會":"已入會，請提醒繳費")))+"】\n";
+  l.forEach(function(r){t+="・"+r.name+(isR?"（"+r.chapter+"）":"")+"（"+(r.kind==="回歸"?"原退會":"新會友")+"）"+(st==="已入會"?"　入會費："+r.entry_fee+"、年費："+r.annual_fee:"")+"\n";});});
+ if(list.length===0){t+="\n目前沒有名單。\n";}
+ t+="\n請在聯繫後回覆結果（同意／婉拒／再考慮）給人資長李敏妃。繳費請至：https://ericliang680928.github.io/IAA/20261204/dues/ 回報，財務長審核後才會顯示已繳。謝謝🙏";$("mt").value=t;}
+$("mk").onclick=build;
+$("cp").onclick=function(){$("mt").select();try{document.execCommand("copy");$("m4").textContent="已複製";}catch(e){$("m4").textContent="請手動複製";}};
+})();
+</script></body></html>
