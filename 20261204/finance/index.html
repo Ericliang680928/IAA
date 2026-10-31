@@ -44,6 +44,7 @@ function draw(){
  var list=rows.filter(function(r){return tab===1?r.status==="待審核":true;});
  $("tb").innerHTML=list.length?list.map(function(r){
   var act=r.status==="待審核"?'<button class="s ok" data-a="ok" data-id="'+r.id+'">確認</button> <button class="s no" data-a="no" data-id="'+r.id+'">退回</button>':'<button class="s g" data-a="re" data-id="'+r.id+'">改回待審</button>';
+  act+=' <button class="s g" data-a="ed" data-id="'+r.id+'">修改</button>';
   return '<tr><td><b>'+esc(r.member_name)+'</b><br><small>'+esc(r.fee_type||'常年會費')+'</small></td><td>'+esc(r.method)+'</td><td>'+(r.amount==null?"":r.amount.toLocaleString())+'</td><td>'+esc(r.last5)+'</td><td class="hm">'+esc(r.paid_date||"")+'</td><td class="hm">'+esc(r.note)+(r.review_note?'<br><small>審核備註：'+esc(r.review_note)+'</small>':'')+'</td><td><span class="pill '+pc(r.status)+'">'+esc(r.status)+'</span></td><td>'+act+'</td></tr>';}).join(""):'<tr><td colspan="8" style="color:#6b7390">沒有資料</td></tr>';
  var un=mem.filter(function(m){return (paid[m.name]===1)===false;});
  $("unp").innerHTML='<b>尚未確認繳費（'+un.length+' 位）</b><div class="chips">'+un.map(function(m){return '<span>'+esc(m.name)+'・'+esc(m.chapter.replace("社",""))+'</span>';}).join("")+'</div>';
@@ -56,6 +57,11 @@ $("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";
   load(function(ok2){if(ok2){$("lg").hidden=true;$("app").hidden=false;$("ad").value=new Date(Date.now()+288e5).toISOString().slice(0,10);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
 $("tb").onclick=function(e){var a=e.target.getAttribute("data-a"),id=e.target.getAttribute("data-id");if(a===null){return;}
+ if(a==="ed"){var rr=rows.filter(function(x){return String(x.id)===id;})[0];if(rr===undefined){return;}
+  var na=window.prompt("修改「"+rr.member_name+"」的金額（元）",String(rr.amount));if(na===null){return;}
+  var nv=parseInt(na,10);if(isNaN(nv)||nv<=0){window.alert("金額格式不正確");return;}
+  var nf=window.prompt("繳費項目：輸入 1＝常年會費，2＝入會費",(rr.fee_type||"常年會費")==="入會費"?"2":"1");if(nf===null){return;}
+  call("POST","rpc/iaa_dues_edit",{p:pw,i:parseInt(id,10),amt:nv,ft:nf.trim()==="2"?"入會費":"常年會費",m:rr.method,l5:rr.last5||"",d:rr.paid_date||null,nt:rr.note||""},function(ok,j){if(ok){load(function(){});}else{window.alert((j&&j.message)?j.message:"修改失敗");}});return;}
  var s=a==="ok"?"已確認":(a==="no"?"退回":"待審核"),rn="";
  if(a==="no"){rn=window.prompt("退回原因（會顯示給會友，可留空）","")||"";}
  call("POST","rpc/iaa_dues_review",{p:pw,i:parseInt(id,10),s:s,rn:rn},function(ok){if(ok){load(function(){});}else{window.alert("操作失敗");}});};
