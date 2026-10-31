@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>IAA 財務長工作後台</title>
+<style>
+:root{--ink:#1a2547;--mut:#6b7390;--line:#e2e6f0;--pk:#B3267F;--bg:#f5f6fb;--ok:#2E7D6B;--bad:#c0392b;--wr:#d98a00}
+*{box-sizing:border-box}body{margin:0;font:17px/1.55 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink)}
+.w{max-width:1040px;margin:0 auto;padding:16px}h1{font-size:25px;margin:8px 0 2px}.sub{color:var(--mut);font-size:15px;margin:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;overflow-x:auto}
+input,select,button,textarea{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700}button.g{background:#fff;color:var(--ink);border-color:var(--line)}button.s{padding:5px 10px;font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{min-width:0}
+.tabs button{background:#fff;color:var(--ink);border-color:var(--line)}.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}.sum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px}.sum small{color:var(--mut);display:block;font-size:14px}.sum b{font-size:23px}.sum em{font-style:normal;font-size:14px;color:var(--mut)}
+table{width:100%;border-collapse:collapse;min-width:640px}th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);font-size:15px;vertical-align:top}th{color:var(--mut);font-weight:500}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.tot td{font-weight:700;border-top:2px solid var(--ink)}tr.vd td{opacity:.45;text-decoration:line-through}
+.bar{height:9px;background:#e9ecf5;border-radius:6px;overflow:hidden;min-width:70px}.bar i{display:block;height:100%;background:var(--ok)}
+.tag{display:inline-block;border-radius:999px;padding:0 9px;font-size:13px;font-weight:700;color:#fff}.t-ok{background:var(--ok)}.t-bad{background:var(--bad)}.t-wr{background:var(--wr)}.t-n{background:#8a90a8}
+.msg{min-height:22px;color:var(--mut);font-size:14px}.err{color:var(--bad)}.warn{background:#FFF5DB;border:1px solid #F0D9A8;border-radius:12px;padding:10px 12px;font-size:14px}
+.f label{display:block;font-weight:700;font-size:14px;margin:8px 0 3px}.f .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}.f input,.f select{width:100%}
+h2{font-size:18px;margin:4px 0 8px}
+</style></head><body><div class="w">
+<h1>財務長工作後台</h1><p class="sub">IAA 第四屆（民國 116 年／2027）收支登記與預算對照</p>
+<div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="財務長密碼" autocomplete="current-password"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
+<div id="app" hidden>
+<div class="warn" style="margin-top:12px">預算依 115.10.11 常發會審核版「116 年度預算表」建入，若預算案後續有調整，請到「預算項目」分頁修改。本頁資料只有登入後看得到，不會公開。</div>
+<div class="sum" id="sum" style="margin-top:12px"></div>
+<div class="card"><div class="row tabs"><button id="t1" class="on">預算對照</button><button id="t2">記一筆</button><button id="t3">流水帳</button><button id="t4">預算項目</button><button class="g" id="csv" style="margin-left:auto">匯出流水帳 CSV</button></div></div>
+<div class="card" id="v1"></div>
+<div class="card f" id="v2" hidden><h2 id="ft">記一筆收支</h2>
+<div class="g2"><div><label>日期</label><input id="fd" type="date"></div><div><label>收支</label><select id="fk"><option>支出</option><option>收入</option></select></div><div><label>預算科目</label><select id="fb"></select></div><div><label>金額（元）</label><input id="fa" type="number" inputmode="numeric" min="0"></div></div>
+<div class="g2"><div><label>摘要／用途</label><input id="fs" maxlength="200" placeholder="例如 第一次例會場地費"></div><div><label>付款方式</label><select id="fm"><option>匯款</option><option>現金</option><option>轉帳</option><option>其他</option></select></div><div><label>對象（付給誰／誰付）</label><input id="fc" maxlength="100"></div><div><label>憑證（收據／發票號）</label><input id="fv" maxlength="100"></div></div>
+<label>備註</label><input id="fn" maxlength="300"><div class="row" style="margin-top:12px"><button id="sv">儲存</button><button class="g" id="cx" hidden>取消編輯</button></div><div class="msg" id="m1"></div></div>
+<div class="card" id="v3" hidden><div class="row" style="margin-bottom:8px"><select id="lf"><option value="">全部科目</option></select><select id="lk"><option value="">收入＋支出</option><option>收入</option><option>支出</option></select><button class="g" id="imp">匯入已確認會費</button><span class="msg" id="m2"></span></div><table><thead><tr><th>日期</th><th>收支</th><th>科目</th><th>摘要</th><th class="n">金額</th><th>方式</th><th>憑證</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="card f" id="v4" hidden><h2>預算項目（數量 × 單價 ＝ 預算金額）</h2><table><thead><tr><th>收支</th><th>項目</th><th class="n">數量</th><th>單位</th><th class="n">單價</th><th class="n">金額</th><th>備註</th><th></th></tr></thead><tbody id="bt"></tbody></table>
+<h2 style="margin-top:16px" id="bft">新增預算項目</h2><div class="g2"><div><label>收支</label><select id="bk"><option>支出</option><option>收入</option></select></div><div><label>項目</label><input id="bi"></div><div><label>數量</label><input id="bq" type="number" value="1"></div><div><label>單位</label><input id="bu" value="式"></div><div><label>單價</label><input id="bp" type="number"></div></div><label>備註</label><input id="bn"><div class="row" style="margin-top:12px"><button id="bs">儲存預算項目</button><button class="g" id="bc" hidden>取消</button></div><div class="msg" id="m3"></div></div>
+</div></div>
+<script>
+(function(){
+var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",bud=[],led=[],tab=1,eid=null,bid=null;
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function N(x){return Math.round(Number(x||0)).toLocaleString();}
+function call(fn,body,cb){body.p=pw;var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
+ x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
+function bname(id){var r=bud.filter(function(b){return b.id===id;})[0];return r?r.item:"（未歸類）";}
+function load(cb){call("iaa_fin_overview",{f:116},function(ok,b){if(ok===false||b===null){cb(false);return;}bud=b;
+ call("iaa_ledger_list",{f:116},function(ok2,l){if(ok2===false||l===null){cb(false);return;}led=l;draw();cb(true);});});}
+function draw(){
+ var ie=0,ia=0,oe=0,oa=0,html="";
+ bud.forEach(function(b){if(b.kind==="收入"){ie+=Number(b.amount);ia+=Number(b.actual);}else{oe+=Number(b.amount);oa+=Number(b.actual);}});
+ $("sum").innerHTML='<div><small>收入　實際／預算</small><b>'+N(ia)+'</b> <em>／ '+N(ie)+'（'+(ie?Math.round(ia/ie*100):0)+'%）</em></div><div><small>支出　實際／預算</small><b>'+N(oa)+'</b> <em>／ '+N(oe)+'（'+(oe?Math.round(oa/oe*100):0)+'%）</em></div><div><small>目前結餘（實收－實支）</small><b>'+N(ia-oa)+'</b></div><div><small>預算支出尚餘</small><b style="color:'+((oe-oa)<0?'#c0392b':'#2E7D6B')+'">'+N(oe-oa)+'</b></div>';
+ function part(kind){var rows=bud.filter(function(b){return b.kind===kind;}),ta=0,tb=0,h='<h2>'+kind+'預算對照</h2><table><thead><tr><th>項目</th><th class="n">預算</th><th class="n">實際</th><th class="n">'+(kind==="支出"?"尚餘":"差額")+'</th><th>進度</th><th>狀態</th></tr></thead><tbody>';
+  rows.forEach(function(b){var a=Number(b.actual),e=Number(b.amount),pc=e?a/e*100:(a>0?100:0),tg;ta+=a;tb+=e;
+   if(kind==="支出"){tg=a>e?'<span class="tag t-bad">超出預算</span>':(pc>=90?'<span class="tag t-wr">接近上限</span>':(a===0?'<span class="tag t-n">尚未支用</span>':'<span class="tag t-ok">範圍內</span>'));}
+   else{tg=a>=e?'<span class="tag t-ok">已達成</span>':(a===0?'<span class="tag t-n">尚未收入</span>':'<span class="tag t-wr">進行中</span>');}
+   var d=kind==="支出"?e-a:a-e;
+   h+='<tr><td><b>'+esc(b.item)+'</b><br><small style="color:#6b7390">'+N(b.qty)+esc(b.unit)+' × '+N(b.unit_price)+'・'+b.cnt+' 筆</small></td><td class="n">'+N(e)+'</td><td class="n">'+N(a)+'</td><td class="n" style="color:'+(kind==="支出"&&d<0?'#c0392b':'inherit')+'">'+N(d)+'</td><td><div class="bar"><i style="width:'+Math.min(pc,100)+'%;background:'+(kind==="支出"&&a>e?'#c0392b':(pc>=90&&kind==="支出"?'#d98a00':'#2E7D6B'))+'"></i></div><small>'+Math.round(pc)+'%</small></td><td>'+tg+'</td></tr>';});
+  var td=kind==="支出"?tb-ta:ta-tb;
+  return h+'<tr class="tot"><td>'+kind+'合計</td><td class="n">'+N(tb)+'</td><td class="n">'+N(ta)+'</td><td class="n">'+N(td)+'</td><td></td><td></td></tr></tbody></table>';}
+ $("v1").innerHTML=part("收入")+'<div style="height:18px"></div>'+part("支出");
+ // selects
+ fillB();
+ var lf=$("lf"),cur=lf.value;lf.innerHTML='<option value="">全部科目</option>'+bud.map(function(b){return '<option value="'+b.id+'">'+esc(b.kind)+'・'+esc(b.item)+'</option>';}).join("")+'<option value="none">（未歸類）</option>';lf.value=cur;
+ var lk=$("lk").value,lfv=lf.value;
+ var list=led.filter(function(r){return (lk===""||r.kind===lk)&&(lfv===""||(lfv==="none"?r.budget_id===null:String(r.budget_id)===lfv));});
+ $("tb").innerHTML=list.length?list.map(function(r){return '<tr class="'+(r.voided?"vd":"")+'"><td>'+esc(r.entry_date)+'</td><td>'+esc(r.kind)+'</td><td>'+esc(bname(r.budget_id))+'</td><td>'+esc(r.description)+(r.counterparty?'<br><small style="color:#6b7390">'+esc(r.counterparty)+(r.note?'・'+esc(r.note):'')+'</small>':'')+'</td><td class="n">'+N(r.amount)+'</td><td>'+esc(r.method)+'</td><td>'+esc(r.voucher)+'</td><td><button class="s g" data-a="e" data-id="'+r.id+'">編輯</button> <button class="s g" data-a="v" data-id="'+r.id+'">'+(r.voided?"取消作廢":"作廢")+'</button></td></tr>';}).join(""):'<tr><td colspan="8" style="color:#6b7390">沒有紀錄</td></tr>';
+ $("bt").innerHTML=bud.map(function(b){return '<tr><td>'+esc(b.kind)+'</td><td>'+esc(b.item)+'</td><td class="n">'+N(b.qty)+'</td><td>'+esc(b.unit)+'</td><td class="n">'+N(b.unit_price)+'</td><td class="n">'+N(b.amount)+'</td><td><small>'+esc(b.note)+'</small></td><td><button class="s g" data-id="'+b.id+'">編輯</button></td></tr>';}).join("");
+}
+function fillB(){var k=$("fk").value,cur=$("fb").value;$("fb").innerHTML='<option value="">（未歸類）</option>'+bud.filter(function(b){return b.kind===k;}).map(function(b){return '<option value="'+b.id+'">'+esc(b.item)+'</option>';}).join("");$("fb").value=cur;}
+$("fk").onchange=function(){$("fb").value="";fillB();};
+function show(n){tab=n;["t1","t2","t3","t4"].forEach(function(id,i){$(id).className=(i+1===n)?"on":"";});$("v1").hidden=(n===1)?false:true;$("v2").hidden=(n===2)?false:true;$("v3").hidden=(n===3)?false:true;$("v4").hidden=(n===4)?false:true;}
+["t1","t2","t3","t4"].forEach(function(id,i){$(id).onclick=function(){show(i+1);};});
+$("lf").onchange=draw;$("lk").onchange=draw;
+$("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";load(function(ok){if(ok){$("lg").hidden=true;$("app").hidden=false;$("fd").value=new Date(Date.now()+288e5).toISOString().slice(0,10);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
+$("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
+function clr(){eid=null;$("fa").value="";$("fs").value="";$("fc").value="";$("fv").value="";$("fn").value="";$("ft").textContent="記一筆收支";$("cx").hidden=true;}
+$("cx").onclick=clr;
+$("sv").onclick=function(){var a=$("fa").value,s=$("fs").value.trim();$("m1").className="msg";
+ if(a===""||s===""||$("fd").value===""){$("m1").className="msg err";$("m1").textContent="日期、摘要、金額必填";return;}
+ var b=$("fb").value;
+ call("iaa_ledger_save",{i:eid,d:$("fd").value,k:$("fk").value,b:b===""?null:parseInt(b,10),ds:s,a:Number(a),m:$("fm").value,cp:$("fc").value,v:$("fv").value,nt:$("fn").value},function(ok,j){
+  if(ok){$("m1").textContent="已儲存："+s;clr();load(function(){});}else{$("m1").className="msg err";$("m1").textContent=(j&&j.message)?j.message:"儲存失敗";}});};
+$("tb").onclick=function(e){var a=e.target.getAttribute("data-a"),id=parseInt(e.target.getAttribute("data-id"),10);if(a===null){return;}
+ var r=led.filter(function(x){return x.id===id;})[0];if(r===undefined){return;}
+ if(a==="v"){call("iaa_ledger_void",{i:id,v:r.voided?false:true},function(ok){if(ok){load(function(){});}});return;}
+ eid=id;$("fd").value=r.entry_date;$("fk").value=r.kind;fillB();$("fb").value=r.budget_id===null?"":String(r.budget_id);$("fa").value=r.amount;$("fs").value=r.description;$("fm").value=r.method||"其他";$("fc").value=r.counterparty;$("fv").value=r.voucher;$("fn").value=r.note;
+ $("ft").textContent="編輯紀錄 #"+id;$("cx").hidden=false;show(2);window.scrollTo(0,0);};
+$("imp").onclick=function(){$("m2").textContent="匯入中…";call("iaa_ledger_import_dues",{},function(ok,j){if(ok){$("m2").textContent="已匯入 "+j+" 筆已確認會費";load(function(){});}else{$("m2").textContent="匯入失敗";}});};
+$("bt").onclick=function(e){var id=parseInt(e.target.getAttribute("data-id"),10);if(isNaN(id)){return;}var b=bud.filter(function(x){return x.id===id;})[0];if(b===undefined){return;}
+ bid=id;$("bk").value=b.kind;$("bi").value=b.item;$("bq").value=b.qty;$("bu").value=b.unit;$("bp").value=b.unit_price;$("bn").value=b.note;$("bft").textContent="編輯預算項目：金額＝數量×單價";$("bc").hidden=false;window.scrollTo(0,document.body.scrollHeight);};
+$("bc").onclick=function(){bid=null;$("bi").value="";$("bp").value="";$("bn").value="";$("bq").value="1";$("bft").textContent="新增預算項目";$("bc").hidden=true;};
+$("bs").onclick=function(){if($("bi").value.trim()===""||$("bp").value===""){$("m3").className="msg err";$("m3").textContent="項目與單價必填";return;}
+ call("iaa_budget_save",{i:bid,k:$("bk").value,it:$("bi").value.trim(),q:Number($("bq").value||1),u:$("bu").value||"式",up:Number($("bp").value),nt:$("bn").value},function(ok,j){
+  if(ok){$("m3").className="msg";$("m3").textContent="已儲存預算項目";$("bc").onclick();load(function(){});}else{$("m3").className="msg err";$("m3").textContent=(j&&j.message)?j.message:"儲存失敗";}});};
+$("csv").onclick=function(){var h=["日期","收支","科目","摘要","金額","方式","對象","憑證","備註","作廢"];
+ var t=[h].concat(led.map(function(r){return [r.entry_date,r.kind,bname(r.budget_id),r.description,r.amount,r.method,r.counterparty,r.voucher,r.note,r.voided?"是":""];}));
+ var s="﻿"+t.map(function(r){return r.map(function(c){return '"'+String(c==null?"":c).replace(/"/g,'""')+'"';}).join(",");}).join("\r\n");
+ var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/csv;charset=utf-8"}));a.download="IAA116年流水帳.csv";document.body.appendChild(a);a.click();document.body.removeChild(a);};
+})();
+</script></body></html>
