@@ -145,7 +145,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 
 <div class="card">
 <h2><i>5</i>會友名冊與回覆狀態</h2>
-<p class="legend"><span class="mc ok">已報名</span><span class="mc lv">請假</span><span class="mc">尚未回覆</span><span class="mc nw">新會友<span class="nw-b">NEW</span></span><span class="mc">回歸會友<span class="nw-b rt-b">回歸</span></span><span class="mc pd">已繳會費<span class="nw-b pd-b">已繳</span></span>點區名展開。</p>
+<p class="legend"><span class="mc ok">已報名</span><span class="mc lv">請假</span><span class="mc">尚未回覆</span><span class="mc nw">有望新會友<span class="nw-b">有望</span>（尚未入會）／已入會新會友<span class="nw-b">NEW</span></span><span class="mc">回歸會友<span class="nw-b rt-b">回歸</span></span><span class="mc pd">已繳會費<span class="nw-b pd-b">已繳</span></span>點區名展開。</p>
 <div class="pdn"><div>會費已確認繳費：<b id="pd-n">–</b> / <b id="pd-t">–</b> 位</div><div>※ 會友繳費（匯款或現金）後，需<b>由財務長審核確認</b>，確認完成才會在名字旁出現「已繳」標記，<b>並非即時更新</b>，請耐心等候。尚未回報者請至 <a href="../dues/">會費繳費回報</a> 填寫。</div></div><div id="roster"></div>
 </div>
 
@@ -279,7 +279,7 @@ function render(){
   var rh="";
   REGIONS.forEach(function(rg){
     var list=roster.filter(function(r){return r.region===rg;});if(!list.length){return;}
-    var a=0,l=0,chips=list.map(function(r){var p=people["m:"+r.name],cl="";if(p){if(p.st==="參加"){a++;cl=" ok";}else if(p.st==="請假"){l++;cl=" lv";}}var nw=NEWM[r.name]?" nw":"";if(PAID[r.name]){cl+=" pd";}return '<span class="mc'+cl+nw+'">'+esc(r.name)+(NEWM[r.name]?'<span class="nw-b">NEW</span>':'')+(RTN[r.name]?'<span class="nw-b rt-b">回歸</span>':'')+(PAID[r.name]?'<span class="nw-b pd-b">已繳</span>':'')+(r.chap?'<small style="opacity:.7">・'+esc(r.chap.replace("社",""))+'</small>':'')+'</span>';}).join("");
+    var a=0,l=0,chips=list.map(function(r){var p=people["m:"+r.name],cl="";if(p){if(p.st==="參加"){a++;cl=" ok";}else if(p.st==="請假"){l++;cl=" lv";}}var nw=NEWM[r.name]?" nw":"";if(PAID[r.name]){cl+=" pd";}return '<span class="mc'+cl+nw+'">'+esc(r.name)+(NEWM[r.name]?'<span class="nw-b">'+(PRO[r.name]?'有望':'NEW')+'</span>':'')+(RTN[r.name]?'<span class="nw-b rt-b">回歸</span>':'')+(PAID[r.name]?'<span class="nw-b pd-b">已繳</span>':'')+(r.chap?'<small style="opacity:.7">・'+esc(r.chap.replace("社",""))+'</small>':'')+'</span>';}).join("");
     rh+='<details'+(rg===REGIONS[0]?'':'')+'><summary><span>'+rg+'（'+list.length+' 人）</span><span class="note">已報名 '+a+'・請假 '+l+'・未回覆 '+(list.length-a-l)+'</span></summary><div class="chips">'+chips+'</div></details>';
   });
   $("roster").innerHTML=rh||'<p class="note">名冊讀取中…</p>';
@@ -296,7 +296,7 @@ function doSearch(){
   roster.forEach(function(r){if(r.name.indexOf(t)>=0){var p=people["m:"+r.name];hits.push({name:r.name,chap:r.chap,st:p?p.st:"",meal:p&&p.st==="參加"?p.meal:""});}});
   Object.keys(people).forEach(function(k){var p=people[k];if(p.kind!=="m"&&p.name.indexOf(t)>=0){hits.push({name:p.name,chap:p.kind==="g"?"來賓":"工作人員",st:p.st,meal:p.meal});}});
   if(!hits.length){box.innerHTML='<p class="note">找不到「'+esc(t)+'」。請確認姓名，或名冊尚在讀取中。</p>';return;}
-  box.innerHTML=hits.slice(0,10).map(function(h){return '<div class="it"><div><span class="nm">'+esc(h.name)+(NEWM[h.name]?'<span class="nw-b">NEW</span>':'')+(RTN[h.name]?'<span class="nw-b rt-b">回歸</span>':'')+(PAID[h.name]?'<span class="nw-b pd-b">已繳</span>':'')+'</span><span class="ch">'+esc(h.chap)+'</span></div><div>'+(h.meal?'<span class="note" style="margin-right:8px">晚宴：'+esc(h.meal)+'</span>':'')+chipFor(h.st)+'</div></div>';}).join("");
+  box.innerHTML=hits.slice(0,10).map(function(h){return '<div class="it"><div><span class="nm">'+esc(h.name)+(NEWM[h.name]?'<span class="nw-b">'+(PRO[h.name]?'有望':'NEW')+'</span>':'')+(RTN[h.name]?'<span class="nw-b rt-b">回歸</span>':'')+(PAID[h.name]?'<span class="nw-b pd-b">已繳</span>':'')+'</span><span class="ch">'+esc(h.chap)+'</span></div><div>'+(h.meal?'<span class="note" style="margin-right:8px">晚宴：'+esc(h.meal)+'</span>':'')+chipFor(h.st)+'</div></div>';}).join("");
 }
 
 function status(ok){
@@ -320,7 +320,7 @@ function loadPaid(){
     if(x.status===200&&l){PAID={};l.forEach(function(n){PAID[n]=1;});render();}};
   x.send("{}");
 }
-var RTN={},SBU="https://ahrgjhlfbrsfznvbokkf.supabase.co",SBK="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI";
+var RTN={},PRO={},SBU="https://ahrgjhlfbrsfznvbokkf.supabase.co",SBK="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI";
 function loadMembers(cb){
   var x=new XMLHttpRequest();
   x.open("GET",SBU+"/rest/v1/iaa_members?select=name,chapter,region,status,is_new&order=id");
@@ -329,7 +329,7 @@ function loadMembers(cb){
     var l=null;try{l=JSON.parse(x.responseText);}catch(e){l=null;}
     if(x.status===200&&l&&l.length){
       roster=l.map(function(m){return {name:m.name,chap:m.chapter,region:m.region};});
-      NEWM={};RTN={};l.forEach(function(m){if(m.is_new){NEWM[m.name]=1;}if(m.status==="回歸"){RTN[m.name]=1;}});
+      NEWM={};RTN={};PRO={};l.forEach(function(m){if(m.is_new){NEWM[m.name]=1;}if(m.status==='有望'){PRO[m.name]=1;}if(m.status==="回歸"){RTN[m.name]=1;}});
       byName={};roster.forEach(function(r){byName[r.name]=r;});loadedRoster=true;cb(true);
     }else{fallback(cb);}
   };
