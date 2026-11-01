@@ -47,13 +47,13 @@ function draw(){
   act+=' <button class="s g" data-a="ed" data-id="'+r.id+'">修改</button>';
   return '<tr><td><b>'+esc(r.member_name)+'</b><br><small>'+esc(r.fee_type||'常年會費')+'</small></td><td>'+esc(r.method)+'</td><td>'+(r.amount==null?"":r.amount.toLocaleString())+'</td><td>'+esc(r.last5)+'</td><td class="hm">'+esc(r.paid_date||"")+'</td><td class="hm">'+esc(r.note)+(r.review_note?'<br><small>審核備註：'+esc(r.review_note)+'</small>':'')+'</td><td><span class="pill '+pc(r.status)+'">'+esc(r.status)+'</span></td><td>'+act+'</td></tr>';}).join(""):'<tr><td colspan="8" style="color:#6b7390">沒有資料</td></tr>';
  var un=mem.filter(function(m){return (paid[m.name]===1)===false;});
- $("unp").innerHTML='<b>尚未確認繳費（'+un.length+' 位）</b><div class="chips">'+un.map(function(m){return '<span>'+esc(m.name)+'・'+esc(m.chapter.replace("社",""))+'</span>';}).join("")+'</div>';
+ $("unp").innerHTML='<b>尚未確認繳費（'+un.length+' 位）</b><div class="chips">'+un.map(function(m){return '<span>'+esc(m.name)+'・'+esc(m.chapter.replace("社",""))+(m.status==="有望"?'（有望）':'')+'</span>';}).join("")+'</div>';
  $("nl").innerHTML=mem.map(function(m){return '<option value="'+esc(m.name)+'">';}).join("");
 }
 function show(n){tab=n;["t1","t2","t3","t4"].forEach(function(id,i){$(id).className=(i+1===n)?"on":"";});$("v1").hidden=(n===3||n===4);$("v3").hidden=(n===3)?false:true;$("v4").hidden=(n===4)?false:true;draw();}
 $("t1").onclick=function(){show(1);};$("t2").onclick=function(){show(2);};$("t3").onclick=function(){show(3);};$("t4").onclick=function(){show(4);};
 $("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";
- call("GET","iaa_members?select=name,chapter&status=neq.%E6%9C%89%E6%9C%9B&order=name",null,function(ok,l){if(ok&&l){mem=l;}
+ call("GET","iaa_members?select=name,chapter,status&order=name",null,function(ok,l){if(ok&&l){mem=l;}
   load(function(ok2){if(ok2){$("lg").hidden=true;$("app").hidden=false;$("ad").value=new Date(Date.now()+288e5).toISOString().slice(0,10);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
 $("tb").onclick=function(e){var a=e.target.getAttribute("data-a"),id=e.target.getAttribute("data-id");if(a===null){return;}
@@ -90,7 +90,7 @@ $("xls").onclick=function(){
  var ra=s1.addRow(["已確認金額（元）",amt]);ra.getCell(2).numFmt="#,##0";
  var un=mem.filter(function(m){return paid[m.name]!==1;});
  s1.addRow(["常年會費尚未繳費人數",un.length]);
- s1.addRow(["有效會友人數",mem.length]);
+ s1.addRow(["應繳人數（含有望新會友）",mem.length]);
  s1.addRow([]);s1.addRow(["財務長：＿＿＿＿＿＿　會長：＿＿＿＿＿＿"]);
  box(s1);
  var ws=wb.addWorksheet("繳費紀錄");ws.columns=[{width:6},{width:12},{width:11},{width:8},{width:12},{width:9},{width:13},{width:26},{width:9},{width:22},{width:18}];
@@ -102,7 +102,7 @@ $("xls").onclick=function(){
  box(ws);ws.views=[{state:"frozen",ySplit:1}];ws.autoFilter={from:"A1",to:"K1"};
  var wu=wb.addWorksheet("未繳名單");wu.columns=[{width:6},{width:14},{width:12},{width:20}];
  head(wu,["序","姓名","社別","備註"]);
- un.sort(function(a,b){return String(a.chapter).localeCompare(String(b.chapter),"zh-Hant")||String(a.name).localeCompare(String(b.name),"zh-Hant");}).forEach(function(m,i){wu.addRow([i+1,m.name,m.chapter,""]);});
+ un.sort(function(a,b){return String(a.chapter).localeCompare(String(b.chapter),"zh-Hant")||String(a.name).localeCompare(String(b.name),"zh-Hant");}).forEach(function(m,i){wu.addRow([i+1,m.name,m.chapter,m.status==="有望"?"有望新會友（尚未入會）":""]);});
  box(wu);wu.views=[{state:"frozen",ySplit:1}];
  [ws,wu].forEach(function(w){w.pageSetup={orientation:"landscape",fitToPage:true,fitToWidth:1,fitToHeight:0};});
  wb.xlsx.writeBuffer().then(function(buf){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));a.download="IAA會費收繳_"+today+".xlsx";document.body.appendChild(a);a.click();document.body.removeChild(a);});
