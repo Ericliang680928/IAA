@@ -144,7 +144,7 @@
   .cgroup.rg-n .prow, .cgroup.rg-n .prow:nth-child(even) { background: #E6F1FC; }
   .cgroup.rg-c .prow, .cgroup.rg-c .prow:nth-child(even) { background: #EAF5DB; }
   .cgroup.rg-s .prow, .cgroup.rg-s .prow:nth-child(even) { background: #FCEBD6; }
-  .pcard .side b { font-size: calc(34px * var(--k)); letter-spacing: .04em; line-height: 1.15; }
+  .pcard .side b { font-size: calc(36px * var(--k)); letter-spacing: .04em; line-height: 1.15; }
   .pcard .side span { font-size: calc(12px * var(--k)); color: #3C4A70; line-height: 1.2; }
   .pcard { grid-template-columns: 1fr calc(34px * var(--k)) 1fr; }
   .pcard .mid { font-size: calc(22px * var(--k)); }
@@ -1044,7 +1044,7 @@
     function side(id) {
       var m = byId(id);
       if (!m) return h('div', { class: 'side' }, h('b', {}, '?'));
-      return h('div', { class: 'side rg-' + regionOf(m.club) }, h('b', {}, m.name), h('span', {}, [m.club, m.company].filter(Boolean).join('・')));
+      return h('div', { class: 'side rg-' + regionOf(m.club) }, h('b', {}, m.name));
     }
     function roundBlock(n, compact) {
       var r = n === 1 ? S.r1 : S.r2;
@@ -1090,7 +1090,7 @@
           var pm = byId(partner[m.id]);
           var row = h('div', { class: 'prow' }, h('span', { class: 'me' }, m.name), h('span', { class: 'arr' }, '↔'),
             pm ? h('span', { class: 'pt' }, pm.name) : h('span', { class: 'pt' }, '休息'),
-            pm ? h('span', { class: 'pc' }, [pm.club, pm.company].filter(Boolean).join('・')) : null);
+            null);
           row.dataset.q = m.name + ' ' + (m.company || '');
           grp.append(row);
         });
@@ -1171,7 +1171,7 @@
       for (var c = 1; c <= n; c++) {
         var rows = Math.ceil(n / c);
         var cw = (W - gap * (c - 1)) / c, ch = (H - gap * (rows - 1)) / rows;
-        var k = Math.min(cw / 310, ch / 52);
+        var k = Math.min(cw / 365, ch / 40);
         if (k > bestK) { bestK = k; best = c; }
       }
       var rows2 = Math.ceil(n / best);
