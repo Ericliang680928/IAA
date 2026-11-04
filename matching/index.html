@@ -124,6 +124,10 @@
   .screen-title { margin: 0; font: 700 30px/1.3 var(--font-display); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .screen-title .time { font: 500 17px var(--font-body); color: var(--muted); }
   .screen-grid { display: grid; gap: 6px; --k: 1; }
+  .dual { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+  .round-block { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .screen-title.compact { font-size: 22px; }
+  .screen-title.compact .time { font-size: 14px; }
   .pcard { background: var(--surface); border: 1px solid var(--line); border-radius: calc(12px * var(--k)); overflow: hidden; display: grid; grid-template-columns: 1fr calc(30px * var(--k)) 1fr; align-items: stretch; min-height: 0; }
   .pcard .side { padding: 0 calc(6px * var(--k)); display: flex; flex-direction: column; justify-content: center; text-align: center; min-width: 0; min-height: 0; overflow: hidden; }
   .pcard .side b { font: 700 calc(21px * var(--k))/1.25 var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -987,46 +991,56 @@
     [1, 2].forEach(function (n) {
       bar.append(h('button', { class: 'btn' + (cur === n ? '' : ' ghost'), type: 'button', disabled: have.indexOf(n) < 0, onclick: function () { S.screenRound = n; render(); } }, '第 ' + n + ' 輪'));
     });
-    var r = cur === 1 ? S.r1 : S.r2;
-    body.append(h('h2', { class: 'screen-title' }, '第 ' + cur + ' 輪配對', h('span', { class: 'time' }, '15 分鐘・找到你的名字，去找你的聊天對象（共 ' + pairsOf(r).length + ' 組）')));
     function side(id) {
       var m = byId(id);
       if (!m) return h('div', { class: 'side' }, h('b', {}, '?'));
       return h('div', { class: 'side' }, h('b', {}, m.name), h('span', {}, [m.club, m.company].filter(Boolean).join('・')));
     }
-    var grid = h('div', { class: 'screen-grid' }, pairsOf(r).map(function (p) {
-      return h('div', { class: 'pcard r' + cur }, side(p[0]), h('div', { class: 'mid', 'aria-label': '配對' }, '↔'), side(p[1]));
-    }));
-    body.append(grid);
+    function roundBlock(n, compact) {
+      var r = n === 1 ? S.r1 : S.r2;
+      var blk = h('div', { class: 'round-block' });
+      blk.append(h('h2', { class: 'screen-title' + (compact ? ' compact' : '') }, '第 ' + n + ' 輪', h('span', { class: 'time' }, '15 分鐘・共 ' + pairsOf(r).length + ' 組' + (compact ? '' : '・找到你的名字，去找你的聊天對象'))));
+      blk.append(h('div', { class: 'screen-grid' }, pairsOf(r).map(function (p) {
+        return h('div', { class: 'pcard r' + n }, side(p[0]), h('div', { class: 'mid', 'aria-label': '配對' }, '↔'), side(p[1]));
+      })));
+      if (r.leftover) { var l = byId(r.leftover); blk.append(h('div', { class: 'restbox' }, '休息：', h('b', {}, l ? l.name : ''))); }
+      return blk;
+    }
+    body.append(roundBlock(cur, false));
     fitScreen();
-    if (r.leftover) { var l = byId(r.leftover); body.append(h('div', { class: 'restbox' }, '這一輪休息：', h('b', {}, l ? l.name : ''), '，可以先喝杯茶。')); }
   }
 
   // Fit every pair on one screen: pick the column count that gives the biggest cards
-  function fitScreen() {
-    var grid = document.querySelector('.screen-grid');
-    if (!grid || $('#view-screen').hidden) return;
-    var n = grid.children.length;
-    if (!n) return;
-    var W = grid.parentElement.clientWidth || window.innerWidth;
-    var rest = document.querySelector('.restbox');
-    var top = grid.getBoundingClientRect().top + window.scrollY;
-    var H = Math.max(240, window.innerHeight - top - 14 - (rest ? rest.offsetHeight + 18 : 0));
-    var gap = 6, best = 1, bestK = 0;
-    for (var c = 1; c <= n; c++) {
-      var rows = Math.ceil(n / c);
-      var cw = (W - gap * (c - 1)) / c, ch = (H - gap * (rows - 1)) / rows;
-      var k = Math.min(cw / 330, ch / 54);
-      if (k > bestK) { bestK = k; best = c; }
-    }
-    var rows2 = Math.ceil(n / best);
-    grid.style.setProperty('--k', String(Math.max(0.45, Math.min(bestK, 2.4)).toFixed(3)));
-    grid.style.gridTemplateColumns = 'repeat(' + best + ', minmax(0, 1fr))';
-    grid.style.gridTemplateRows = 'repeat(' + rows2 + ', minmax(0, 1fr))';
-    grid.style.height = H + 'px';
+  function fitScreen(extra) {
+    if ($('#view-screen').hidden) return;
+    extra = extra || 0;
+    document.querySelectorAll('.screen-grid').forEach(function (grid) {
+      var n = grid.children.length;
+      if (!n) return;
+      var blk = grid.parentElement;
+      var W = blk.clientWidth || window.innerWidth;
+      var used = 0;
+      Array.prototype.forEach.call(blk.children, function (c) { if (c !== grid) used += c.offsetHeight + 10; });
+      var top = blk.getBoundingClientRect().top + window.scrollY;
+      var H = Math.max(240, window.innerHeight - top - 28 - used - extra);
+      var gap = 6, best = 1, bestK = 0;
+      for (var c = 1; c <= n; c++) {
+        var rows = Math.ceil(n / c);
+        var cw = (W - gap * (c - 1)) / c, ch = (H - gap * (rows - 1)) / rows;
+        var k = Math.min(cw / 330, ch / 54);
+        if (k > bestK) { bestK = k; best = c; }
+      }
+      var rows2 = Math.ceil(n / best);
+      grid.style.setProperty('--k', String(Math.max(0.3, Math.min(bestK, 2.4)).toFixed(3)));
+      grid.style.gridTemplateColumns = 'repeat(' + best + ', minmax(0, 1fr))';
+      grid.style.gridTemplateRows = 'repeat(' + rows2 + ', minmax(0, 1fr))';
+      grid.style.height = H + 'px';
+    });
+    var over = document.documentElement.scrollHeight - window.innerHeight;
+    if (over > 0 && extra < 400) fitScreen(extra + over);
   }
   var fitTimer = null;
-  window.addEventListener('resize', function () { cancelAnimationFrame(fitTimer); fitTimer = requestAnimationFrame(fitScreen); });
+  window.addEventListener('resize', function () { cancelAnimationFrame(fitTimer); fitTimer = requestAnimationFrame(function () { fitScreen(0); }); });
   document.addEventListener('fullscreenchange', function () { setTimeout(fitScreen, 120); });
 
   /* ---------- render: chrome ---------- */
@@ -1065,6 +1079,7 @@
     $('#view-help').hidden = tab !== 'help';
     $('#view-screen').hidden = tab !== 'screen';
     $('#outer').classList.toggle('big', tab === 'screen');
+    document.querySelector('.adm-foot').hidden = tab === 'screen';
     $('#tab-screen').setAttribute('aria-selected', String(tab === 'screen'));
     $('#help-admin').hidden = !S.admin;
     $('#view-admin').hidden = !showAdmin;
