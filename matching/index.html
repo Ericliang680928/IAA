@@ -121,8 +121,8 @@
   #outer.big header { margin: 0; }
   #view-screen { max-width: none; }
   .screen-bar { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; }
-  .screen-title { margin: 0; font: 700 30px/1.3 var(--font-display); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-  .screen-title .time { font: 500 17px var(--font-body); color: var(--muted); }
+  .screen-title { margin: 0; font: 700 24px/1.2 var(--font-display); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .screen-title .time { font: 500 15px var(--font-body); color: var(--muted); }
   .screen-grid { display: grid; gap: 6px; --k: 1; }
   .dual { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
   .round-block { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
@@ -133,6 +133,16 @@
   .pcard .side b { font: 700 calc(21px * var(--k))/1.25 var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .pcard .side span { font-size: calc(12.5px * var(--k)); line-height: 1.3; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pcard .mid { display: flex; align-items: center; justify-content: center; font: 700 calc(18px * var(--k)) var(--font-body); }
+  .pcard { box-shadow: 0 1px 0 rgba(26,42,92,.06); }
+  .pcard.alt { background: #F1F6FA; }
+  .pcard .side b { font-size: calc(34px * var(--k)); letter-spacing: .04em; line-height: 1.15; }
+  .pcard .side span { font-size: calc(12px * var(--k)); color: #3C4A70; line-height: 1.2; }
+  .pcard { grid-template-columns: 1fr calc(34px * var(--k)) 1fr; }
+  .pcard .mid { font-size: calc(22px * var(--k)); }
+  .pcard.hit { outline: calc(4px * var(--k)) solid var(--ink); outline-offset: calc(-2px * var(--k)); box-shadow: 0 0 0 calc(6px * var(--k)) rgba(181,28,132,.28); position: relative; z-index: 2; }
+  .screen-grid.finding .pcard:not(.hit) { opacity: .22; }
+  #screen-find { font: 500 16px var(--font-body); padding: 8px 14px; border: 2px solid var(--line); border-radius: 999px; min-width: 180px; flex: 1 1 180px; max-width: 320px; background: var(--surface); color: var(--ink); }
+  #screen-find:focus { outline: none; border-color: var(--ink); }
   .pcard.r1 .mid { background: var(--r1); color: var(--on-r1); }
   .pcard.r2 .mid { background: var(--r2); color: var(--on-r2); }
   .restbox { background: var(--hint); border-radius: 14px; padding: 10px 16px; font-size: 18px; }
@@ -181,6 +191,7 @@
   <section id="view-screen" class="wrap" style="gap:18px" hidden>
     <div class="screen-bar">
       <div class="row" id="screen-rounds"></div>
+      <input type="search" id="screen-find" placeholder="找自己的名字" aria-label="找自己的名字" autocomplete="off">
       <button class="btn ghost" type="button" id="btn-full">全螢幕</button>
     </div>
     <div id="screen-body" class="wrap" style="gap:18px;max-width:none"></div>
@@ -999,16 +1010,36 @@
     function roundBlock(n, compact) {
       var r = n === 1 ? S.r1 : S.r2;
       var blk = h('div', { class: 'round-block' });
-      blk.append(h('h2', { class: 'screen-title' + (compact ? ' compact' : '') }, '第 ' + n + ' 輪', h('span', { class: 'time' }, '15 分鐘・共 ' + pairsOf(r).length + ' 組' + (compact ? '' : '・找到你的名字，去找你的聊天對象'))));
-      blk.append(h('div', { class: 'screen-grid' }, pairsOf(r).map(function (p) {
-        return h('div', { class: 'pcard r' + n }, side(p[0]), h('div', { class: 'mid', 'aria-label': '配對' }, '↔'), side(p[1]));
+      blk.append(h('h2', { class: 'screen-title' + (compact ? ' compact' : '') }, '第 ' + n + ' 輪', h('span', { class: 'time' }, '15 分鐘・共 ' + pairsOf(r).length + ' 組・找到你的名字，去找你的聊天對象')));
+      var key = function (id) { var m = byId(id); return m ? (m.club || '') + '\u0001' + m.name : ''; };
+      var ps = pairsOf(r).map(function (p) { return key(p[0]) <= key(p[1]) ? p : [p[1], p[0]]; });
+      ps.sort(function (a, b) { return key(a[0]).localeCompare(key(b[0]), 'zh-Hant'); });
+      blk.append(h('div', { class: 'screen-grid' }, ps.map(function (p, i) {
+        var a = byId(p[0]), b = byId(p[1]);
+        var c = h('div', { class: 'pcard r' + n + (i % 2 ? ' alt' : '') }, side(p[0]), h('div', { class: 'mid', 'aria-label': '配對' }, '↔'), side(p[1]));
+        c.dataset.q = [a && a.name, a && a.company, b && b.name, b && b.company].filter(Boolean).join(' ');
+        return c;
       })));
       if (r.leftover) { var l = byId(r.leftover); blk.append(h('div', { class: 'restbox' }, '休息：', h('b', {}, l ? l.name : ''))); }
       return blk;
     }
     body.append(roundBlock(cur, false));
     fitScreen();
+    applyFind();
   }
+
+  function applyFind() {
+    var q = ($('#screen-find').value || '').trim();
+    var grid = document.querySelector('.screen-grid');
+    if (!grid) return;
+    var hit = 0;
+    Array.prototype.forEach.call(grid.children, function (c) {
+      var on = !!q && (c.dataset.q || '').indexOf(q) >= 0;
+      c.classList.toggle('hit', on); if (on) hit++;
+    });
+    grid.classList.toggle('finding', !!q && hit > 0);
+  }
+  $('#screen-find').addEventListener('input', applyFind);
 
   // Fit every pair on one screen: pick the column count that gives the biggest cards
   function fitScreen(extra) {
@@ -1027,7 +1058,7 @@
       for (var c = 1; c <= n; c++) {
         var rows = Math.ceil(n / c);
         var cw = (W - gap * (c - 1)) / c, ch = (H - gap * (rows - 1)) / rows;
-        var k = Math.min(cw / 330, ch / 54);
+        var k = Math.min(cw / 310, ch / 52);
         if (k > bestK) { bestK = k; best = c; }
       }
       var rows2 = Math.ceil(n / best);
