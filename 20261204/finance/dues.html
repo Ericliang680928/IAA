@@ -125,4 +125,7 @@ $("xls").onclick=function(){
 };
 try{var sp=window.sessionStorage.getItem("iaa_fin_pw");if(sp){$("pw").value=sp;$("go").onclick();}}catch(e){}
 })();
+
+function syncAll(){if(document.hidden===false&&$("app").hidden===false){call("GET","iaa_members?select=name,chapter,status&order=name",null,function(ok,l){if(ok&&l){mem=l;CH={};l.forEach(function(m){CH[m.name]=m.chapter;});}load(function(){});});}}
+setInterval(syncAll,45000);window.addEventListener("focus",syncAll);
 </script></body></html>

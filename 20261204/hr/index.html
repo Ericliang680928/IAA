@@ -102,4 +102,6 @@ function build(){var v=$("ms").value,isR=v.slice(0,2)==="R:",nm=v.slice(2),list=
 $("mk").onclick=build;
 $("cp").onclick=function(){$("mt").select();try{document.execCommand("copy");$("m4").textContent="已複製";}catch(e){$("m4").textContent="請手動複製";}};
 })();
+
+setInterval(function(){if(document.hidden===false&&$("app").hidden===false){load(function(){});}},45000);
 </script></body></html>
