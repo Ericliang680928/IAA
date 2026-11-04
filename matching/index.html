@@ -134,7 +134,16 @@
   .pcard .side span { font-size: calc(12.5px * var(--k)); line-height: 1.3; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .pcard .mid { display: flex; align-items: center; justify-content: center; font: 700 calc(18px * var(--k)) var(--font-body); }
   .pcard { box-shadow: 0 1px 0 rgba(26,42,92,.06); }
-  .pcard.alt { background: #F1F6FA; }
+  .side.rg-n { background: #D6E8FA; }
+  .side.rg-c { background: #DDF0C8; }
+  .side.rg-s { background: #FBE0C2; }
+  .legend { display: inline-flex; gap: 6px; margin-left: 6px; }
+  .legend i { font: 700 14px var(--font-body); font-style: normal; padding: 2px 12px; border-radius: 999px; color: var(--ink); }
+  .legend i.rg-n { background: #D6E8FA; } .legend i.rg-c { background: #DDF0C8; } .legend i.rg-s { background: #FBE0C2; }
+  .cgroup.rg-n .chead { background: #2F6DA8 !important; } .cgroup.rg-c .chead { background: #5B8A1E !important; } .cgroup.rg-s .chead { background: #B9600F !important; }
+  .cgroup.rg-n .prow, .cgroup.rg-n .prow:nth-child(even) { background: #E6F1FC; }
+  .cgroup.rg-c .prow, .cgroup.rg-c .prow:nth-child(even) { background: #EAF5DB; }
+  .cgroup.rg-s .prow, .cgroup.rg-s .prow:nth-child(even) { background: #FCEBD6; }
   .pcard .side b { font-size: calc(34px * var(--k)); letter-spacing: .04em; line-height: 1.15; }
   .pcard .side span { font-size: calc(12px * var(--k)); color: #3C4A70; line-height: 1.2; }
   .pcard { grid-template-columns: 1fr calc(34px * var(--k)) 1fr; }
@@ -1007,6 +1016,15 @@
   }
 
   /* ---------- render: big screen ---------- */
+  var REGION = { n: ['宜蘭', '基隆', '台北', '臺北', '桃園', '新竹'], c: ['苗栗', '台中', '臺中', '彰化', '南投'], s: ['雲林', '嘉義', '台南', '臺南', '南瀛', '高雄', '屏東', '澎湖', '台東', '花蓮'] };
+  function regionOf(club) {
+    var c = club || '';
+    for (var k in REGION) for (var i = 0; i < REGION[k].length; i++) if (c.indexOf(REGION[k][i]) === 0) return k;
+    return 'x';
+  }
+  function legend() {
+    return h('span', { class: 'legend' }, h('i', { class: 'rg-n' }, '北區'), h('i', { class: 'rg-c' }, '中區'), h('i', { class: 'rg-s' }, '南區'));
+  }
   function renderScreen() {
     var bar = $('#screen-rounds'), body = $('#screen-body');
     bar.replaceChildren(); body.replaceChildren();
@@ -1019,25 +1037,29 @@
     [1, 2].forEach(function (n) {
       bar.append(h('button', { class: 'btn' + (cur === n ? '' : ' ghost'), type: 'button', disabled: have.indexOf(n) < 0, onclick: function () { S.screenRound = n; render(); } }, '第 ' + n + ' 輪'));
     });
-    var mode = S.screenMode === 'pair' ? 'pair' : 'club';
+    var mode = S.screenMode === 'club' ? 'club' : 'pair';
     bar.append(h('span', { style: 'width:10px' }));
     bar.append(h('button', { class: 'btn sm' + (mode === 'club' ? '' : ' ghost'), type: 'button', onclick: function () { S.screenMode = 'club'; render(); } }, '依社別找人'));
     bar.append(h('button', { class: 'btn sm' + (mode === 'pair' ? '' : ' ghost'), type: 'button', onclick: function () { S.screenMode = 'pair'; render(); } }, '依配對組'));
     function side(id) {
       var m = byId(id);
       if (!m) return h('div', { class: 'side' }, h('b', {}, '?'));
-      return h('div', { class: 'side' }, h('b', {}, m.name), h('span', {}, [m.club, m.company].filter(Boolean).join('・')));
+      return h('div', { class: 'side rg-' + regionOf(m.club) }, h('b', {}, m.name), h('span', {}, [m.club, m.company].filter(Boolean).join('・')));
     }
     function roundBlock(n, compact) {
       var r = n === 1 ? S.r1 : S.r2;
       var blk = h('div', { class: 'round-block' });
-      blk.append(h('h2', { class: 'screen-title' + (compact ? ' compact' : '') }, '第 ' + n + ' 輪', h('span', { class: 'time' }, '15 分鐘・共 ' + pairsOf(r).length + ' 組・找到你的名字，去找你的聊天對象')));
-      var key = function (id) { var m = byId(id); return m ? (m.club || '') + '\u0001' + m.name : ''; };
+      blk.append(h('h2', { class: 'screen-title' + (compact ? ' compact' : '') }, '第 ' + n + ' 輪', h('span', { class: 'time' }, '15 分鐘・共 ' + pairsOf(r).length + ' 組・找到你的名字，去找你的聊天對象'), legend()));
+      var key = function (id) {
+        var m = byId(id); if (!m) return '9999';
+        var rg = regionOf(m.club), ri = 'ncsx'.indexOf(rg), ci = rg === 'x' ? 0 : REGION[rg].findIndex(function (x) { return (m.club || '').indexOf(x) === 0; });
+        return ri + '' + String(Math.max(ci, 0)).padStart(2, '0') + '\u0001' + m.name;
+      };
       var ps = pairsOf(r).map(function (p) { return key(p[0]) <= key(p[1]) ? p : [p[1], p[0]]; });
       ps.sort(function (a, b) { return key(a[0]).localeCompare(key(b[0]), 'zh-Hant'); });
       blk.append(h('div', { class: 'screen-grid' }, ps.map(function (p, i) {
         var a = byId(p[0]), b = byId(p[1]);
-        var c = h('div', { class: 'pcard r' + n + (i % 2 ? ' alt' : '') }, side(p[0]), h('div', { class: 'mid', 'aria-label': '配對' }, '↔'), side(p[1]));
+        var c = h('div', { class: 'pcard r' + n }, side(p[0]), h('div', { class: 'mid', 'aria-label': '配對' }, '↔'), side(p[1]));
         c.dataset.q = [a && a.name, a && a.company, b && b.name, b && b.company].filter(Boolean).join(' ');
         return c;
       })));
@@ -1049,7 +1071,7 @@
       var partner = {};
       pairsOf(r).forEach(function (p) { partner[p[0]] = p[1]; partner[p[1]] = p[0]; });
       var blk = h('div', { class: 'round-block' });
-      blk.append(h('h2', { class: 'screen-title' }, '第 ' + n + ' 輪', h('span', { class: 'time' }, '15 分鐘・先找你的社別，再找你的名字，右邊就是你的聊天對象')));
+      blk.append(h('h2', { class: 'screen-title' }, '第 ' + n + ' 輪', h('span', { class: 'time' }, '15 分鐘・先找你的社別，再找你的名字，右邊就是你的聊天對象'), legend()));
       var cols = h('div', { class: 'club-cols r' + n });
       var order = [], by = {};
       members().forEach(function (m) {
@@ -1060,7 +1082,7 @@
       });
       cols._groups = [];
       order.forEach(function (c, ci) {
-        var grp = h('div', { class: 'cgroup' });
+        var grp = h('div', { class: 'cgroup rg-' + regionOf(c) });
         grp.dataset.n = String(by[c].length);
         cols._groups.push(grp);
         grp.append(h('div', { class: 'chead' }, c + '（' + by[c].length + '）'));
