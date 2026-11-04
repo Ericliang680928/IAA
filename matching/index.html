@@ -141,6 +141,23 @@
   .pcard .mid { font-size: calc(22px * var(--k)); }
   .pcard.hit { outline: calc(4px * var(--k)) solid var(--ink); outline-offset: calc(-2px * var(--k)); box-shadow: 0 0 0 calc(6px * var(--k)) rgba(181,28,132,.28); position: relative; z-index: 2; }
   .screen-grid.finding .pcard:not(.hit) { opacity: .22; }
+  .club-cols { display: flex; gap: 14px; align-items: flex-start; --k: 1; overflow: hidden; }
+  .ccol { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; }
+  .cgroup { margin-top: calc(7px * var(--k)); }
+  .ccol .cgroup:first-child { margin-top: 0; }
+  .club-cols .chead { background: var(--ink); color: #fff; font: 700 calc(15px * var(--k)) var(--font-body); padding: calc(3px * var(--k)) calc(10px * var(--k)); border-radius: calc(8px * var(--k)); }
+  .club-cols.r2 .chead { background: #5B6A12; }
+  .club-cols.r1 .chead { background: var(--r1); }
+  .prow { display: flex; align-items: baseline; gap: calc(8px * var(--k)); padding: calc(2px * var(--k)) calc(8px * var(--k)); border-bottom: 1px solid var(--line); background: var(--surface); line-height: 1.25; white-space: nowrap; overflow: hidden; }
+  .prow:nth-child(even) { background: #F1F6FA; }
+  .prow .me { font: 700 calc(21px * var(--k)) var(--font-display); color: var(--ink); min-width: 4.4em; }
+  .prow .arr { font-weight: 700; color: var(--r1); font-size: calc(17px * var(--k)); }
+  .club-cols.r2 .prow .arr { color: #5B6A12; }
+  .prow .pt { font: 700 calc(21px * var(--k)) var(--font-display); color: var(--ink); }
+  .prow .pc { font-size: calc(12px * var(--k)); color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+  .club-cols.finding .prow:not(.hit) { opacity: .2; }
+  .prow.hit { background: #FFF3A8 !important; outline: calc(3px * var(--k)) solid var(--ink); outline-offset: -2px; position: relative; z-index: 2; opacity: 1; }
+  .modebar { display: flex; gap: 6px; }
   #screen-find { font: 500 16px var(--font-body); padding: 8px 14px; border: 2px solid var(--line); border-radius: 999px; min-width: 180px; flex: 1 1 180px; max-width: 320px; background: var(--surface); color: var(--ink); }
   #screen-find:focus { outline: none; border-color: var(--ink); }
   .pcard.r1 .mid { background: var(--r1); color: var(--on-r1); }
@@ -1002,6 +1019,10 @@
     [1, 2].forEach(function (n) {
       bar.append(h('button', { class: 'btn' + (cur === n ? '' : ' ghost'), type: 'button', disabled: have.indexOf(n) < 0, onclick: function () { S.screenRound = n; render(); } }, '第 ' + n + ' 輪'));
     });
+    var mode = S.screenMode === 'pair' ? 'pair' : 'club';
+    bar.append(h('span', { style: 'width:10px' }));
+    bar.append(h('button', { class: 'btn sm' + (mode === 'club' ? '' : ' ghost'), type: 'button', onclick: function () { S.screenMode = 'club'; render(); } }, '依社別找人'));
+    bar.append(h('button', { class: 'btn sm' + (mode === 'pair' ? '' : ' ghost'), type: 'button', onclick: function () { S.screenMode = 'pair'; render(); } }, '依配對組'));
     function side(id) {
       var m = byId(id);
       if (!m) return h('div', { class: 'side' }, h('b', {}, '?'));
@@ -1023,17 +1044,51 @@
       if (r.leftover) { var l = byId(r.leftover); blk.append(h('div', { class: 'restbox' }, '休息：', h('b', {}, l ? l.name : ''))); }
       return blk;
     }
-    body.append(roundBlock(cur, false));
+    function clubBlock(n) {
+      var r = n === 1 ? S.r1 : S.r2;
+      var partner = {};
+      pairsOf(r).forEach(function (p) { partner[p[0]] = p[1]; partner[p[1]] = p[0]; });
+      var blk = h('div', { class: 'round-block' });
+      blk.append(h('h2', { class: 'screen-title' }, '第 ' + n + ' 輪', h('span', { class: 'time' }, '15 分鐘・先找你的社別，再找你的名字，右邊就是你的聊天對象')));
+      var cols = h('div', { class: 'club-cols r' + n });
+      var order = [], by = {};
+      members().forEach(function (m) {
+        if (!(m.id in partner) && r.leftover !== m.id) return;
+        var c = m.club || '其他';
+        if (!by[c]) { by[c] = []; order.push(c); }
+        by[c].push(m);
+      });
+      cols._groups = [];
+      order.forEach(function (c, ci) {
+        var grp = h('div', { class: 'cgroup' });
+        grp.dataset.n = String(by[c].length);
+        cols._groups.push(grp);
+        grp.append(h('div', { class: 'chead' }, c + '（' + by[c].length + '）'));
+        by[c].forEach(function (m) {
+          var pm = byId(partner[m.id]);
+          var row = h('div', { class: 'prow' }, h('span', { class: 'me' }, m.name), h('span', { class: 'arr' }, '↔'),
+            pm ? h('span', { class: 'pt' }, pm.name) : h('span', { class: 'pt' }, '休息'),
+            pm ? h('span', { class: 'pc' }, [pm.club, pm.company].filter(Boolean).join('・')) : null);
+          row.dataset.q = m.name + ' ' + (m.company || '');
+          grp.append(row);
+        });
+      });
+      cols._groups.forEach(function (g) { cols.append(g); });
+      blk.append(cols);
+      if (r.leftover) { var l = byId(r.leftover); blk.append(h('div', { class: 'restbox' }, '休息：', h('b', {}, l ? l.name : ''))); }
+      return blk;
+    }
+    body.append(mode === 'club' ? clubBlock(cur) : roundBlock(cur, false));
     fitScreen();
     applyFind();
   }
 
   function applyFind() {
     var q = ($('#screen-find').value || '').trim();
-    var grid = document.querySelector('.screen-grid');
+    var grid = document.querySelector('.screen-grid, .club-cols');
     if (!grid) return;
     var hit = 0;
-    Array.prototype.forEach.call(grid.children, function (c) {
+    Array.prototype.forEach.call(grid.querySelectorAll('[data-q]'), function (c) {
       var on = !!q && (c.dataset.q || '').indexOf(q) >= 0;
       c.classList.toggle('hit', on); if (on) hit++;
     });
@@ -1042,9 +1097,45 @@
   $('#screen-find').addEventListener('input', applyFind);
 
   // Fit every pair on one screen: pick the column count that gives the biggest cards
+  function fitClub(cols, extra) {
+    var blk = cols.parentElement, W = blk.clientWidth || window.innerWidth, gap = 14;
+    var groups = cols._groups || [];
+    var used = 0;
+    Array.prototype.forEach.call(blk.children, function (c) { if (c !== cols) used += c.offsetHeight + 10; });
+    var top = blk.getBoundingClientRect().top + window.scrollY;
+    var H = Math.max(240, window.innerHeight - top - 28 - used - extra);
+    var weights = groups.map(function (g) { return Number(g.dataset.n) + 1.1; });
+    var total = weights.reduce(function (a, b) { return a + b; }, 0);
+    function split(N) {
+      var target = total / N, out = [[]], loads = [0];
+      groups.forEach(function (g, i) {
+        var li = out.length - 1;
+        if (loads[li] > 0 && loads[li] + weights[i] > target * 1.12 && out.length < N) { out.push([]); loads.push(0); li++; }
+        out[li].push(g); loads[li] += weights[i];
+      });
+      return { cols: out, max: Math.max.apply(null, loads) };
+    }
+    var best = null, bestK = 0;
+    for (var N = 2; N <= 9; N++) {
+      var sp = split(N);
+      var cw = (W - gap * (sp.cols.length - 1)) / sp.cols.length;
+      var k = Math.min(cw / 330, H / (sp.max * 31));
+      if (k > bestK) { bestK = k; best = sp; }
+    }
+    cols.replaceChildren();
+    best.cols.forEach(function (list) {
+      var c = h('div', { class: 'ccol' });
+      list.forEach(function (g) { c.append(g); });
+      cols.append(c);
+    });
+    cols.style.setProperty('--k', String(Math.max(0.4, Math.min(bestK, 2.2)).toFixed(3)));
+    cols.style.height = H + 'px';
+  }
   function fitScreen(extra) {
     if ($('#view-screen').hidden) return;
     extra = extra || 0;
+    var cc = document.querySelector('.club-cols');
+    if (cc) { fitClub(cc, extra); var o = document.documentElement.scrollHeight - window.innerHeight; if (o > 0 && extra < 400) fitScreen(extra + o); return; }
     document.querySelectorAll('.screen-grid').forEach(function (grid) {
       var n = grid.children.length;
       if (!n) return;
