@@ -154,17 +154,12 @@
     <h1>商務配對串聯</h1>
     <p class="sub">會友選 2 到 3 位想聊的人，只要填一次；配不到的人，電腦隨機配對。</p>
     <div class="tabs" id="tabs" role="tablist" hidden>
-      <button class="tab" role="tab" id="tab-member" aria-selected="true" type="button">會友端</button>
-      <button class="tab" role="tab" id="tab-screen" aria-selected="false" type="button">大螢幕</button>
       <button class="tab" role="tab" id="tab-help" aria-selected="false" type="button">說明</button>
-      <button class="tab" role="tab" id="tab-admin" aria-selected="false" type="button" hidden>主辦端</button>
+      <button class="tab" role="tab" id="tab-member" aria-selected="true" type="button">會友端</button>
+      <button class="tab" role="tab" id="tab-admin" aria-selected="false" type="button">主辦端</button>
+      <button class="tab" role="tab" id="tab-screen" aria-selected="false" type="button">配對大螢幕</button>
     </div>
   </header>
-
-  <div class="strip-wrap" aria-label="活動時間分配">
-    <div class="strip"><div class="chip r1">1</div><div class="chip r2">2</div><div class="chip free">自由交流</div><div class="chip fb">回饋</div></div>
-    <p class="strip-note">1 小時：第 1、2 輪各 15 分鐘，自由交流 20 分鐘，回饋 10 分鐘（現場隨機 5 人，每人 2 分鐘）。色塊寬度就是時間長短。</p>
-  </div>
 
   <p class="hint err" id="banner" role="status" hidden></p>
 
@@ -188,6 +183,10 @@
   </section>
 
   <section id="view-help" class="wrap" style="gap:16px" hidden>
+  <div class="strip-wrap" aria-label="活動時間分配">
+    <div class="strip"><div class="chip r1">1</div><div class="chip r2">2</div><div class="chip free">自由交流</div><div class="chip fb">回饋</div></div>
+    <p class="strip-note">1 小時：第 1、2 輪各 15 分鐘，自由交流 20 分鐘，回饋 10 分鐘（現場隨機 5 人，每人 2 分鐘）。色塊寬度就是時間長短。</p>
+  </div>
     <div class="panel">
       <h2>會友怎麼用</h2>
       <ol class="steps">
@@ -383,7 +382,7 @@
   }
 
   var S = {
-    db: null, user: null, dl: null, uid: null, admin: false, tab: 'member',
+    db: null, user: null, dl: null, uid: null, admin: false, tab: 'help',
     roster: null, r1: null, r2: null, picks: [],
     loaded: {}, timeout: false, err: '', meId: null,
     checkins: [], screenRound: null, busy: false, confirmReset: false, confirmZero: false, confirmImport: false,
@@ -1060,7 +1059,6 @@
     syncNames();
     syncWho();
     $('#tabs').hidden = false;
-    $('#tab-admin').hidden = !S.admin;
     var tab = (S.tab === 'admin' && !S.admin) ? 'member' : S.tab;
     var showAdmin = tab === 'admin';
     $('#view-member').hidden = tab !== 'member';
@@ -1118,7 +1116,7 @@
     render();
   });
   $('#tab-member').addEventListener('click', function () { S.tab = 'member'; render(); });
-  $('#tab-admin').addEventListener('click', function () { S.tab = 'admin'; render(); });
+  $('#tab-admin').addEventListener('click', function () { if (S.admin) { S.tab = 'admin'; render(); } else $('#btn-adm').click(); });
   $('#tab-screen').addEventListener('click', function () { S.tab = 'screen'; render(); });
   $('#btn-full').addEventListener('click', function () {
     try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); } catch (e) { /* not allowed here */ }
