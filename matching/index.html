@@ -1,732 +1,189 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IAA 交朋友大冒險 · 三輪配對工具</title>
+<title>商務配對串聯規則</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap">
 <style>
-  :root{--navy:#1B2A4A;--navy2:#2A3B5E;--gold:#D4A24C;--cream:#F7F5F0;--ink:#1B2A4A;--muted:#5B6B8C;--line:#EEE9DD;--red:#E15554;--green:#3B8C6E;}
-  *{box-sizing:border-box;}
-  body{margin:0;font-family:"Microsoft JhengHei","PingFang TC",system-ui,sans-serif;background:var(--cream);color:var(--ink);}
-  header{background:var(--navy);color:var(--cream);padding:18px 24px;}
-  header h1{margin:0;font-size:20px;letter-spacing:1px;}
-  header p{margin:4px 0 0;font-size:13px;color:#B9C2D6;}
-  .tabs{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
-  .tab{padding:6px 16px;border-radius:999px;font-size:14px;border:0;cursor:pointer;background:var(--navy2);color:var(--cream);}
-  .tab.active{background:var(--gold);color:var(--navy);font-weight:700;}
-  main{max-width:860px;margin:0 auto;padding:24px;}
-  h2{font-size:17px;display:flex;align-items:center;gap:8px;margin:0 0 8px;}
-  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;}
-  .muted{color:var(--muted);font-size:13px;}
-  textarea{width:100%;border:1px solid #D9D4C7;border-radius:8px;padding:10px;font-family:ui-monospace,monospace;font-size:12px;background:#fff;}
-  button.act{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-size:14px;cursor:pointer;}
-  button.act:hover{background:var(--navy2);}
-  button.gold{background:var(--gold);color:var(--navy);font-weight:700;}
-  button.ghost{background:#fff;border:1px solid var(--navy);color:var(--navy);}
-  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-  .pair{background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:14px;}
-  select,input[type=text]{border:1px solid #D9D4C7;border-radius:8px;padding:8px;font-size:14px;background:#fff;width:100%;}
-  .kicker{font-size:11px;letter-spacing:1px;color:var(--gold);font-weight:700;text-transform:uppercase;}
-  .partner{font-size:18px;font-weight:700;}
-  .ice{background:var(--cream);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:14px;}
-  .want{color:var(--green);} .offer{color:#B4791F;}
-  label.pick{display:flex;gap:8px;padding:8px;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:14px;align-items:flex-start;margin-bottom:6px;}
-  label.pick.sel{border-color:var(--gold);background:#FBF3E3;}
-  .timer{font-size:28px;font-weight:800;letter-spacing:2px;}
-  .err{background:var(--red);color:#fff;padding:8px 24px;font-size:13px;}
-  .ok{color:var(--green);} .warn{color:var(--red);}
-  .toggle{font-size:13px;display:flex;gap:6px;align-items:center;}
-  hr{border:0;border-top:1px solid var(--line);margin:14px 0;}
-  small.tag{font-size:11px;color:var(--muted);}
-  @media print{.tabs,.noprint{display:none;} body{background:#fff;}}
-  /* 圖解流程 */
-  .flow{display:flex;flex-wrap:wrap;gap:2px;align-items:stretch;justify-content:flex-start;margin:10px 0;}
-  .step{flex:0 0 118px;background:var(--cream);border:2px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;}
-  .step .pic{font-size:34px;line-height:1.2;}
-  .step .no{display:inline-block;background:var(--gold);color:var(--navy);font-weight:800;border-radius:999px;min-width:22px;padding:1px 6px;font-size:12px;margin-bottom:4px;}
-  .step .txt{font-size:13px;font-weight:700;margin-top:4px;}
-  .step .sub{font-size:11px;color:var(--muted);margin-top:2px;}
-  .arrow{align-self:center;font-size:20px;color:var(--gold);font-weight:800;padding:0 2px;}
-  .rolebar{display:inline-block;border-radius:999px;padding:3px 14px;font-size:13px;font-weight:800;color:#fff;margin-bottom:2px;}
-  .story{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;background:var(--cream);border-radius:14px;padding:12px;margin:8px 0;}
-  .story .sc{text-align:center;flex:0 0 130px;}
-  .story .sc .pic{font-size:38px;}
-  .story .sc .txt{font-size:12px;font-weight:700;margin-top:2px;}
+  /* Palette from the IAA logo: magenta = round 1, lime = round 2, deep orange = round 3, sky = free talk, navy = text */
+  :root {
+    --bg: #F5F8FB; --surface: #FFFFFF; --ink: #1A2A5C; --muted: #4A587C; --line: #DDE4EE;
+    --r1: #B51C84; --r2: #BAC928; --r3: #B94711; --free: #A1C7C8;
+    --on-r1: #FFFFFF; --on-r2: #1A2A5C; --on-r3: #FFFFFF; --on-free: #1A2A5C;
+    --note: #E6F0F1; --hint: #FBF4C7; --pick: #F3F7D2; --focus: #B51C84;
+    --danger: #B3261E; --ok: #12724A;
+    --font-display: "Noto Serif TC", "Songti TC", "PingFang TC", "Microsoft JhengHei", serif;
+    --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1730; --surface: #18224A; --ink: #E9EEF9; --muted: #A9B5D2; --line: #2C3A66;
+      --note: #223158; --hint: #3A3414; --pick: #2B3320; --focus: #E58AD0;
+      --danger: #FF8A80; --ok: #6FD3A1;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1730; --surface: #18224A; --ink: #E9EEF9; --muted: #A9B5D2; --line: #2C3A66;
+    --note: #223158; --hint: #3A3414; --pick: #2B3320; --focus: #E58AD0;
+    --danger: #FF8A80; --ok: #6FD3A1;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.8 var(--font-body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 24px 56px;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+  /* IAA logo on a white plate so the artwork reads in both themes */
+  .logo-plate { display: inline-block; background: #FFFFFF; border: 1px solid var(--line); border-radius: 16px; padding: 8px 14px; line-height: 0; max-width: 100%; }
+  .logo-plate img { height: 48px; width: auto; max-width: 100%; display: block; }
+  h1 { font: 700 30px/1.35 var(--font-body); margin: 14px 0 6px; text-wrap: balance; }
+  .lead, .sub { margin: 0; color: var(--muted); }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, summary:focus-visible, .opt:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  /* time strip: widths are real minutes */
+  .strip { display: flex; gap: 4px; }
+  .chip { min-width: 0; border-radius: 20px; padding: 8px 2px; text-align: center; font-size: 13px; line-height: 1.4; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .chip small { font-size: 12.5px; font-weight: 500; }
+  .chip.r1 { flex: 15 1 0; background: var(--r1); color: var(--on-r1); }
+  .chip.r2 { flex: 15 1 0; background: var(--r2); color: var(--on-r2); }
+  .chip.r3 { flex: 10 1 0; background: var(--r3); color: var(--on-r3); }
+  .chip.fb { flex: 10 1 0; background: #ECC61B; color: #1A2A5C; }
+  .chip.free { flex: 20 1 0; background: var(--free); color: var(--on-free); }
+  .strip-note { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
+
+  /* name badge card */
+  .badge { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; }
+  .badge-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 18px; font-weight: 700; font-size: 16px; }
+  .badge-head .slot { width: 36px; height: 10px; border-radius: 5px; background: currentColor; opacity: .85; flex: none; }
+  .badge-head .time { margin-left: auto; font-weight: 500; font-size: 14px; }
+  .badge.r1 .badge-head { background: var(--r1); color: var(--on-r1); }
+  .badge.r2 .badge-head { background: var(--r2); color: var(--on-r2); }
+  .badge.r3 .badge-head { background: var(--r3); color: var(--on-r3); }
+  .badge.fb .badge-head { background: #ECC61B; color: #1A2A5C; }
+  .badge.free .badge-head { background: var(--free); color: var(--on-free); }
+  .badge.prep .badge-head { background: var(--ink); color: var(--bg); }
+  .badge-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .badge-body p { margin: 0; }
+  .badge-body h2 { font: 700 24px/1.4 var(--font-display); margin: 0; text-wrap: balance; }
+  .example { background: var(--note); border-radius: 14px; padding: 10px 14px; font-size: 15px; line-height: 1.7; }
+  .example.tip { background: var(--hint); }
+  .example strong { color: var(--ink); }
+  ul.fill { margin: 0; padding-left: 1.3em; }
+  ul.fill li { margin: 2px 0; }
+  .faq { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 14px 20px 6px; }
+  .faq h2 { font: 700 20px/1.4 var(--font-body); margin: 0 0 4px; }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq details:last-child { border-bottom: 0; }
+  .faq summary { cursor: pointer; font-weight: 700; padding: 12px 0; }
+  .faq details p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
+  .foot { text-align: center; font-size: 13px; color: var(--muted); margin: 0; }
+  @media (max-width: 420px) { h1 { font-size: 26px; } }
 </style>
-</head>
-<body>
-<header>
-  <h1>IAA 創新加速聯盟 · 交朋友大冒險</h1>
-  <p>輪轉制三輪配對：每輪全員配對、換人不重複、單數自動併三人組 ｜ ① 指定 ② 需求/背景 ③ 隨機 ＋ 自由交流 30 分</p>
-  <div class="tabs noprint">
-    <button class="tab active" data-v="admin" onclick="setView('admin')">管理端</button>
-    <button class="tab" data-v="member" onclick="setView('member')">會友端</button>
-    <button class="tab" data-v="board" onclick="setView('board')">投影/總表</button>
-    <button class="tab" data-v="help" onclick="setView('help')">📖 使用說明</button>
-  </div>
-</header>
-<div id="err" class="err" style="display:none"></div>
-<main id="app"></main>
 
-<script>
-/* ---------------- 狀態 ---------------- */
-const KEY="iaa_match_v3";
-let S=load()||{roster:[],round1:null,round2Picks:{},round2:null,round3:null,
-  opts:{mode:"biz",crossShe:true,roundMin:10},absent:[],extraHist:[]};
-S.absent=S.absent||[];S.extraHist=S.extraHist||[];S.round1Picks=S.round1Picks||{};
-let view="admin", selfName="";
-
-function load(){try{return JSON.parse(localStorage.getItem(KEY));}catch(e){return null;}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){showErr("儲存失敗，資料仍在畫面中。");}}
-function showErr(m){const e=document.getElementById("err");e.textContent=m;e.style.display="block";setTimeout(()=>e.style.display="none",4000);}
-
-/* ---------------- CSV ---------------- */
-const DEFAULT_ROSTER=`姓名,社別,公司,產業大分類,產業細分類,最近在忙,想找,可提供,指定配對
-黃雅堂,宜蘭社,維多麗亞玫瑰莊園,觀光/住宿/旅遊,住宿/觀光,,,,
-賴約凱,宜蘭社,亞典菓子工場,食品/餐飲/伴手禮,烘焙/糕點,,,,
-謝陳煌,基隆社,和平島皇帝殿食品坊,食品/餐飲/伴手禮,餐飲/伴手禮,,,,
-楊麗玲,基隆社,藻樂趣海藻創意美食,食品/餐飲/伴手禮,餐飲/伴手禮,,,,
-鄭明仁,基隆社,IMC聯合會,社團/組織,社團/協會,,,,
-王雪香,台北社,弘喜有限公司,珠寶/禮品,珠寶/禮品,,,,
-張森烈,台北社,聖島國際專利商標聯合事務所,顧問/專業服務,智財/法律,,,,
-吳俊傑,台北社,珍萬國家具裝潢(股)公司,家具/家飾/寢飾,家具,,,,
-李伍滄,台北社,伍合床枕(股)公司,家具/家飾/寢飾,寢具/寢飾,,,,
-黃金龍,台北社,深耕開發(股)公司,資訊/電子/科技,通信/網路,,,,
-宋貴修,桃園社,嘉彰(股)公司,機械/設備/金屬製造,金屬/五金,,,,
-陳蒼海,桃園社,嘉彰(股)公司,機械/設備/金屬製造,金屬/五金,,,,
-陳麗美,桃園社,禾洋室內裝修工程有限公司,建築/營造/不動產,室內設計/裝修,,,,
-盧永濬,桃園社,源鮮農業生物科技(股)公司,農業/林業,農業/農產生技,,,,
-伍穗華,桃園社,侏羅紀(股)公司／藝信(股)公司,珠寶/禮品,珠寶/藝術,,,,
-陳嘉鴻,桃園社,富堡能源(股)公司,綠能/環保/能源,氫能/燃料電池,,,,
-古思明,桃園社,安耐視科技(股)公司,生技/醫療/保健,醫療器材,,,,
-陳昌平,桃園社,台灣粒線體應用技術(股)公司,生技/醫療/保健,生技/新藥,,,,
-謝昌寶,新竹社,建興農業科技(股)公司,農業/林業,農業/農產生技,,,,
-黃唯洲,新竹社,愛蜂園有限公司,食品/餐飲/伴手禮,農特產品,,,,
-林文華,新竹社,小林煎餅(股)公司,食品/餐飲/伴手禮,烘焙/糕點,,,,
-朱碧霞,苗栗社,勞動部勞資獨任仲裁人／勞動部勞資獨任調解人,顧問/專業服務,勞資/法律顧問,,,,
-江德利,苗栗社,泰安觀止溫泉(股)公司,觀光/住宿/旅遊,溫泉/飯店,,,,
-黃教誠,苗栗社,元埕建築師事務所,建築/營造/不動產,建築設計/事務所,,,,
-林鎂雲,苗栗社,后里薩克斯風玩家館有限公司,文創/藝術/設計印刷,樂器/音樂,,,,
-梁群儒,苗栗社,米樂家國際貿易有限公司,食品/餐飲/伴手禮,食品原料/批發,,,,
-林振鋒,苗栗社,賀喜能源(股)公司,綠能/環保/能源,綠能電力系統,,,,
-翟清楠,苗栗社,恆智重機(股)公司,機械/設備/金屬製造,搬運/物流設備,,,,
-江淑萍,苗栗社,江記永安囍餅有限公司,食品/餐飲/伴手禮,烘焙/糕點,,,,
-林浿安,苗栗社,EX—亞洲劇團,文創/藝術/設計印刷,表演藝術,,,,
-魏宏汶,苗栗社,麥世科(股)公司,化工/材料,不織布/複合材料,,,,
-沈香君,苗栗社,麥世科(股)公司,化工/材料,不織布/複合材料,,,,
-鄧克智,苗栗社,苗栗縣加樂林業生產合作社,農業/林業,林業,,,,
-劉筱文,苗栗社,和宸企業社附設阿昌清潔庇護工場,綠能/環保/能源,環保/清潔服務,,,,
-張光瑤,台中社,光纖電腦科技(股)公司,資訊/電子/科技,電子設備,,,,
-唐明良,台中社,向陽聯合會計師事務所,顧問/專業服務,會計/財稅,,,,
-林珮君,台中社,亞克科技開發(股)公司,汽機車/零件,汽車配件,,,,
-廖月照,台中社,歐群科技(股)公司,機械/設備/金屬製造,工具機/機械,,,,
-陳科仰,台中社,鼎力生醫(股)公司,美妝/保養品,保養品/代工,,,,
-陳奕錩,台中社,大振豐洋傘有限公司,紡織/傘具,傘具,,,,
-許慶修,台中社,中美本草生技(股)公司,生技/醫療/保健,保健品/新藥,,,,
-林祺豪,台中社,三風食品工業(股)公司,食品/餐飲/伴手禮,食品加工製造,,,,
-王明宇,台中社,恭勤化學工業(股)公司,化工/材料,化工原料,,,,
-孫連忠,台中社,敬統實業(股)公司,家具/家飾/寢飾,寢具/寢飾,,,,
-王信焜,台中社,群復中醫醫療照護事業,生技/醫療/保健,醫療照護/長照,,,,
-彭素菁,台中社,順心企業(股)公司,機械/設備/金屬製造,自動化/機械設備,,,,
-余垂恒,台中社,塑懋機械有限公司,機械/設備/金屬製造,塑膠加工機械,,,,
-呂金豐,台中社,金豐室內裝修有限公司,建築/營造/不動產,室內設計/裝修,,,,
-葉子儀,台中社,台灣快密刀科技有限公司,化工/材料,工業潤滑油/潤滑脂,,,,
-王瑞良,台中社,進發科技有限公司,機械/設備/金屬製造,工具機/機械,,,,
-陳祥彬,台中社,蜜友商行,食品/餐飲/伴手禮,冰品/飲品,,,,
-陳人豪,台中社,元亨精紡工業(股)公司,紡織/傘具,紡織,,,,
-廖經舜,台中社,旭建電機工業(股)公司,機械/設備/金屬製造,電機/馬達,,,,
-周鴻仁,彰化社,潤盟國際商管顧問,顧問/專業服務,企管/品牌顧問,,,,
-林金順,彰化社,富雨洋傘有限公司,紡織/傘具,傘具,,,,
-周淑秋,彰化社,富雨洋傘有限公司,紡織/傘具,傘具,,,,
-陳武郎,彰化社,夢龍(股)公司,食品/餐飲/伴手禮,食品貿易,,,,
-楊國珍,南投社,珍鼎記茶飲(股)公司,食品/餐飲/伴手禮,茶飲/飲品,,,,
-張金泉,南投社,良飛工業有限公司,汽機車/零件,消音器/排氣,,,,
-曾煌棊,南投社,昇大交通(股)公司,運輸/物流,貨物運輸,,,,
-張金來,南投社,良飛工業有限公司,汽機車/零件,消音器/排氣,,,,
-林子騰,雲林社,領點資訊有限公司,資訊/電子/科技,軟體/資訊服務,,,,
-鄭文太,雲林社,新吉發米粉工廠有限公司,食品/餐飲/伴手禮,食品加工製造,,,,
-陳盈豪,雲林社,土庫驛可可莊園有限公司,食品/餐飲/伴手禮,巧克力/可可,,,,
-郭建位,雲林社,雲林縣職業工會聯合服務中心,顧問/專業服務,勞資/職訓,,,,
-紀書菱,雲林社,台灣雅聞生技(股)公司,美妝/保養品,化妝/保養品,,,,
-葉欣芝,嘉義社,對了出發(股)公司／湯悅開發有限公司,文創/藝術/設計印刷,文創事業,,,,
-高麗琴,嘉義社,維霖開發建設(股)公司,建築/營造/不動產,建設/營造,,,,
-何勇魏,嘉義社,華實興業(股)公司,美妝/保養品,化妝/保養品,,,,
-郭奕谷,嘉義社,伍睿建設(股)公司／莆田市游龍生物科技有限公司,建築/營造/不動產,建設/營造,,,,
-林啟輝,嘉義社,志輝科技(股)公司,機械/設備/金屬製造,電機/馬達,,,,
-陳文忠,嘉義社,盈松環保(股)公司,綠能/環保/能源,環保/廢棄物,,,,
-陳琬媖,嘉義社,盈松環保(股)公司,綠能/環保/能源,環保/廢棄物,,,,
-李勳婷,台南市社,三道門旅店有限公司,觀光/住宿/旅遊,住宿/飯店,,,,
-陳政仁,台南市社,麒宏食品工業有限公司,食品/餐飲/伴手禮,食品加工製造,,,,
-陳信宏,南瀛社,南瀛IMC,社團/組織,社團/協會,,,,
-李敏妃,南瀛社,洋碁國際旅行社有限公司,觀光/住宿/旅遊,旅行社,,,,
-翁志宜,南瀛社,儕陞生化技術(股)公司,生技/醫療/保健,生技/新藥,,,,
-郭文勝,南瀛社,蔡阿姨租屋,建築/營造/不動產,不動產/租賃,,,,
-郭文俊,南瀛社,南科贊美酒店,觀光/住宿/旅遊,住宿/飯店,,,,
-陳慧龍,南瀛社,龍宏印刷有限公司,文創/藝術/設計印刷,設計/印刷,,,,
-鄭群亮,南瀛社,營新醫院,生技/醫療/保健,醫療照護/長照,,,,
-陳志銘,南瀛社,澄交生物科技(股)公司,生技/醫療/保健,生技/新藥,,,,
-蕭崇瑜,南瀛社,詠糧實業有限公司,食品/餐飲/伴手禮,食品原料/批發,,,,
-張翔渝,南瀛社,伍道眾合有限公司,食品/餐飲/伴手禮,生鮮食材,,,,
-李國陽,高雄社,順升昌企業(股)公司,機械/設備/金屬製造,金屬/五金,,,,
-周代耀,高雄社,誠翔國際顧問有限公司,顧問/專業服務,企管/品牌顧問,,,,
-宋小麗,高雄社,立達國際興業(股)公司,顧問/專業服務,人力資源/電商,,,,
-陳崇誠,高雄社,提碁(股)公司,美妝/保養品,美容美髮,,,,
-蔡俊明,高雄社,福樂多事業(股)公司,生技/醫療/保健,醫療照護/長照,,,,
-麥芯瑜,高雄社,創潔生技(股)公司,食品/餐飲/伴手禮,茶飲/飲品,,,,
-張清泉,高雄社,永泉國際企業有限公司,食品/餐飲/伴手禮,生鮮食材,,,,
-王竣立,高雄社,鴻信實業(股)公司,食品/餐飲/伴手禮,祭祀/禮品食品,,,,`;
-const SAMPLE=DEFAULT_ROSTER;
-
-function parseCSV(text){
-  const rows=[];let i=0,f="",row=[],q=false;text=text.replace(/\r/g,"");
-  while(i<text.length){const c=text[i];
-    if(q){if(c=='"'){if(text[i+1]=='"'){f+='"';i++;}else q=false;}else f+=c;}
-    else{if(c=='"')q=true;else if(c==','){row.push(f);f="";}
-      else if(c=='\n'){row.push(f);rows.push(row);row=[];f="";}else f+=c;}
-    i++;}
-  if(f!==""||row.length){row.push(f);rows.push(row);}
-  return rows;
-}
-function importRoster(text){
-  const rows=parseCSV(text.trim());if(rows.length<2){showErr("沒有資料列");return;}
-  const H=rows[0].map(s=>s.trim());const idx=n=>H.indexOf(n);
-  const g=(r,n)=>{const k=idx(n);return k>=0?(r[k]||"").trim():"";};
-  const seen={};
-  const roster=rows.slice(1).filter(r=>r.join("").trim()).map(r=>{
-    let nm=g(r,"姓名");if(seen[nm]){nm=nm+"("+g(r,"社別")+")";}seen[g(r,"姓名")]=1;
-    return {name:nm,she:g(r,"社別"),company:g(r,"公司"),
-      catBig:g(r,"產業大分類"),catSub:g(r,"產業細分類"),
-      interests:g(r,"最近在忙"),wants:g(r,"想找"),offers:g(r,"可提供"),
-      desired:g(r,"指定配對").split("|").map(s=>s.trim()).filter(Boolean)};
-  }).filter(m=>m.name);
-  S.roster=roster;S.round1=null;S.round1Picks={};S.round2Picks={};S.round2=null;S.round3=null;S.absent=[];S.extraHist=[];save();render();
-}
-/* ---------------- Google 試算表匯入 ---------------- */
-function sheetCsvUrl(url){
-  const m=url.match(/\/spreadsheets\/d\/([a-zA-Z0-9\-_]+)/);if(!m)return null;
-  const gid=(url.match(/[#&?]gid=(\d+)/)||[])[1]||"0";
-  return "https://docs.google.com/spreadsheets/d/"+m[1]+"/gviz/tq?tqx=out:csv&gid="+gid;
-}
-function importFromSheet(url){
-  url=(url||"").trim();
-  if(!url){showErr("請先貼上 Google 試算表網址");return;}
-  const cu=sheetCsvUrl(url);
-  if(!cu){showErr("網址格式不對，請貼完整的 Google 試算表網址（含 /spreadsheets/d/…）");return;}
-  S.opts.sheetUrl=url;save();
-  fetch(cu).then(r=>{if(!r.ok)throw new Error();return r.text();})
-    .then(t=>{if(!t||t.indexOf("姓名")<0){showErr("讀到的內容沒有「姓名」欄，請確認工作表欄位與分頁 gid");return;}importRoster(t);})
-    .catch(()=>showErr("讀取失敗：請確認試算表已設「知道連結的使用者→檢視者」，且網路正常。"));
-}
-function markAbsent(n){if(!n)return;if(!S.absent.includes(n))S.absent.push(n);save();render();}
-function restoreAbsent(n){S.absent=S.absent.filter(x=>x!==n);save();render();}
-
-/* ---------------- 工具 ---------------- */
-function byName(){return Object.fromEntries(S.roster.map(m=>[m.name,m]));}
-function key(a,b){return [a,b].sort().join("|");}
-function sameCo(a,b){const bn=byName();return bn[a]&&bn[b]&&bn[a].company&&bn[a].company===bn[b].company;}
-function present(){return S.roster.filter(m=>!S.absent.includes(m.name));}
-function presentNames(){return present().map(m=>m.name);}
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function metSet(rounds){const s=new Set();for(const r of rounds){if(!r)continue;
-  for(const [a,b] of Object.entries(r.matched)) s.add(key(a,b));
-  if(r.trio){s.add(key(r.trio.extra,r.trio.pair[0]));s.add(key(r.trio.extra,r.trio.pair[1]));}
-}return s;}
-
-// 通用配對：forbid 為硬條件；落單者退而求其次僅擋同公司，盡量讓每個人都有伴
-function greedyPair(names,forbid){
-  const pool=shuffle([...names]),matched={},used=new Set();
-  for(let i=0;i<pool.length;i++){const a=pool[i];if(used.has(a))continue;
-    for(let j=i+1;j<pool.length;j++){const b=pool[j];if(used.has(b))continue;if(forbid(a,b))continue;
-      matched[a]=b;matched[b]=a;used.add(a);used.add(b);break;}}
-  let left=pool.filter(n=>!used.has(n));
-  for(let i=0;i<left.length;i++){const a=left[i];if(used.has(a))continue;
-    for(let j=i+1;j<left.length;j++){const b=left[j];if(used.has(b))continue;if(sameCo(a,b))continue;
-      matched[a]=b;matched[b]=a;used.add(a);used.add(b);break;}}
-  return {matched,leftover:pool.filter(n=>!used.has(n))};
-}
-
-/* ---------------- 配對評分（第二輪推薦用） ---------------- */
-function tok(s){return (s||"").split(/[、,，\/／;；\s]+/).map(x=>x.trim()).filter(x=>x.length>=2);}
-function overlap(aStr,bStr){const A=tok(aStr),B=(bStr||"");return A.some(t=>B.includes(t));}
-function score(me,c){
-  const o=S.opts;let s=0;
-  const mw=overlap(me.wants,c.offers),cw=overlap(c.wants,me.offers);
-  if(mw)s+=50;if(cw)s+=50;if(mw&&cw)s+=30;
-  if(me.catSub&&me.catSub===c.catSub)s+=(o.mode==="deep"?30:20);
-  else if(me.catBig&&me.catBig===c.catBig)s+=10;
-  if(o.crossShe&&me.she&&c.she&&me.she!==c.she)s+=(o.mode==="deep"?4:8);
-  return s;
-}
-function suggest(name){
-  const bn=byName(),me=bn[name],met=metSet([S.round1]);
-  return presentNames().filter(n=>n!==name)
-    .filter(n=>!met.has(key(name,n))&&!sameCo(name,n))
-    .map(n=>bn[n]).map(c=>({m:c,s:score(me,c)}))
-    .sort((a,b)=>b.s-a.s).slice(0,5).map(x=>x.m);
-}
-
-/* ---------------- 三輪（輪轉制） ---------------- */
-function finishRound(R,others){
-  if(R.leftover&&R.leftover.length===1){
-    const met=metSet(others);
-    let x=R.leftover[0];
-    if(S.extraHist.includes(x)){
-      for(const [a,b] of Object.entries(R.matched)){
-        if(S.extraHist.includes(a)||a===x||b===x)continue;
-        if(!sameCo(x,b)&&!met.has(key(x,b))){
-          delete R.matched[a];R.matched[x]=b;R.matched[b]=x;R.leftover=[a];x=a;break;}
-      }
-    }
-    const ps=Object.entries(R.matched).filter(([a,b])=>a<b);
-    let best=null,bestS=-1;
-    for(const [a,b] of ps){
-      if(sameCo(x,a)||sameCo(x,b))continue;
-      let s=0;if(!met.has(key(x,a)))s++;if(!met.has(key(x,b)))s++;
-      if(s>bestS){bestS=s;best=[a,b];}
-    }
-    if(!best&&ps.length)best=ps[0];
-    R.trio=best?{pair:best,extra:x}:null;
-    if(R.trio)S.extraHist.push(x);
-  } else R.trio=null;
-  return R;
-}
-// 指定名單：會友端現場指定優先，沒有現場指定才退回匯入名單「指定配對」欄
-function desiredOf(m){const p=S.round1Picks[m.name];return (p&&p.target)?[p.target]:m.desired;}
-function computeRound1(){
-  const bn=byName(),matched={},used=new Set();
-  const P=new Set(presentNames());
-  const place=(a,b)=>{matched[a]=b;matched[b]=a;used.add(a);used.add(b);};
-  for(const m of present()){if(used.has(m.name))continue;
-    for(const d of desiredOf(m)){if(!P.has(d)||used.has(d)||!bn[d]||d===m.name||sameCo(m.name,d))continue;
-      if(desiredOf(bn[d]).includes(m.name)){place(m.name,d);break;}}}
-  for(const m of present()){if(used.has(m.name))continue;
-    for(const d of desiredOf(m)){if(used.has(m.name))break;
-      if(!P.has(d)||used.has(d)||!bn[d]||d===m.name||sameCo(m.name,d))continue;place(m.name,d);}}
-  const rest=presentNames().filter(n=>!used.has(n));
-  const g=greedyPair(rest,(a,b)=>sameCo(a,b));
-  Object.assign(matched,g.matched);
-  S.round1=finishRound({matched,leftover:g.leftover},[]);
-  S.round2Picks={};S.round2=null;S.round3=null;save();render();
-}
-function finalizeRound2(){
-  const met=metSet([S.round1]);
-  const P=new Set(presentNames());
-  const forbid=(a,b)=>a===b||sameCo(a,b)||met.has(key(a,b));
-  const matched={},used=new Set();
-  const place=(a,b)=>{matched[a]=b;matched[b]=a;used.add(a);used.add(b);};
-  const picks=Object.entries(S.round2Picks).filter(([n,p])=>P.has(n)&&P.has(p.target)).sort((x,y)=>x[1].ts-y[1].ts);
-  const pmap=Object.fromEntries(picks.map(([n,p])=>[n,p.target]));
-  for(const [n,p] of picks){if(used.has(n))continue;const t=p.target;
-    if(used.has(t))continue;if(pmap[t]===n&&!forbid(n,t))place(n,t);}
-  for(const [n,p] of picks){if(used.has(n))continue;const t=p.target;
-    if(used.has(t)||forbid(n,t))continue;place(n,t);}
-  const rest=presentNames().filter(n=>!used.has(n));
-  const g=greedyPair(rest,forbid);Object.assign(matched,g.matched);
-  S.round2=finishRound({matched,leftover:g.leftover},[S.round1]);
-  S.round3=null;save();render();
-}
-function computeRound3(){
-  const met=metSet([S.round1,S.round2]);
-  const g=greedyPair(presentNames(),(a,b)=>a===b||sameCo(a,b)||met.has(key(a,b)));
-  S.round3=finishRound({matched:g.matched,leftover:g.leftover},[S.round1,S.round2]);
-  save();render();
-}
-
-/* ---------------- 匯出 ---------------- */
-function exportCSV(){
-  const L=["姓名,社別,公司,第一輪,第二輪,第三輪"];
-  for(const m of S.roster){const abs=S.absent.includes(m.name);L.push([m.name+(abs?"(請假)":""),m.she,m.company,
-    abs?"—":(S.round1?.matched?.[m.name]||(S.round1?.trio?.extra===m.name?("三人組:"+S.round1.trio.pair.join("+")):"(輪空)")),S.round2?.matched?.[m.name]||"",S.round3?.matched?.[m.name]||""]
-    .map(x=>/[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x).join(","));}
-  const blob=new Blob(["﻿"+L.join("\n")],{type:"text/csv;charset=utf-8"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="IAA配對結果.csv";a.click();
-}
-
-/* ---------------- 計時器 ---------------- */
-let timerInt=null,timerLeft=0;
-function startTimer(min){clearInterval(timerInt);timerLeft=min*60;renderTimer();
-  timerInt=setInterval(()=>{timerLeft--;renderTimer();if(timerLeft<=0)clearInterval(timerInt);},1000);}
-function renderTimer(){const el=document.getElementById("timer");if(!el)return;
-  const m=String(Math.floor(Math.max(timerLeft,0)/60)).padStart(2,"0"),s=String(Math.max(timerLeft,0)%60).padStart(2,"0");
-  el.textContent=m+":"+s;}
-
-/* ---------------- 畫面 ---------------- */
-function setView(v){view=v;document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.v===v));render();}
-function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
-function pairs(R){return R?Object.entries(R.matched).filter(([a,b])=>a<b):[];}
-function pairList(R){if(!R)return '<span class="muted">—</span>';
-  const t=R.trio;
-  const html=pairs(R).map(([a,b])=>{
-    if(t&&((t.pair[0]===a&&t.pair[1]===b)||(t.pair[0]===b&&t.pair[1]===a)))
-      return `<div class="pair">${esc(a)} ↔ ${esc(b)} ➕ ${esc(t.extra)}（三人組）</div>`;
-    return `<div class="pair">${esc(a)} ↔ ${esc(b)}</div>`;}).join("");
-  const lo=(!t&&R.leftover&&R.leftover.length)?`<div class="pair warn">輪空：${R.leftover.map(esc).join("、")}</div>`:"";
-  return (html||'<span class="muted">—</span>')+lo;}
-function stat(R){if(!R)return"";const t=R.trio;
- return `<p class="muted" style="margin-top:8px">配成 ${pairs(R).length} 組${t?`（含 1 組三人組：${esc(t.extra)} 加入）`:(R.leftover&&R.leftover.length?`，${R.leftover.length} 人輪空`:``)}。</p>`;}
-function miniProfile(p){if(!p)return"";
-  return `<div style="margin-bottom:8px"><div class="partner">${esc(p.name)}</div>
-    <div class="muted">${esc(p.company)}${p.catSub?"・"+esc(p.catSub):(p.catBig?"・"+esc(p.catBig):"")}${p.she?"（"+esc(p.she)+"）":""}</div>
-    ${p.interests?`<div class="ice">💬 破冰：聽說你最近在忙「${esc(p.interests)}」，可以多聊聊嗎？</div>`:""}
-    ${p.wants?`<div class="ice"><span class="want">🎯 想找：</span>${esc(p.wants)}</div>`:""}
-    ${p.offers?`<div class="ice"><span class="offer">🙌 能提供：</span>${esc(p.offers)}</div>`:""}</div>`;
-}
-function iceCard(label,R,me){
-  const bn=byName();
-  if(S.absent.includes(me))return `<div class="card"><div class="kicker">${label}</div><p class="muted">已標記請假，本輪不參與配對。</p></div>`;
-  if(R&&R.trio&&R.trio.extra===me){
-    const [a,b]=R.trio.pair;
-    return `<div class="card"><div class="kicker">${label}</div><p class="ok" style="font-size:13px">本輪為三人組，你將加入下面這組一起聊：</p>${miniProfile(bn[a])}${miniProfile(bn[b])}</div>`;
-  }
-  if(R&&!R.trio&&R.leftover&&R.leftover.includes(me))
-    return `<div class="card"><div class="kicker">${label}</div><p class="warn">本輪輪空，請到自由交流時段找人聊聊。</p></div>`;
-  let extraNote="";
-  if(R&&R.trio&&R.trio.pair.includes(me))extraNote=`<p class="ok" style="font-size:13px">➕ ${esc(R.trio.extra)} 會加入你們，這輪是三人組。</p>`;
-  const pName=R?.matched?.[me];const p=pName?bn[pName]:null;
-  const inner=p?`${miniProfile(p)}${extraNote}`:'<span class="muted">尚未產生本輪配對</span>';
-  return `<div class="card"><div class="kicker">${label}</div>${inner}</div>`;
-}
-
-function render(){const app=document.getElementById("app");
-  app.innerHTML= view==="admin"?adminHTML():view==="member"?memberHTML():view==="board"?boardHTML():helpHTML();}
-
-function adminHTML(){
-  const r=S.roster,o=S.opts;
-  const prevCSV=document.getElementById("csv")?document.getElementById("csv").value:SAMPLE;
-  return `
-  <div class="card">
-    <h2>⚙️ 配對設定</h2>
-    <div class="row">
-      <label class="toggle">第二輪偏好：
-        <select style="width:auto" onchange="S.opts.mode=this.value;save();">
-          <option value="biz"${o.mode==="biz"?" selected":""}>商機互補優先</option>
-          <option value="deep"${o.mode==="deep"?" selected":""}>同產業深聊優先</option>
-        </select></label>
-      <label class="toggle"><input type="checkbox" ${o.crossShe?"checked":""} onchange="S.opts.crossShe=this.checked;save();"> 跨社優先</label>
-      <label class="toggle">每輪 <input type="text" value="${o.roundMin}" style="width:46px" onchange="S.opts.roundMin=+this.value||10;save();"> 分</label>
+<div class="wrap">
+  <header>
+    <div class="logo-plate"><img src="data:image/jpeg;base64,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" width="720" height="228" alt="創新加速聯盟會 IAA 標誌"></div>
+    <h1>商務配對串聯：<br>一小時，認識新朋友</h1>
+    <p class="lead">這是一場一對一聊天接力。前 30 分鐘聊兩輪，每輪 15 分鐘，你只要先選好 2 到 3 位想認識的人。接著自由交流 20 分鐘，最後 10 分鐘是回饋，現場隨機抽 5 位，每人分享 2 分鐘。</p>
+    <div class="strip" role="img" aria-label="60 分鐘流程：第 1 輪 15 分鐘、第 2 輪 15 分鐘、自由交流 20 分鐘、回饋 10 分鐘">
+      <div class="chip r1">第1輪<small>15分</small></div>
+      <div class="chip r2">第2輪<small>15分</small></div>
+      <div class="chip free">自由交流<small>20分</small></div>
+      <div class="chip fb">回饋<small>10分</small></div>
     </div>
-    <p class="muted" style="margin-top:6px">輪轉制：每輪都替每個人配一位，換人不重複、不配同公司；人數為單數時每輪 1 人輪空。</p>
-  </div>
+    <p class="strip-note">色塊的長短就是時間的長短。</p>
+  </header>
 
-  <div class="card">
-    <h2>📥 1. 匯入會友名單</h2>
-    <p class="muted">欄位：姓名,社別,公司,產業大分類,產業細分類,最近在忙,想找,可提供,指定配對（多人以 | 分隔，可留空）</p>
-    <textarea id="csv" rows="7">${esc(prevCSV)}</textarea>
-    <div class="row" style="margin-top:8px">
-      <button class="act" onclick="importRoster(document.getElementById('csv').value)">匯入名單</button>
-      <input type="file" accept=".csv" class="noprint" onchange="const f=this.files[0];if(f){f.text().then(t=>{document.getElementById('csv').value=t;importRoster(t);});}">
-      <span class="muted">目前 ${r.length} 人</span>
+  <p style="margin:0 0 18px;text-align:center"><a href="https://claude.ai/artifact/RKGcdgTdDWUaQo2B1ma3tG" style="display:inline-block;background:#B51C84;color:#fff;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:14px;font-size:17px">開啟配對系統（報到、選志願）</a></p>
+
+  <article class="badge prep">
+    <div class="badge-head"><span class="slot"></span>活動前</div>
+    <div class="badge-body">
+      <h2>先在網站選一次</h2>
+      <p>活動時，打開網站，找到自己的名字，從名單裡選 2 到 3 位想聊的人，並排好順序。只要選一次，兩輪都會用到。</p>
+      <p>你也要選自己的「新創階段」，一共五種，選最像你現在的那一個：</p>
+      <ul>
+        <li><strong>1 期待新創：</strong>想轉型，但還沒有明確的想法。<br>適合聊：聊聊別人怎麼起步、找靈感。</li>
+        <li><strong>2 新創加速：</strong>想轉型，也有想法，但缺人、缺錢、缺資源。<br>適合聊：把想法變成行動，找夥伴與人脈。</li>
+        <li><strong>3 新創變現：</strong>產品或服務已經做出來，需要市場通路資源，讓更多人買單。<br>適合聊：客戶、通路、行銷與合作銷售。</li>
+        <li><strong>4 精實運營：</strong>已經有收入，要把管理模式整理好，讓成本、流程、團隊更順。<br>適合聊：管理制度、流程、人才與成本。</li>
+        <li><strong>5 擴大經營：</strong>事業穩定、持續運營，想繼續擴張、長久經營。<br>適合聊：擴點、投資、傳承，也能帶新創。</li>
+      </ul>
+      <p>聊天對象的畫面上，會看到對方的階段。電腦幫沒有特別想聊的人配對時，會盡量找階段差比較多的人，這樣可以互相請教、互相幫忙。</p>
+      <p>名單上，工作領域跟你接近的人排在最前面。沒有特別想聊的人，也可以交給電腦。</p>
+      <p class="example tip"><strong>請記得：</strong>報名就是答應要來。你沒出現，想見你的人就白等了。</p>
     </div>
-    <hr>
-    <p class="muted">☁️ 或直接從 <b>Google 試算表</b> 匯入（報名表單回應工作表；試算表共用需設「知道連結的使用者→檢視者」，欄位名稱同上）</p>
-    <div class="row">
-      <input type="text" id="gsUrl" placeholder="貼上 Google 試算表網址" value="${esc(o.sheetUrl||"")}" style="flex:1;min-width:240px">
-      <button class="act" onclick="importFromSheet(document.getElementById('gsUrl').value)">☁️ 從雲端匯入</button>
+  </article>
+
+  <article class="badge prep">
+    <div class="badge-head"><span class="slot"></span>志願排序</div>
+    <div class="badge-body">
+      <h2>想聊的人，排先後</h2>
+      <p>你要選 2 到 3 位想聊的人，並排好順序。第一志願是你最想聊的，第二志願其次，第三志願可以不選。</p>
+      <p>電腦先配你的第一志願。他被別人配走了，就換第二志願，再換第三志願，都不行才隨機。</p>
+      <p>同一位被好幾個人選到時，最早選的人先得。互相選對方的人，最優先。</p>
+      <p class="example"><strong>例如：</strong>小美選小強、小華、小玲。小強已經配給別人，電腦就改配小華。小華也配走了，才配小玲。</p>
     </div>
-  </div>
+  </article>
 
-  ${r.length?`
-  <div class="card">
-    <h2>🙋 出席管理（臨時請假）</h2>
-    <div class="row">
-      <select id="absSel" style="width:auto;min-width:160px">${present().map(m=>`<option>${esc(m.name)}</option>`).join("")}</select>
-      <button class="act" onclick="markAbsent(document.getElementById('absSel').value)">標記請假</button>
-      <span class="muted">出席 ${present().length} 人／請假 ${S.absent.length} 人</span>
+  <article class="badge r1">
+    <div class="badge-head"><span class="slot"></span>第 1 輪<span class="time">15 分鐘</span></div>
+    <div class="badge-body">
+      <h2>先配你選的人</h2>
+      <p>兩個人互相選對方，最優先。同一位朋友被好幾個人選到時，最早選的人先得。</p>
+      <p>第一個選擇被選走了，就換第二個，再來第三個。三個都配不到，或你沒有選，電腦就幫你隨機找一位聊天對象，並參考新創階段，盡量配到階段不同、可以互補的人。</p>
+      <p class="example"><strong>例如：</strong>小明選小華，小華也選小明，他們這一輪就一定會碰面。</p>
     </div>
-    ${S.absent.length?`<div style="margin-top:8px">${S.absent.map(n=>`<span class="pill">${esc(n)} <a href="#" onclick="restoreAbsent('${esc(n)}');return false;">✕</a></span>`).join(" ")}</div>`:""}
-    <p class="muted" style="margin-top:6px">請假者不會出現在之後產生的輪次；若某輪已產生才發現有人沒到，標記請假後請按該輪按鈕重新產生。</p>
-  </div>`:""}
+  </article>
 
-  ${r.length?`
-  <div class="card">
-    <h2>1️⃣ 第一輪 · 指定配對（沒指定者隨機補）</h2>
-    <p class="muted">會友可到「會友端」現場指定想見的人（優先於匯入名單的指定配對欄）；沒指定者系統隨機安排。指定人數：${Object.keys(S.round1Picks).length}。</p>
-    <div class="row"><button class="gold act" onclick="computeRound1()">產生第一輪配對</button>
-      ${S.round1?`<button class="ghost act" onclick="startTimer(S.opts.roundMin)">▶ 開始 ${o.roundMin} 分計時</button><span id="timer" class="timer"></span>`:""}</div>
-    ${stat(S.round1)}${S.round1?`<div class="grid">${pairList(S.round1)}</div>`:""}
-  </div>`:""}
-
-  ${S.round1?`
-  <div class="card">
-    <h2>2️⃣ 第二輪 · 需求/背景媒合（全員換人）</h2>
-    <p class="muted">會友可到「會友端」挑選想聊對象（未挑選者系統隨機換人）。已提交挑選 ${Object.keys(S.round2Picks).length} 份。</p>
-    <div class="row"><button class="gold act" onclick="finalizeRound2()">結算第二輪</button>
-      ${S.round2?`<button class="ghost act" onclick="startTimer(S.opts.roundMin)">▶ 開始 ${o.roundMin} 分計時</button><span id="timer" class="timer"></span>`:""}</div>
-    ${stat(S.round2)}${S.round2?`<div class="grid">${pairList(S.round2)}</div>`:""}
-  </div>`:""}
-
-  ${S.round2?`
-  <div class="card">
-    <h2>3️⃣ 第三輪 · 隨機配對（全員換人）</h2>
-    <div class="row"><button class="gold act" onclick="computeRound3()">產生第三輪配對</button>
-      ${S.round3?`<button class="ghost act" onclick="startTimer(S.opts.roundMin)">▶ 開始 ${o.roundMin} 分計時</button><span id="timer" class="timer"></span>`:""}</div>
-    ${stat(S.round3)}${S.round3?`<div class="grid">${pairList(S.round3)}</div>`:""}
-  </div>`:""}
-
-  ${r.length?`<div class="card"><button class="ghost act" onclick="exportCSV()">⬇ 匯出全部配對結果 (CSV)</button>
-    <button class="ghost act" onclick="if(confirm('確定清除所有資料？')){localStorage.removeItem(KEY);location.reload();}">🗑 清除全部</button></div>`:""}
-  `;
-}
-
-function updSelf(f,v){const m=S.roster.find(x=>x.name===selfName);if(m){m[f]=v.trim();save();}}
-let selfSaved=false;
-function saveSelf(){
-  updSelf('interests',document.getElementById('selfInt').value);
-  updSelf('wants',document.getElementById('selfWants').value);
-  updSelf('offers',document.getElementById('selfOffers').value);
-  selfSaved=true;render();
-}
-function memberHTML(){
-  if(!S.roster.length)return `<div class="card muted">尚未匯入名單，請先到管理端匯入。</div>`;
-  const opts=S.roster.map(m=>`<option ${m.name===selfName?"selected":""}>${esc(m.name)}</option>`).join("");
-  let body="";
-  if(selfName){
-    const me=byName()[selfName];
-    if(me&&!S.round2){
-      body+=`<div class="card"><div class="kicker">✏️ 我的媒合資料（影響第二輪推薦，可隨時修改）</div>
-        <div style="display:grid;gap:8px;margin-top:8px">
-          <label style="font-size:13px">💬 最近在忙（破冰話題）<input type="text" id="selfInt" value="${esc(me.interests)}" placeholder="例：自動化產線研發"></label>
-          <label style="font-size:13px"><span class="want">🎯 我想找的資源／對象</span><input type="text" id="selfWants" value="${esc(me.wants)}" placeholder="例：外銷通路、行銷人才、食品代工廠（多項用、分隔）"></label>
-          <label style="font-size:13px"><span class="offer">🙌 我能提供的專長／資源</span><input type="text" id="selfOffers" value="${esc(me.offers)}" placeholder="例：CNC 加工、品牌顧問、通路資源（多項用、分隔）"></label>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <button class="gold act" onclick="saveSelf()">💾 儲存送出</button>
-          ${selfSaved?'<span class="ok" style="font-weight:700">✅ 已儲存！之後想改再回來填即可。</span>':''}
-        </div>
-        <p class="muted" style="font-size:12px;margin:8px 0 0">填得越具體，第二輪「需求↔資源互補」的推薦越準。</p>
-      </div>`;
-    }
-    if(!S.round1){
-      const bn=byName();
-      const cands=presentNames().filter(n=>n!==selfName&&!sameCo(selfName,n));
-      const groups={};
-      cands.forEach(n=>{const g=bn[n].catBig||"（未分類）";(groups[g]=groups[g]||[]).push(n);});
-      const groupNames=Object.keys(groups).sort((a,b)=>a==="（未分類）"?1:(b==="（未分類）"?-1:a.localeCompare(b,'zh-Hant')));
-      const cur=S.round1Picks[selfName]?.target||"";
-      const optHtml=groupNames.map(g=>{
-        const opts=groups[g].sort((a,b)=>a.localeCompare(b,'zh-Hant')).map(n=>{
-          const c=bn[n],lbl=c.catSub?`${n}（${c.catSub}）`:n;
-          return `<option value="${esc(n)}" ${cur===n?"selected":""}>${esc(lbl)}</option>`;}).join("");
-        return `<optgroup label="${esc(g)}">${opts}</optgroup>`;}).join("");
-      body+=`<div class="card"><div class="kicker">第一輪 · 指定配對（選填，你可以指定想見的人）</div>
-        <p class="muted" style="font-size:12px;margin:0 0 6px">下拉選單依產業大分類分組，方便找同產業或相關產業的人。</p>
-        <select onchange="S.round1Picks['${esc(selfName)}']={target:this.value,ts:Date.now()};save();render();">
-          <option value="">— 不指定，交給系統安排 —</option>
-          ${optHtml}
-        </select>
-        ${cur?`<p class="ok" style="font-size:13px">已指定：${esc(cur)}。若對方也指定你，會優先配成一對；若對方沒指定你，系統仍會優先幫你安排到他。請等承辦按下「產生第一輪配對」。</p>`:'<p class="muted" style="font-size:13px">不指定也沒關係，第一輪系統會自動幫你安排一位。</p>'}
-      </div>`;
-    } else {
-      body+=iceCard("第一輪 · 指定配對",S.round1,selfName);
-    }
-    // 第二輪：全員都可挑選（結算前）
-    if(S.round1&&!S.round2){
-      const notLeft=!(S.round1.leftover&&S.round1.leftover.includes(selfName))||true;
-      const sug=suggest(selfName);
-      body+=`<div class="card"><div class="kicker">第二輪 · 請選擇想聊的對象（換一位新朋友）</div>
-        ${sug.map(s=>`<label class="pick ${S.round2Picks[selfName]?.target===s.name?"sel":""}">
-          <input type="radio" name="r2" ${S.round2Picks[selfName]?.target===s.name?"checked":""} onchange="S.round2Picks['${esc(selfName)}']={target:'${esc(s.name)}',ts:Date.now()};save();render();">
-          <span><b>${esc(s.name)}</b> <small class="tag">${esc(s.company)}${s.catSub?"・"+esc(s.catSub):""}${s.she?"／"+esc(s.she):""}</small>
-          ${s.interests?`<div class="muted">最近在忙：${esc(s.interests)}</div>`:""}
-          ${s.offers?`<div class="offer" style="font-size:13px">能提供：${esc(s.offers)}</div>`:""}</span></label>`).join("")||'<span class="muted">沒有可推薦對象（可能都配過了），系統會於結算時隨機安排。</span>'}
-        ${S.round2Picks[selfName]?`<p class="ok" style="font-size:13px">已提交：${esc(S.round2Picks[selfName].target)}，等待結算。</p>`:""}</div>`;
-    }
-    if(S.round2)body+=iceCard("第二輪 · 需求/背景媒合",S.round2,selfName);
-    if(S.round3)body+=iceCard("第三輪 · 隨機配對",S.round3,selfName);
-  }
-  return `<div class="card"><div class="kicker">請選擇你的名字</div>
-    <select onchange="selfName=this.value;selfSaved=false;render();"><option value="">— 請選擇 —</option>${opts}</select></div>${body}`;
-}
-
-function boardHTML(){
-  return `<div class="card"><h2>📽 配對總表（可投影／列印）</h2>
-    <div class="row noprint"><button class="ghost act" onclick="window.print()">🖨 列印/投影</button></div>
-    <hr><div class="kicker">第一輪 · 指定</div>${stat(S.round1)}<div class="grid">${pairList(S.round1)}</div>
-    <hr><div class="kicker">第二輪 · 媒合</div>${stat(S.round2)}<div class="grid">${pairList(S.round2)}</div>
-    <hr><div class="kicker">第三輪 · 隨機</div>${stat(S.round3)}<div class="grid">${pairList(S.round3)}</div></div>`;
-}
-
-function helpHTML(){
-  const o=S.opts;
-  const th='style="text-align:left;border-bottom:2px solid var(--navy);padding:6px 8px;font-size:13px"';
-  const td='style="border-bottom:1px solid var(--line);padding:6px 8px;font-size:13px;vertical-align:top"';
-  const tbl='style="width:100%;border-collapse:collapse;margin:8px 0"';
-  const A=`<span class="arrow">➜</span>`;
-  return `
-  <div class="card">
-    <h2>🎨 一看就懂 · 圖解操作流程</h2>
-
-    <div class="story">
-      <div class="sc"><div class="pic">👥👥👥</div><div class="txt">大家來參加</div></div>
-      <div class="sc"><div class="pic">🤝</div><div class="txt">第1輪：跟指定的人聊</div></div>
-      <div class="sc"><div class="pic">🔄🤝</div><div class="txt">第2輪：換一位互補的人</div></div>
-      <div class="sc"><div class="pic">🎲🤝</div><div class="txt">第3輪：再換一位驚喜的人</div></div>
-      <div class="sc"><div class="pic">🎉</div><div class="txt">認識3位新朋友！</div></div>
+  <article class="badge r2">
+    <div class="badge-head"><span class="slot"></span>第 2 輪<span class="time">15 分鐘</span></div>
+    <div class="badge-body">
+      <h2>再試一次，其他隨機</h2>
+      <p>你不用再選。第一輪沒聊到你選的人，這一輪會優先照順序再幫你配一次，一樣是最早選的人先得。</p>
+      <p>其他人由電腦隨機配對，而且會盡量不讓你遇到第一輪聊過的人，也會參考新創階段，盡量配到階段不同、可以互補的人。</p>
+      <p>如果現場人數是單數，每一輪會有一個人先休息，可以去喝杯茶。</p>
     </div>
+  </article>
 
-    <p><span class="rolebar" style="background:var(--green)">🙋 我是會友（現場這樣做）</span></p>
-    <div class="flow">
-      <div class="step"><span class="no">1</span><div class="pic">📱</div><div class="txt">打開網頁</div><div class="sub">點上面「會友端」</div></div>${A}
-      <div class="step"><span class="no">2</span><div class="pic">🙋</div><div class="txt">選自己名字</div><div class="sub">下拉選單找到你</div></div>${A}
-      <div class="step"><span class="no">3</span><div class="pic">✏️</div><div class="txt">填3個小問題</div><div class="sub">在忙・想找・能提供</div></div>${A}
-      <div class="step"><span class="no">4</span><div class="pic">👉</div><div class="txt">想見誰？</div><div class="sub">可指定（不指定也OK）</div></div>${A}
-      <div class="step"><span class="no">5</span><div class="pic">💬</div><div class="txt">看配對結果</div><div class="sub">照破冰話題開聊！</div></div>
+  <article class="badge free">
+    <div class="badge-head"><span class="slot"></span>自由交流<span class="time">20 分鐘</span></div>
+    <div class="badge-body">
+      <h2>想聊誰，就走過去聊</h2>
+      <p>兩輪結束後，沒有人幫你排了。你可以去找剛剛還沒聊夠的人，或是特別想認識的人。</p>
     </div>
+  </article>
 
-    <p style="margin-top:14px"><span class="rolebar" style="background:var(--navy)">🎛️ 我是承辦（照按鈕順序按）</span></p>
-    <div class="flow">
-      <div class="step"><span class="no">1</span><div class="pic">📥</div><div class="txt">匯入名單</div><div class="sub">已預載/雲端匯入</div></div>${A}
-      <div class="step"><span class="no">2</span><div class="pic">🙅</div><div class="txt">有人沒來？</div><div class="sub">出席管理標記請假</div></div>${A}
-      <div class="step"><span class="no">3</span><div class="pic">1️⃣</div><div class="txt">產生第一輪</div><div class="sub">按鈕＋開始計時</div></div>${A}
-      <div class="step"><span class="no">4</span><div class="pic">2️⃣</div><div class="txt">結算第二輪</div><div class="sub">等會友挑完再按</div></div>${A}
-      <div class="step"><span class="no">5</span><div class="pic">3️⃣</div><div class="txt">產生第三輪</div><div class="sub">系統隨機安排</div></div>${A}
-      <div class="step"><span class="no">6</span><div class="pic">⬇️</div><div class="txt">匯出結果</div><div class="sub">CSV 留存回報</div></div>
+  <article class="badge fb">
+    <div class="badge-head"><span class="slot"></span>回饋<span class="time">10 分鐘</span></div>
+    <div class="badge-body">
+      <h2>說說今天的收穫</h2>
+      <p>最後 10 分鐘，現場隨機抽 5 位朋友上台，每人 2 分鐘，說說今天認識了誰、聊到什麼有趣的事。</p>
+      <p>被抽到的人不用緊張，講兩三句就好。沒被抽到的人，也可以在自由交流時間先想好要說什麼。</p>
     </div>
+  </article>
 
-    <p class="muted" style="margin-top:10px">🧡 貼心規則：每輪都有伴、絕不重複、不配同公司；人數單數會自動變一組三人小隊，沒有人落單！</p>
-  </div>
+  <section class="faq">
+    <h2>常見問題</h2>
+    <details>
+      <summary>我選的人都會見到嗎？</summary>
+      <p>只有兩輪，所以不一定。第一輪沒配到你選的人，第二輪會優先再試一次。還是沒排到的話，可以在自由交流時間去找他。</p>
+    </details>
+    <details>
+      <summary>好多人都想找同一個人，怎麼辦？</summary>
+      <p>互相選的優先。其他人看誰先選，最早選的人先得。你的第一個選擇被選走，就換第二個、第三個，都不行才隨機。</p>
+    </details>
+    <details>
+      <summary>我什麼都沒填，可以參加嗎？</summary>
+      <p>可以。沒選的話，兩輪都由電腦隨機幫你找聊天對象。</p>
+    </details>
+    <details>
+      <summary>我不認識對方，要聊什麼？</summary>
+      <p>配對結果會告訴你對方最近在忙什麼，直接問他就可以：「聽說你最近在忙這個，可以多說一點嗎？」</p>
+    </details>
+  </section>
 
-  <div class="card">
-    <h2>📖 使用說明與配對原理</h2>
-    <p class="muted">這份說明分兩部分：① 現場怎麼操作　② 每一輪配對背後的邏輯，讓承辦與會友都能看懂系統為什麼這樣配。</p>
-  </div>
-
-  <div class="card">
-    <h2>🗓️ 整體流程</h2>
-    <p>報名 → <b>① 指定配對 ${o.roundMin} 分</b> → <b>② 需求/背景媒合 ${o.roundMin} 分</b> → <b>③ 隨機配對 ${o.roundMin} 分</b> → <b>自由交流 30 分</b></p>
-    <p class="muted">核心原則：<b>每一輪都讓在場的每個人都有伴聊天</b>（不是配到就結束的淘汰制），三輪下來換三位不同的人、絕不重複配到同一人、也不會配到同公司的人。人數是單數時，會有 1 組自動變成「三人組」，確保沒有人真的落單。</p>
-  </div>
-
-  <div class="card">
-    <h2>1️⃣ 第一輪：指定配對</h2>
-    <p><b>資料來源（兩種，現場指定優先）：</b></p>
-    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
-      <li>會友在「會友端」現場用下拉選單指定想見的人（已依產業大分類分組，方便找同產業）。</li>
-      <li>若沒有現場指定，退回採用匯入名單 CSV 裡「指定配對」欄位（報名表就先填好的人選，可用 <code>|</code> 分隔多人）。</li>
-    </ol>
-    <p><b>配對順序（承辦按下「產生第一輪配對」時，依序執行）：</b></p>
-    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
-      <li><b>互選優先</b>：A 指定 B、B 也指定 A → 直接配成一對（最強配對訊號，優先處理）。</li>
-      <li><b>單向指定</b>：只有一方指定 → 依名單順序，優先幫指定的人安排到他想見的對象（只要對方還沒被配走、不是同公司）。</li>
-      <li><b>其餘沒指定或指定對象已被配走的人</b>：用「隨機洗牌配對」（Fisher–Yates 洗牌法）兩兩隨機配對，只擋「同公司」這一條硬限制。</li>
-    </ol>
-    <p class="muted">為什麼要先洗牌再配對，而不是照名單順序？因為照原始順序配對容易讓名單前面的人反覆配到彼此、名單後面的人吃虧；洗牌後每次產生的隨機性才公平。</p>
-  </div>
-
-  <div class="card">
-    <h2>2️⃣ 第二輪：需求／背景媒合（加權推薦）</h2>
-    <p>第一輪結束、按「結算第二輪」前，會友可到「會友端」從系統推薦的 <b>3–5 位</b>候選人中挑一位。系統怎麼推薦？每個候選人都會被算一個「配對分數」，分數由以下條件<b>加總</b>而成，分數越高越推薦：</p>
-    <table ${tbl}>
-      <tr><th ${th}>條件</th><th ${th}>加分</th><th ${th}>邏輯</th></tr>
-      <tr><td ${td}>我的「想找」關鍵字，命中對方的「可提供」</td><td ${td}><b>+50</b></td><td ${td}>對方可能剛好有我要的資源，商機價值最高</td></tr>
-      <tr><td ${td}>反過來，對方的「想找」也命中我的「可提供」</td><td ${td}>+50</td><td ${td}>雙向都命中會再疊加，兩筆加分都拿到</td></tr>
-      <tr><td ${td}>上面兩條「雙向互補」同時成立</td><td ${td}>再 +30</td><td ${td}>彼此都能幫上對方，媒合最穩，額外加成</td></tr>
-      <tr><td ${td}>產業「細分類」相同（例如都做「食品加工製造」）</td><td ${td}>+20（深聊模式 +30）</td><td ${td}>同溫層話題多、容易聊開</td></tr>
-      <tr><td ${td}>細分類不同，但「大分類」相同</td><td ${td}>+10</td><td ${td}>相關產業，仍有共通語言</td></tr>
-      <tr><td ${td}>跨社別 / 跨分區</td><td ${td}>+8（深聊模式 +4）</td><td ${td}>鼓勵認識平常較少接觸的圈子；「同產業深聊優先」模式會降低這項權重，讓同產業優先勝出</td></tr>
-      <tr><td ${td}>同公司　／　第一輪已經配過這個人</td><td ${td}>直接剔除</td><td ${td}>系統推薦名單中不會出現，不需要手動排除</td></tr>
-    </table>
-    <p class="muted">關鍵字比對：把「想找／可提供」欄位用頓號、逗號、斜線等符號切成一個個詞，只要有一個詞出現在對方欄位裡就算命中（非嚴格字串完全比對，較寬鬆好用）。</p>
-    <p class="muted">「想找」「可提供」欄位是空的怎麼辦？→ 這兩項互補分數就拿不到，系統會改依產業分類分數排序推薦，不會沒有候選人。</p>
-    <p><b>「想找／可提供」資料從哪來？（兩個管道）</b></p>
-    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
-      <li><b>活動前</b>：報名 Google 表單一併填寫 → 匯出 CSV 匯入本工具（建議主要管道，可跨裝置收齊）。</li>
-      <li><b>現場補填</b>：會友端選了自己名字後，最上方有「✏️ 我的媒合資料」輸入區，可即時填寫或修改，立刻影響第二輪推薦。<span class="warn">注意：本工具資料只存在開啟它的那台裝置，現場補填請用承辦準備的平板／筆電（同一台），不要各自用手機開檔案填。</span></li>
-    </ol>
-    <p>目前設定：<b>${o.mode==="deep"?"同產業深聊優先":"商機互補優先"}</b>　｜　跨社加分：<b>${o.crossShe?"開啟":"關閉"}</b>（可在管理端調整，會即時影響上表的加分結果）</p>
-    <p><b>結算規則</b>：互選（兩人都選對方）優先直接成對；其餘依「提交時間」排序，先選先配；沒選的人由系統用同一套「洗牌＋只擋同公司/擋已配過」的邏輯隨機補上，確保每個人都有第二輪的伴。</p>
-  </div>
-
-  <div class="card">
-    <h2>3️⃣ 第三輪：隨機配對</h2>
-    <p>不用挑選，系統直接用「洗牌配對」處理所有在場的人；唯一限制是<b>不能是前兩輪配過的人、也不能同公司</b>。這樣三輪下來，每個人都認識了 3 位（或含三人組共 4 位）不重複的新朋友。</p>
-  </div>
-
-  <div class="card">
-    <h2>➕ 單數落單怎麼辦：三人組機制</h2>
-    <p>當在場人數是單數，兩兩配對一定會剩 1 人。系統不會讓這個人乾等，而是：</p>
-    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
-      <li>從當輪已配好的組別中，挑一組「這位落單者都還沒認識過的兩人」加入，變成三人組一起聊。</li>
-      <li>如果找不到完全沒認識過的組合，退而求其次，只要不是同公司就可以加入。</li>
-      <li>系統會記錄「誰當過三人組的第三人」，下一輪優先換別人當第三人，<b>避免同一人每次都被迫當三人組</b>（已用 93 人三輪模擬驗證：三輪的第三人皆為不同人）。</li>
-    </ol>
-  </div>
-
-  <div class="card">
-    <h2>🙋 臨時請假怎麼處理</h2>
-    <p>管理端「出席管理」可即時把某人標記請假：</p>
-    <ul style="margin:4px 0 8px;padding-left:20px;font-size:14px">
-      <li>請假者會從<b>之後尚未產生的輪次</b>中自動剔除，不會被配對，也不會被系統誤挑去當三人組。</li>
-      <li>若某一輪<b>已經產生完</b>才發現有人沒到，把他標記請假後，重新按一次該輪「產生配對」按鈕，系統會排除他重算。</li>
-      <li>請假者的歷史配對紀錄仍保留在名單與匯出結果中（標註「請假」），不會從名單裡整個刪除。</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h2>🖥️ 操作步驟</h2>
-    <p><b>管理端（承辦／人資長）</b></p>
-    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
-      <li>「配對設定」選好第二輪偏好（商機互補優先／同產業深聊優先）與跨社優先開關、每輪時間。</li>
-      <li>「匯入會友名單」貼上或上傳報名 CSV（第一次開啟已自動預載目前會友名單，可直接使用或重新匯入更新）。</li>
-      <li>報到時，若有人請假，在「出席管理」標記。</li>
-      <li>按「產生第一輪配對」→ 投影／請會友到會友端查看 → 按「開始計時」。</li>
-      <li>第一輪結束後，開放會友到會友端挑第二輪對象，時間到按「結算第二輪」。</li>
-      <li>按「產生第三輪配對」。</li>
-      <li>活動後按「匯出全部配對結果 (CSV)」留存，或回報媒合成交狀況。</li>
-    </ol>
-    <p><b>會友端（現場會友自己操作）</b></p>
-    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
-      <li>下拉選單選自己的名字。</li>
-      <li>第一輪還沒產生前，可選填「指定配對」（依產業分組，找同產業的人更快）。</li>
-      <li>每輪配對出來後，畫面會顯示對象的公司／產業／破冰話題／想找／可提供，方便直接開口聊。</li>
-      <li>第二輪開放挑選時，從推薦的 3–5 位中選一位想聊的對象。</li>
-    </ol>
-    <p><b>投影／總表</b>：活動現場可直接投影本頁面（按「列印/投影」），一次看到三輪所有配對結果，方便主持人喊名字。</p>
-  </div>
-
-  <div class="card">
-    <h2>☁️ 上雲端（GitHub Pages）與 Google 試算表串接</h2>
-    <p><b>可以，而且已內建。</b>管理端「匯入會友名單」卡片下方有「☁️ 從雲端匯入」：貼上 Google 試算表網址，工具會直接把該工作表讀成 CSV 匯入——報名名單、每個人的「想找／可提供」一次帶進來，直接參與第二輪評分。</p>
-    <p><b>原理</b>：Google 試算表有一個公開的 CSV 輸出端點（gviz 匯出）。只要試算表共用設定為「知道連結的使用者→檢視者」，任何網頁（含放在 GitHub Pages 上的本工具）都能用瀏覽器直接抓到即時內容，<b>不需要伺服器、不需要 API 金鑰、零成本</b>。Google 表單的回應會自動寫進試算表，所以整條路是：</p>
-    <p style="text-align:center"><b>會友填 Google 表單 → 回應自動進試算表 → 本工具「☁️ 從雲端匯入」一鍵抓最新名單</b></p>
-    <p><b>設定步驟（一次性）：</b></p>
-    <ol style="margin:4px 0 8px;padding-left:20px;font-size:14px">
-      <li>建立 Google 表單，題目對應欄位：姓名、社別、公司、產業大分類、產業細分類、最近在忙、想找、可提供、指定配對。</li>
-      <li>表單「回應」→ 連結試算表；把試算表<b>第一列欄名改成上面這些名稱</b>（與工具欄位一致才對得上）。</li>
-      <li>試算表右上「共用」→「知道連結的使用者」→「檢視者」。</li>
-      <li>複製試算表網址，貼到管理端「☁️ 從雲端匯入」→ 完成。之後每次活動前按一下就是最新名單。</li>
-    </ol>
-    <p><b>把本工具放上 GitHub Pages：</b>把這個 HTML 檔放進 GitHub repo → Settings → Pages → 選分支發布，會得到一個 https 網址，承辦和會友都能用網址開啟，不必傳檔案。</p>
-    <p><b>限制與注意：</b></p>
-    <ul style="margin:4px 0;padding-left:20px;font-size:14px">
-      <li><b>讀取沒問題，回寫做不到</b>：工具能「讀」試算表，但無法把現場補填或配對結果「寫回」試算表（那需要另外掛 Google Apps Script，之後要做可以加）。現場補填仍存在該裝置，配對結果請用「匯出 CSV」留存。</li>
-      <li><b>就算網頁上了雲端，每台裝置的資料仍是各自獨立</b>（localStorage 特性）：會友用自己手機開，看得到名單與說明，但承辦電腦上產生的配對結果不會同步到會友手機。現場查看配對仍以投影／承辦裝置為主。</li>
-      <li><b>隱私</b>：設為「知道連結可檢視」的試算表等於半公開，<b>報名試算表只放媒合需要的欄位，不要放手機、地址</b>；GitHub repo 建議設 private（Pages 頁面本身仍公開，網址不主動外流）。</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h2>🔒 資料與隱私</h2>
-    <ul style="margin:4px 0;padding-left:20px;font-size:14px">
-      <li>配對顯示以公司／產業／在忙什麼／想找／可提供為主，<b>不顯示手機等聯絡方式</b>；要聯絡請現場交換名片或請人資長轉介。</li>
-      <li>所有資料只存在你目前瀏覽器的本機儲存（localStorage），沒有伺服器、不會外流；換瀏覽器或清除瀏覽器資料會需要重新匯入名單。</li>
-      <li>管理端「清除全部」會刪除本機所有配對資料，請先匯出 CSV 備份再清除。</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h2>❓ 常見問題</h2>
-    <p><b>Q：會友端顯示「尚未產生本輪配對」？</b><br>A：代表承辦還沒在管理端按下該輪的「產生配對」按鈕，等承辦按下後畫面會自動更新對象。</p>
-    <p><b>Q：我指定的人沒被配到我？</b><br>A：如果對方也剛好被更早的互選配走，或對方指定了別人，系統會優先成全互選成功的雙方；沒配到會在後續「隨機補位」中被安排到別人，仍保證你這輪一定有伴。</p>
-    <p><b>Q：第二輪都沒有推薦名單？</b><br>A：通常代表可推薦的人都已經在第一輪配過或同公司，系統會在結算時直接隨機幫你安排，不影響你有伴聊天。</p>
-    <p><b>目前狀態</b>：名單 ${S.roster.length} 人｜出席 ${present().length} 人｜請假 ${S.absent.length} 人｜第一輪${S.round1?"已產生":"未產生"}｜第二輪${S.round2?"已結算":"未結算"}｜第三輪${S.round3?"已產生":"未產生"}</p>
-  </div>
-  `;
-}
-
-// 首次開啟自動預載目前會友名單
-if(!S.roster||!S.roster.length){importRoster(DEFAULT_ROSTER);}else{render();}
-</script>
-</body>
-</html>
+  <p class="foot">商務配對串聯・IAA 創新加速聯盟</p>
+</div>
