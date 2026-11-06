@@ -14,21 +14,21 @@ iframe{width:100%;max-width:1100px;margin:6px auto 0;border:0;display:block;heig
 <div class="top"><h1>財務長後台</h1><p class="sub">會費審核・收支登記・預算對照（登入一次即可）</p></div>
 <div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="財務長密碼" autocomplete="current-password" style="flex:1"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
 <div id="app" hidden style="display:none">
-<div class="top"><div class="row tabs"><button id="t1" class="on">會費審核</button><button id="t2">收支與預算</button></div></div>
-<iframe id="f1" title="會費審核"></iframe><iframe id="f2" title="收支與預算" hidden></iframe>
+<div class="top"><div class="row tabs"><button id="t1" class="on">會費審核</button><button id="t2">收支與預算</button><button id="t3">記憶庫</button></div></div>
+<iframe id="f1" title="會費審核"></iframe><iframe id="f2" title="收支與預算" hidden></iframe><iframe id="f3" title="記憶庫" hidden></iframe>
 </div>
 <script>
 (function(){
 var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",cur=1;
 function $(i){return document.getElementById(i);}
 function chk(pw,cb){var x=new XMLHttpRequest();x.open("POST",B+"iaa_dues_list");x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");x.onload=function(){cb(x.status>=200&&x.status<300);};x.onerror=function(){cb(false);};x.send(JSON.stringify({p:pw}));}
-function fit(){["f1","f2"].forEach(function(id){var f=$(id);if(f.hidden){return;}try{var d=f.contentDocument;var h=Math.ceil(d.body.getBoundingClientRect().height)+40;if(Math.abs(f.offsetHeight-h)>4){f.style.height=h+"px";}}catch(e){}});}
+function fit(){["f1","f2","f3"].forEach(function(id){var f=$(id);if(f.hidden){return;}try{var d=f.contentDocument;var h=Math.ceil(d.body.getBoundingClientRect().height)+40;if(Math.abs(f.offsetHeight-h)>4){f.style.height=h+"px";}}catch(e){}});}
 setInterval(fit,400);
 function tidy(f){try{f.contentDocument.documentElement.style.overflow="hidden";}catch(e){}try{var d=f.contentDocument;var h=d.querySelector("h1");if(h){h.style.display="none";}var s=d.querySelector(".sub");if(s){s.style.display="none";}}catch(e){}}
-function show(n){cur=n;$("t1").className=n===1?"on":"";$("t2").className=n===2?"on":"";$("f1").hidden=(n===1?false:true);$("f2").hidden=(n===2?false:true);
- var f=$("f"+n);if(f.getAttribute("data-ld")==="1"){try{f.contentWindow.location.reload();}catch(e){}}else{f.setAttribute("data-ld","1");f.src=(n===1?"dues.html":"../books/");}}
-$("f1").onload=function(){tidy($("f1"));};$("f2").onload=function(){tidy($("f2"));};
-$("t1").onclick=function(){show(1);};$("t2").onclick=function(){show(2);};
+function show(n){cur=n;$("t1").className=n===1?"on":"";$("t2").className=n===2?"on":"";$("t3").className=n===3?"on":"";$("f1").hidden=(n===1?false:true);$("f2").hidden=(n===2?false:true);$("f3").hidden=(n===3?false:true);
+ var f=$("f"+n);if(f.getAttribute("data-ld")==="1"){try{f.contentWindow.location.reload();}catch(e){}}else{f.setAttribute("data-ld","1");f.src=(n===1?"dues.html":(n===2?"../books/":"../kb/"));}}
+$("f1").onload=function(){tidy($("f1"));};$("f2").onload=function(){tidy($("f2"));};$("f3").onload=function(){tidy($("f3"));};
+$("t1").onclick=function(){show(1);};$("t2").onclick=function(){show(2);};$("t3").onclick=function(){show(3);};
 function enter(pw){try{window.sessionStorage.setItem("iaa_fin_pw",pw);}catch(e){}$("lg").style.display="none";$("app").hidden=false;$("app").style.display="block";
  var t=new URLSearchParams(location.search).get("t");show(t==="books"?2:1);}
 $("go").onclick=function(){var pw=$("pw").value;$("m0").className="msg";$("m0").textContent="登入中…";chk(pw,function(ok){if(ok){enter(pw);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};

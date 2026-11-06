@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>IAA 會務記憶庫</title>
+<style>
+:root{--ink:#1a2547;--mut:#6b7390;--line:#e2e6f0;--pk:#B3267F;--bg:#f5f6fb;--bad:#c0392b}
+*{box-sizing:border-box}body{margin:0;font:17px/1.55 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink)}
+.w{max-width:900px;margin:0 auto;padding:16px}h1{font-size:23px;margin:4px 0 2px}.sub{color:var(--mut);font-size:14px;margin:0 0 8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+input,select,button,textarea{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700}button.g{background:#fff;color:var(--ink);border-color:var(--line);font-weight:500;padding:4px 10px;font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}textarea{width:100%;min-height:90px}
+.k{display:inline-block;border-radius:999px;padding:0 9px;font-size:13px;font-weight:700;color:#fff;background:#8a90a8}.k.r{background:var(--pk)}.k.e{background:#1F5FBF}.k.x{background:#2E7D6B}
+.it h3{margin:0 0 4px;font-size:17px}.it p{margin:2px 0 6px;white-space:pre-wrap}.meta{color:var(--mut);font-size:13px}
+.msg{min-height:22px;color:var(--mut);font-size:14px}.err{color:var(--bad)}
+</style></head><body><div class="w">
+<h1>會務記憶庫</h1><p class="sub">自動記下繳費、入會等事件；搜尋過去怎麼處理；標「有幫助」的答案會排在前面</p>
+<div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="後台密碼（人資／財務／編輯皆可）" style="flex:1"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
+<div id="app" hidden>
+<div class="card"><div class="row"><input id="q" placeholder="搜尋，例如：金額打錯怎麼改／誰還沒繳費／入會流程" style="flex:1"><button id="sb">搜尋</button><button class="g" id="rc">最近紀錄</button></div></div>
+<div id="out"></div>
+<div class="card"><b>新增一則經驗／待辦／問答</b>
+<div class="row" style="margin-top:8px"><select id="ak"><option>經驗</option><option>待辦</option><option>問答</option><option>事件</option></select><input id="at" placeholder="標題（一句話）" style="flex:1" maxlength="120"></div>
+<textarea id="ab" placeholder="內容：發生什麼、怎麼處理、下次注意什麼" maxlength="1000" style="margin-top:8px"></textarea>
+<div class="row" style="margin-top:8px"><input id="ag" placeholder="關鍵字，用逗號分開" style="flex:1" maxlength="200"><button id="as">儲存</button></div><div class="msg" id="m1"></div></div>
+</div></div>
+<script>
+(function(){
+var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="";
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s===null||s===undefined?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function call(fn,body,cb){body.p=pw;var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
+ x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
+var KC={"規則":"r","經驗":"x","事件":"e"};
+function draw(l){var o=$("out");if(l.length===0){o.innerHTML='<div class="card meta">找不到相關紀錄。換個關鍵字，或在下方新增一則。</div>';return;}
+ o.innerHTML=l.map(function(r){var d=(r.created_at||"").slice(0,10);
+  return '<div class="card it"><span class="k '+(KC[r.kind]||"")+'">'+esc(r.kind)+'</span> <span class="meta">'+d+'・'+esc(r.actor)+(r.useful>0?'・👍'+r.useful:'')+'</span><h3>'+esc(r.title)+'</h3><p>'+esc(r.body)+'</p>'
+  +'<div class="row"><button class="g" data-a="up" data-id="'+r.id+'">👍 有幫助</button>'+(r.kind==="規則"?'':'<button class="g" data-a="del" data-id="'+r.id+'">刪除</button>')+(r.tags?'<span class="meta">'+esc(r.tags)+'</span>':'')+'</div></div>';}).join("");}
+function search(){var q=$("q").value;call("iaa_kb_search",{q:q,lim:15},function(ok,j){if(ok&&j){draw(j);}else{$("out").innerHTML='<div class="card err">讀取失敗</div>';}});}
+$("sb").onclick=search;$("rc").onclick=function(){$("q").value="";search();};$("q").onkeydown=function(e){if(e.key==="Enter"){search();}};
+$("out").onclick=function(e){var a=e.target.getAttribute("data-a"),id=e.target.getAttribute("data-id");if(a===null){return;}
+ if(a==="up"){call("iaa_kb_vote",{i:Number(id),d:1},function(ok){if(ok){e.target.textContent="已記下 ✓";}});}
+ if(a==="del"){if(window.confirm("確定刪除這則紀錄？")===false){return;}call("iaa_kb_del",{i:Number(id)},function(ok){if(ok){search();}});}};
+$("as").onclick=function(){var t=$("at").value;if(t.replace(/\s/g,"")===""){$("m1").className="msg err";$("m1").textContent="請填標題";return;}
+ call("iaa_kb_add",{kd:$("ak").value,ti:t,bd:$("ab").value,tg:$("ag").value},function(ok){if(ok){$("m1").className="msg";$("m1").textContent="已儲存";$("at").value="";$("ab").value="";$("ag").value="";}else{$("m1").className="msg err";$("m1").textContent="儲存失敗";}});};
+function enter(p){pw=p;try{window.sessionStorage.setItem("iaa_kb_pw",p);}catch(e){}$("lg").style.display="none";$("app").hidden=false;search();}
+function tryp(p,cb){pw=p;call("iaa_kb_search",{q:"",lim:1},function(ok){cb(ok);});}
+$("go").onclick=function(){var p=$("pw").value;$("m0").className="msg";$("m0").textContent="登入中…";tryp(p,function(ok){if(ok){enter(p);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
+$("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
+try{var s=window.sessionStorage.getItem("iaa_kb_pw")||window.sessionStorage.getItem("iaa_fin_pw")||window.sessionStorage.getItem("iaa_hr_pw");if(s){tryp(s,function(ok){if(ok){enter(s);}});}}catch(e){}
+})();
+</script></body></html>

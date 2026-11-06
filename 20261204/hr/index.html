@@ -21,7 +21,7 @@ table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;
 textarea{width:100%;min-height:240px;font-size:15px}
 h2{font-size:18px;margin:4px 0 8px}
 </style></head><body><div class="w">
-<div style="text-align:right"><a href="../" style="display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);text-decoration:none;font-weight:700;font-size:15px">← 回前台</a></div><h1>人資組後台</h1><p class="sub">IAA 第四屆・新會友與原退會會友的邀約、入會、繳費追蹤</p>
+<div style="text-align:right"><a href="../kb/" style="display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);text-decoration:none;font-weight:700;font-size:15px;margin-right:8px">記憶庫</a><a href="../" style="display:inline-block;padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);text-decoration:none;font-weight:700;font-size:15px">← 回前台</a></div><h1>人資組後台</h1><p class="sub">IAA 第四屆・新會友與原退會會友的邀約、入會、繳費追蹤</p>
 <div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="人資組密碼" autocomplete="current-password"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
 <div id="app" hidden>
 <div class="role"><b>責任分工</b><br>・<b>社召集人</b>：負責聯繫該社的新會友與原退會會友，回報邀約結果與繳費。<br>・<b>區總召</b>：督導所轄各社的進度。<br>・<b>人資長（李敏妃）與副人資長</b>：統籌名單、辦理入會作業（按「完成入會」才會進入會友名冊）。<br>・<b>財務長</b>：審核入會費與常年會費，確認後才算已繳。</div>
@@ -46,7 +46,7 @@ var REG={"北區":["基隆社","台北社","宜蘭社","桃園社","新竹社"],
 var LEAD={},CONV={};
 function $(i){return document.getElementById(i);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
-function call(fn,body,cb){body.p=pw;var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
+function call(fn,body,cb){body.p=pw;try{window.sessionStorage.setItem("iaa_hr_pw",pw);}catch(e){}var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
  x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
 function sc(s){return {"待邀請":"s-a","邀請中":"s-b","已同意":"s-c","已入會":"s-d","婉拒":"s-e","暫緩":"s-f"}[s]||"s-a";}
 function fee(r){function f(v){return v==="已確認"?'<b class="o">已確認</b>':(v==="待審核"?'<b class="w">待審核</b>':v);}return '<span class="fee">'+f(r.entry_fee)+' ／ '+f(r.annual_fee)+'</span>';}
