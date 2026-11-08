@@ -55,7 +55,8 @@ function call(fn,body,cb){body.p=pw;try{window.sessionStorage.setItem("iaa_hr_pw
  x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
 function sc(s){return {"待邀請":"s-a","邀請中":"s-b","已同意":"s-c","已入會":"s-d","婉拒":"s-e","暫緩":"s-f"}[s]||"s-a";}
 function fee(r){function f(v){return v==="已確認"?'<b class="o">已確認</b>':(v==="待審核"?'<b class="w">待審核</b>':v);}return '<span class="fee">'+f(r.entry_fee)+' ／ '+f(r.annual_fee)+'</span>';}
-function load(cb){call("iaa_hr_list",{},function(ok,l){if(ok===false||l===null){cb(false);return;}rows=l;rows.forEach(function(r){if(r.convener){CONV[r.chapter]=r.convener;}if(r.region_lead){LEAD[r.region]=r.region_lead;}});draw();cb(true);});}
+function load(cb){call("iaa_hr_list",{},function(ok,l){if(ok===false||l===null){cb(false);return;}rows=l;rows.forEach(function(r){if(r.convener){CONV[r.chapter]=r.convener;}if(r.region_lead){LEAD[r.region]=r.region_lead;}});
+ call("iaa_hr_roles",{},function(ok2,rl){if(ok2&&rl){rl.forEach(function(o){if(o.scope==="社"){CONV[o.scope_name]=o.name;}else{LEAD[o.scope_name]=o.name;}});}draw();cb(true);});});}
 function vis(){var rg=$("fr").value;return rows.filter(function(r){return rg===""||r.region===rg;});}
 function draw(){
  var v=vis(),c={n:0,a:0,j:0,d:0,pf:0};
