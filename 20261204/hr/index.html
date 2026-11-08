@@ -25,17 +25,18 @@ h2{font-size:18px;margin:4px 0 8px}
 <div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="人資組密碼" autocomplete="current-password"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
 <div id="app" hidden>
 <div class="role"><b>責任分工</b><br>・<b>社召集人</b>：負責聯繫該社的新會友與原退會會友，回報邀約結果與繳費。<br>・<b>區總召</b>：督導所轄各社的進度。<br>・<b>人資長（李敏妃）與副人資長</b>：統籌名單、辦理入會作業（按「完成入會」才會進入會友名冊）。<br>・<b>財務長</b>：審核入會費與常年會費，確認後才算已繳。</div>
+<div class="role" style="margin-top:10px"><b>這些名單是什麼？</b><br>・<b>責任分配、全部名單</b>＝<b>「邀約名單」</b>：還<u>沒有入會</u>、需要有人去邀請的人，分兩類：<b>新會友</b>（創新獎得獎者、會友推薦等第一次加入）與<b>原退會</b>（以前退會、邀請回來的會友）。已經是會友的人不會出現在這裡。<br>・<b>進度</b>：待邀請 → 邀請中 → 已同意 → 人資按「完成入會」→ 已入會。已入會才會進入「會友名冊」。<br>・<b>未繳／已確認</b>：前面是<b>入會費</b>、後面是<b>常年會費</b>；回報後要財務長審核確認，才算已繳。<br>・<b>目前的會友（已入會者）</b>請到「會友名冊」分頁查詢、新增或修改。</div>
 <div class="sum" id="sum" style="margin-top:12px"></div>
 <div class="card"><div class="row tabs"><button id="t1" class="on">責任分配</button><button id="t2">全部名單</button><button id="t3">邀約名單 新增／編輯</button><button id="t5">會友名冊</button><button id="t4">產生分派訊息</button>
 <select id="fr" style="margin-left:auto"><option value="">全部區域</option><option>北區</option><option>中區</option><option>南區</option></select></div></div>
 <div id="v1"></div>
-<div class="card sc" id="v2" hidden><div class="row" style="margin-bottom:8px"><select id="fs"><option value="">全部進度</option><option>待邀請</option><option>邀請中</option><option>已同意</option><option>已入會</option><option>婉拒</option><option>暫緩</option></select><select id="fk"><option value="">新會友＋回歸</option><option>新會友</option><option>回歸</option></select></div>
+<div class="card sc" id="v2" hidden><h2>全部邀約名單 <span style="font-weight:400;font-size:14px;color:#6b7390">尚未入會的新會友與原退會會友</span></h2><div class="row" style="margin-bottom:8px"><select id="fs"><option value="">全部進度</option><option>待邀請</option><option>邀請中</option><option>已同意</option><option>已入會</option><option>婉拒</option><option>暫緩</option></select><select id="fk"><option value="">新會友＋回歸</option><option>新會友</option><option>回歸</option></select></div>
 <table><thead><tr><th>姓名</th><th>社別／負責</th><th>類別</th><th>進度</th><th>繳費（入會費／常年會費）</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
-<div class="card f" id="v3" hidden><h2 id="et">新增名單</h2>
+<div class="card f" id="v3" hidden><p class="sub" style="margin:0 0 6px">此處為<b>邀約名單</b>（尚未入會的新會友／原退會會友）；已入會的會友請到「會友名冊」。</p><h2 id="et">新增邀約名單</h2>
 <div class="g2"><div><label>姓名</label><input id="en"></div><div><label>社別</label><select id="ec"></select></div><div><label>類別</label><select id="ek"><option>新會友</option><option>回歸</option></select></div><div><label>進度</label><select id="es"><option>待邀請</option><option>邀請中</option><option>已同意</option><option>已入會</option><option>婉拒</option><option>暫緩</option></select></div></div>
 <div class="g2"><div><label>來源</label><input id="eo" placeholder="例如 創新獎得獎者／會友推薦"></div><div><label>邀約人</label><input id="ei" placeholder="預設為該社召集人"></div><div><label>邀約日期</label><input id="ed" type="date"></div></div>
 <label>備註</label><input id="eb" maxlength="300"><div class="row" style="margin-top:12px"><button id="sv">儲存</button><button class="g" id="cx">清除</button></div><div class="msg" id="m1"></div></div>
-<div class="card f" id="v5" hidden><h2 id="mt5">新增會友</h2>
+<div class="card f" id="v5" hidden><p class="sub" style="margin:0 0 6px">此處為<b>會友名冊</b>（已經是 IAA 會友的人，含有效、回歸、有望、退會）。可直接新增新會友、修改社別／狀態／備註。</p><h2 id="mt5">新增會友</h2>
 <div class="g2"><div><label>姓名</label><input id="mn"></div><div><label>社別</label><select id="mc"></select></div><div><label>狀態</label><select id="ms5"><option>有效</option><option>回歸</option><option>有望</option><option>退會</option></select></div><div><label>新會友 NEW 標籤</label><select id="mw"><option value="1">是</option><option value="0">否</option></select></div></div>
 <label>備註</label><input id="mo" maxlength="300" placeholder="例如 鄭群亮夫人、共同參賽成員"><div class="row" style="margin-top:12px"><button id="msv">儲存</button><button class="g" id="mcx">清除／取消編輯</button></div><div class="msg" id="mm"></div>
 <div class="row" style="margin-top:14px"><input id="mq" placeholder="搜尋姓名或社別" style="flex:1;min-width:160px"><select id="mf"><option value="">全部狀態</option><option>有效</option><option>回歸</option><option>有望</option><option>退會</option></select></div>
@@ -61,19 +62,19 @@ function vis(){var rg=$("fr").value;return rows.filter(function(r){return rg==="
 function draw(){
  var v=vis(),c={n:0,a:0,j:0,d:0,pf:0};
  v.forEach(function(r){c.n+=1;if(r.status==="待邀請"||r.status==="邀請中"){c.a+=1;}if(r.status==="已同意"){c.j+=1;}if(r.status==="已入會"){c.d+=1;}if(r.status==="已入會"&&(r.annual_fee==="已確認"?false:true)){c.pf+=1;}});
- $("sum").innerHTML='<div><small>名單總數</small><b>'+c.n+'</b></div><div><small>待邀請／邀請中</small><b>'+c.a+'</b></div><div><small>已同意（待入會）</small><b>'+c.j+'</b></div><div><small>已入會</small><b>'+c.d+'</b></div><div><small>已入會、年費未確認</small><b>'+c.pf+'</b></div>';
+ $("sum").innerHTML='<div><small>邀約名單總數</small><b>'+c.n+'</b></div><div><small>待邀請／邀請中</small><b>'+c.a+'</b></div><div><small>已同意（待入會）</small><b>'+c.j+'</b></div><div><small>已入會</small><b>'+c.d+'</b></div><div><small>已入會、年費未確認</small><b>'+c.pf+'</b></div>';
  var h="";
  Object.keys(REG).forEach(function(rg){if($("fr").value===""||$("fr").value===rg){}else{return;}
   h+='<div class="reg">'+rg+'　<span style="font-weight:400;font-size:15px">區總召：'+esc(LEAD[rg]||"待指定")+'</span></div>';
   REG[rg].forEach(function(ch){var l=rows.filter(function(r){return r.chapter===ch;});
-   h+='<div class="chp"><h3>'+ch+' <span>召集人：'+esc(CONV[ch]||"尚未指定（由人資長統籌）")+'・'+l.length+' 位</span></h3>'+(l.length?l.map(function(r){return '<span class="pp" data-id="'+r.id+'">'+esc(r.name)+' <span class="tag '+sc(r.status)+'">'+esc(r.status)+'</span> <small>'+(r.kind==="回歸"?"回歸":"新")+'</small> '+fee(r)+'</span>';}).join(""):'<span class="fee">目前沒有名單</span>')+'</div>';});});
+   h+='<div class="chp"><h3>'+ch+' <span>召集人：'+esc(CONV[ch]||"尚未指定（由人資長統籌）")+'・'+l.length+' 位</span></h3>'+(l.length?l.map(function(r){return '<span class="pp" data-id="'+r.id+'">'+esc(r.name)+' <span class="tag '+sc(r.status)+'">'+esc(r.status)+'</span> <small>'+(r.kind==="回歸"?"原退會":"新會友")+'</small> '+fee(r)+'</span>';}).join(""):'<span class="fee">目前沒有名單</span>')+'</div>';});});
  $("v1").innerHTML=h;
  var fs=$("fs").value,fk=$("fk").value;
  var list=v.filter(function(r){return (fs===""||r.status===fs)&&(fk===""||r.kind===fk);});
  $("tb").innerHTML=list.map(function(r){var act='<button class="s g" data-a="e" data-id="'+r.id+'">編輯</button>';
   if(r.status==="已同意"||(r.status==="邀請中"&&false)){act+=' <button class="s ok" data-a="j" data-id="'+r.id+'">完成入會</button>';}
   if(r.status==="已入會"){act+=' <button class="s g" data-a="p" data-id="'+r.id+'">代回報繳費</button>';}
-  return '<tr><td><b>'+esc(r.name)+'</b><br><small style="color:#6b7390">'+esc(r.source)+'</small></td><td>'+esc(r.chapter)+'<br><small style="color:#6b7390">召集人 '+esc(r.convener||"—")+'／總召 '+esc(r.region_lead||"—")+'</small></td><td>'+esc(r.kind)+'</td><td><span class="tag '+sc(r.status)+'">'+esc(r.status)+'</span></td><td>'+fee(r)+'</td><td>'+act+'</td></tr>';}).join("")||'<tr><td colspan="6" style="color:#6b7390">沒有資料</td></tr>';
+  return '<tr><td><b>'+esc(r.name)+'</b><br><small style="color:#6b7390">'+esc(r.source)+'</small></td><td>'+esc(r.chapter)+'<br><small style="color:#6b7390">召集人 '+esc(r.convener||"—")+'／總召 '+esc(r.region_lead||"—")+'</small></td><td>'+(r.kind=="回歸"?"原退會":"新會友")+'</td><td><span class="tag '+sc(r.status)+'">'+esc(r.status)+'</span></td><td>'+fee(r)+'</td><td>'+act+'</td></tr>';}).join("")||'<tr><td colspan="6" style="color:#6b7390">沒有資料</td></tr>';
 }
 function opts(){$("mc").innerHTML='<option value="">請選擇社別</option>'+NS.map(function(c){return '<option>'+c+'</option>';}).join("");$("ec").innerHTML='<option value="">請選擇社別</option>'+NS.map(function(c){return '<option>'+c+'</option>';}).join("");
  $("ms").innerHTML=Object.keys(REG).map(function(r){return '<option value="R:'+r+'">'+r+'總召（全區）</option>';}).join("")+NS.map(function(c){return '<option value="C:'+c+'">'+c+'召集人</option>';}).join("");}
@@ -93,7 +94,7 @@ $("pf").onchange=function(){$("pa").value=$("pf").value==="入會費"?1000:6000;
 $("pc").onclick=function(){$("pd").hidden=true;};
 $("ps").onclick=function(){$("m5").className="msg";call("iaa_hr_dues",{n:pname,ft:$("pf").value,m:$("pm").value,amt:parseInt($("pa").value||"0",10),l5:$("pl").value,d:$("pe").value||null,nt:$("pn").value},function(ok,j){
  if(ok){$("m5").textContent="已送出，等財務長審核確認後會顯示「已確認」";$("pl").value="";load(function(){});}else{$("m5").className="msg err";$("m5").textContent=(j&&j.message)?j.message:"送出失敗";}});};
-function clr(){eid=null;$("en").value="";$("ec").value="";$("eo").value="";$("ei").value="";$("ed").value="";$("eb").value="";$("es").value="待邀請";$("ek").value="新會友";$("et").textContent="新增名單";$("m1").textContent="";}
+function clr(){eid=null;$("en").value="";$("ec").value="";$("eo").value="";$("ei").value="";$("ed").value="";$("eb").value="";$("es").value="待邀請";$("ek").value="新會友";$("et").textContent="新增邀約名單";$("m1").textContent="";}
 $("cx").onclick=clr;
 $("sv").onclick=function(){$("m1").className="msg";if($("en").value.trim()===""||$("ec").value===""){$("m1").className="msg err";$("m1").textContent="姓名與社別必填";return;}
  call("iaa_hr_save",{i:eid,n:$("en").value,c:$("ec").value,k:$("ek").value,s:$("eo").value,iv:$("ei").value,st:$("es").value,nt:$("eb").value,d:$("ed").value||null},function(ok,j){
