@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>IAA 會員通訊錄</title>
+<style>
+:root{--ink:#1a2547;--mut:#6b7390;--line:#e2e6f0;--pk:#B3267F;--bg:#f5f6fb}
+*{box-sizing:border-box}body{margin:0;font:19px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink)}
+.w{max-width:680px;margin:0 auto;padding:16px}h1{font-size:28px;margin:8px 0 2px}.sub{color:var(--mut);font-size:16px;margin:0 0 10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:10px 0}
+input,select,button{font:inherit;width:100%;padding:12px 14px;min-height:52px;font-size:19px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+button{background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700;cursor:pointer;margin-top:10px}
+.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+.nm{font-size:22px;font-weight:700}.nm span{font-size:15px;font-weight:400;color:#fff;background:var(--pk);border-radius:8px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+.co{margin-top:2px}.bz{color:var(--mut);font-size:16px}.tg{display:inline-block;font-size:14px;background:#EEF3FF;border:1px solid #C9D8F5;border-radius:8px;padding:0 8px;margin:4px 6px 0 0;color:#2c4a8a}
+.tel{display:inline-block;margin-top:6px;color:var(--pk);font-weight:700;text-decoration:none;font-size:20px}
+.cnt{color:var(--mut);font-size:16px;margin:6px 2px}.err{color:#c0392b;font-size:17px;min-height:24px;margin-top:8px}
+[hidden]{display:none!important}
+</style></head><body><div class="w">
+<h1>會員通訊錄</h1><p class="sub">IAA 創新加速聯盟會・僅供會友聯繫使用，請勿轉傳或外流</p>
+<div class="card" id="lg"><label for="pw" style="font-weight:700">會友密碼</label><input id="pw" type="password" autocomplete="off" placeholder="請輸入會友密碼（向人資組索取）"><button id="go">進入通訊錄</button><div class="err" id="er"></div></div>
+<div id="ap" hidden>
+<div class="card"><input id="q" placeholder="搜尋：姓名、公司、職稱、營業內容、產業"><div class="row" style="margin-top:8px"><select id="fc"></select><select id="fi"></select></div></div>
+<div class="cnt" id="ct"></div><div id="ls"></div>
+</div>
+<script>
+(function(){
+var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI";
+var ORD=["基隆社","台北社","宜蘭社","桃園社","新竹社","苗栗社","台中社","彰化社","南投社","雲林社","嘉義社","南瀛社","台南市社","高雄社","屏東社"];
+var D=[];
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function rpc(fn,body,cb){var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
+ x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
+function opts(sel,first,arr){sel.innerHTML='<option value="">'+first+'</option>'+arr.map(function(c){return '<option>'+esc(c)+'</option>';}).join("");}
+function draw(){var q=$("q").value.trim().toLowerCase(),c=$("fc").value,ind=$("fi").value;
+ var l=D.filter(function(m){if(c&&m.chapter!==c){return false;}if(ind&&m.industry!==ind){return false;}
+  if(q){var s=(m.name+m.company+m.title+m.biz+m.industry+m.chapter+m.qual_type).toLowerCase();if(s.indexOf(q)<0){return false;}}return true;});
+ l.sort(function(a,b){var x=ORD.indexOf(a.chapter),y=ORD.indexOf(b.chapter);x=x<0?99:x;y=y<0?99:y;return x-y||(a.name<b.name?-1:1);});
+ $("ct").textContent="共 "+l.length+" 位會友";
+ $("ls").innerHTML=l.map(function(m){var tel=(m.phone||"").replace(/[^0-9+]/g,"");
+  return '<div class="card"><div class="nm">'+esc(m.name)+'<span>'+esc(m.chapter)+'</span></div>'+
+   '<div class="co">'+esc(m.company)+(m.title?'｜'+esc(m.title):'')+'</div>'+
+   (m.biz?'<div class="bz">'+esc(m.biz)+'</div>':'')+
+   (m.industry?'<span class="tg">'+esc(m.industry)+'</span>':'')+(m.qual_type?'<span class="tg">'+esc(m.qual_type)+'</span>':'')+
+   (tel?'<br><a class="tel" href="tel:'+tel+'">📞 '+esc(m.phone)+'</a>':'')+'</div>';}).join("")||'<div class="card">沒有符合的會友</div>';}
+function enter(){$("er").textContent="查詢中…";$("go").disabled=true;
+ rpc("iaa_dir_list",{p:$("pw").value},function(ok,j){$("go").disabled=false;
+  if(!ok||!j||!j.length){$("er").textContent="密碼不正確，請向人資組索取";return;}
+  D=j;try{sessionStorage.setItem("iaa_dir",$("pw").value);}catch(e){}
+  var cs=[],is=[];D.forEach(function(m){if(m.chapter&&cs.indexOf(m.chapter)<0){cs.push(m.chapter);}if(m.industry&&is.indexOf(m.industry)<0){is.push(m.industry);}});
+  cs.sort(function(a,b){return ORD.indexOf(a)-ORD.indexOf(b);});is.sort();
+  opts($("fc"),"全部社別",cs);opts($("fi"),"全部產業",is);
+  $("lg").hidden=true;$("ap").hidden=false;draw();});}
+$("go").onclick=enter;$("pw").onkeydown=function(e){if(e.keyCode===13){enter();}};
+$("q").oninput=draw;$("fc").onchange=draw;$("fi").onchange=draw;
+try{var s=sessionStorage.getItem("iaa_dir");if(s){$("pw").value=s;enter();}}catch(e){}
+})();
+</script></div></body></html>
