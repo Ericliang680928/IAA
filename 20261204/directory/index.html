@@ -35,14 +35,13 @@ function draw(){var q=$("q").value.trim().toLowerCase(),c=$("fc").value,ind=$("f
   if(q){var s=(m.name+m.company+m.title+m.biz+m.industry+m.chapter+m.qual_type).toLowerCase();if(s.indexOf(q)<0){return false;}}return true;});
  l.sort(function(a,b){var x=ORD.indexOf(a.chapter),y=ORD.indexOf(b.chapter);x=x<0?99:x;y=y<0?99:y;return x-y||(a.name<b.name?-1:1);});
  $("ct").textContent="共 "+l.length+" 位會友";
- $("ls").innerHTML=l.map(function(m){var tel=(m.phone||"").replace(/[^0-9+]/g,"");
+ $("ls").innerHTML=l.map(function(m){
   return '<div class="card"><div class="nm">'+esc(m.name)+'<span>'+esc(m.chapter)+'</span></div>'+
    '<div class="co">'+esc(m.company)+(m.title?'｜'+esc(m.title):'')+'</div>'+
    (m.biz?'<div class="bz">'+esc(m.biz)+'</div>':'')+
-   (m.industry?'<span class="tg">'+esc(m.industry)+'</span>':'')+(m.qual_type?'<span class="tg">'+esc(m.qual_type)+'</span>':'')+
-   (tel?'<br><a class="tel" href="tel:'+tel+'">📞 '+esc(m.phone)+'</a>':'')+'</div>';}).join("")||'<div class="card">沒有符合的會友</div>';}
+   (m.industry?'<span class="tg">'+esc(m.industry)+'</span>':'')+(m.qual_type?'<span class="tg">'+esc(m.qual_type)+'</span>':'')+'</div>';}).join("")||'<div class="card">沒有符合的會友</div>';}
 function enter(){$("er").textContent="查詢中…";$("go").disabled=true;
- rpc("iaa_dir_list",{p:$("pw").value},function(ok,j){$("go").disabled=false;
+ rpc("iaa_dir_list_v2",{p:$("pw").value},function(ok,j){$("go").disabled=false;
   if(!ok||!j||!j.length){$("er").textContent="密碼不正確，請向人資組索取";return;}
   D=j;try{sessionStorage.setItem("iaa_dir",$("pw").value);}catch(e){}
   var cs=[],is=[];D.forEach(function(m){if(m.chapter&&cs.indexOf(m.chapter)<0){cs.push(m.chapter);}if(m.industry&&is.indexOf(m.industry)<0){is.push(m.industry);}});
@@ -52,6 +51,6 @@ function enter(){$("er").textContent="查詢中…";$("go").disabled=true;
 $("go").onclick=enter;$("pw").onkeydown=function(e){if(e.keyCode===13){enter();}};
 $("q").oninput=draw;$("fc").onchange=draw;$("fi").onchange=draw;
 $("lg").hidden=true;
-rpc("iaa_dir_list",{p:""},function(ok,j){if(ok&&j&&j.length){$("pw").value="";enter();}else{$("lg").hidden=false;try{var s=sessionStorage.getItem("iaa_dir");if(s){$("pw").value=s;enter();}}catch(e){}}});
+rpc("iaa_dir_list_v2",{p:""},function(ok,j){if(ok&&j&&j.length){$("pw").value="";enter();}else{$("lg").hidden=false;try{var s=sessionStorage.getItem("iaa_dir");if(s){$("pw").value=s;enter();}}catch(e){}}});
 })();
 </script></div></body></html>
