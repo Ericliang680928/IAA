@@ -51,6 +51,7 @@ function enter(){$("er").textContent="查詢中…";$("go").disabled=true;
   $("lg").hidden=true;$("ap").hidden=false;draw();});}
 $("go").onclick=enter;$("pw").onkeydown=function(e){if(e.keyCode===13){enter();}};
 $("q").oninput=draw;$("fc").onchange=draw;$("fi").onchange=draw;
-try{var s=sessionStorage.getItem("iaa_dir");if(s){$("pw").value=s;enter();}}catch(e){}
+$("lg").hidden=true;
+rpc("iaa_dir_list",{p:""},function(ok,j){if(ok&&j&&j.length){$("pw").value="";enter();}else{$("lg").hidden=false;try{var s=sessionStorage.getItem("iaa_dir");if(s){$("pw").value=s;enter();}}catch(e){}}});
 })();
 </script></div></body></html>
