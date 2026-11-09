@@ -6,7 +6,7 @@
 .w{max-width:1000px;margin:0 auto;padding:14px}h1{font-size:23px;margin:4px 0 2px}.sub{color:var(--mut);font-size:14px;margin:0 0 8px}
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
 input,select,button{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
-button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700}button.g{background:#fff;color:var(--ink);border-color:var(--line);font-weight:500}
+button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700}button.on{background:var(--ink);border-color:var(--ink)}button.g{background:#fff;color:var(--ink);border-color:var(--line);font-weight:500}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px}.sum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 12px;cursor:pointer}.sum b{font-size:22px;display:block}.sum small{color:var(--mut)}
 .unit{border-left:6px solid var(--pk);padding-left:10px;margin:16px 0 6px;font-weight:700;font-size:18px}.unit small{color:var(--mut);font-weight:400}
@@ -19,6 +19,7 @@ button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);fon
 <div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="後台密碼" style="flex:1"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
 <div id="app" hidden>
 <div class="sum" id="sum"></div>
+<div class="row" id="vw" style="margin-top:10px"><button data-v="owner" class="on">依負責人（各自回報）</button><button data-v="slot" class="g">依時段（全流程）</button></div>
 <div class="card"><div class="row"><select id="fo"></select><select id="fs"><option value="">全部狀態</option><option>未填</option><option>未開始</option><option>進行中</option><option>已完成</option><option>待解決</option></select><select id="fu"></select><input id="fq" placeholder="搜尋工作" style="flex:1;min-width:120px"><button class="g" id="xl">匯出 CSV</button></div>
 <div class="row" style="margin-top:8px"><span class="sub" style="margin:0">填寫人：</span><input id="by" placeholder="你的名字" maxlength="20" style="width:140px"><span class="msg" id="mt"></span></div></div>
 <div id="bn"></div>
@@ -46,7 +47,7 @@ function opts(){var os={};OWN.forEach(function(x){os[x]=1;});rows.forEach(functi
  var ks=Object.keys(os);var cur=$("fo").value;$("fo").innerHTML='<option value="">全部負責人</option><option value="未指定">未指定負責人</option>'+ks.map(function(k){return '<option>'+esc(k)+'</option>';}).join("");$("fo").value=cur;
  $("ol").innerHTML=ks.map(function(k){return '<option value="'+esc(k)+'">';}).join("");
  var us=[];rows.forEach(function(r){if(us.indexOf(r.unit)<0){us.push(r.unit);}});var cu=$("fu").value;$("fu").innerHTML='<option value="">全部單元</option>'+us.map(function(u){return '<option>'+esc(u)+'</option>';}).join("");$("fu").value=cu;}
-var onlyLate=false,CF=null,CT="";
+var onlyLate=false,CF=null,CT="",VIEW="owner";
 (function(){var m=location.search.match(/[?&]c=([^&]*)/);if(m){CF=decodeURIComponent(m[1]).split(",");var t=location.search.match(/[?&]ti=([^&]*)/);CT=t?decodeURIComponent(t[1]):"";}})();
 function msOf(r){var o=[];try{var P=window.parent.IAAP;if(P&&window.parent!==window){window.iaaLinkTitles(r.code).forEach(function(k){P.forEach(function(x){if(x.t.indexOf(k)>=0&&o.indexOf(x)<0){o.push(x);}});});}}catch(e){}return o;}
 function draw(){summary();var fo=$("fo").value,fs=$("fs").value,fu=$("fu").value,q=$("fq").value.replace(/\s/g,"");
@@ -54,14 +55,19 @@ function draw(){summary();var fo=$("fo").value,fs=$("fs").value,fu=$("fu").value
   if(fs!==""&&stat(r)!==fs){return false;}if(fu!==""&&r.unit!==fu){return false;}if(q!==""&&r.task.indexOf(q)<0){return false;}if(onlyLate&&late(r)===false){return false;}if(CF!==null&&CF.indexOf(r.code)<0){return false;}return true;});
  $("bn").innerHTML=CF===null?"":'<div class="card">只顯示與期程「'+esc(CT)+'」相關的 '+l.length+' 項　<button class="g" id="cc">顯示全部</button></div>';
  var h="",last="";
- l.forEach(function(r){var u=r.unit+"|"+r.slot;if(u!==last){last=u;h+='<div class="unit">'+esc(r.unit)+' <small>'+esc(r.slot)+'</small></div>';}
+ if(VIEW==="owner"){var oi=function(o){if(o===""){return -1;}var i=OWN.indexOf(o);return i<0?99:i;};l=l.slice().sort(function(a,b){return oi(a.owner)-oi(b.owner)||(a.owner<b.owner?-1:(a.owner>b.owner?1:0))||a.ord-b.ord;});}
+ l.forEach(function(r){var u=VIEW==="owner"?"o|"+r.owner:r.unit+"|"+r.slot;if(u!==last){last=u;
+  if(VIEW==="owner"){var mine=rows.filter(function(x){return x.owner===r.owner;}),dn=mine.filter(function(x){return x.status==="已完成";}).length;h+='<div class="unit">'+(r.owner===""?"待指定負責人":esc(r.owner))+' <small>'+dn+' / '+mine.length+' 項完成'+(mine.filter(late).length?'・<b style="color:var(--bad)">'+mine.filter(late).length+' 項逾期</b>':'')+'</small></div>';}
+  else{h+='<div class="unit">'+esc(r.unit)+' <small>'+esc(r.slot)+'</small></div>';}}
   var so=["","未開始","進行中","已完成","待解決"].map(function(s){return '<option value="'+s+'"'+(r.status===s?' selected':'')+'>'+(s===""?"（未填）":s)+'</option>';}).join("");
-  h+='<div class="t'+(r.status==="已完成"?' done':'')+(r.owner===""?' nw':'')+'" data-c="'+r.code+'"><h3>'+esc(r.task)+' <span>#'+r.code+(late(r)?' ・<b style="color:var(--bad)">逾期</b>':'')+(r.updated_by?' ・'+esc(r.updated_by)+' '+esc((r.updated_at||"").slice(5,10)):'')+'</span></h3>'+msOf(r).map(function(x){var lt=x.s!=="done"&&x.d<TODAY;return '<div class="msg" style="margin:0 0 6px">↔ 對應期程：'+esc(x.t)+'（'+x.d.slice(5).replace('-','/')+'・<b style="color:'+(x.s==="done"?'var(--ok)':(lt?'var(--bad)':'var(--wr)'))+'">'+(x.s==="done"?'已完成':(lt?'已逾期':'未完成'))+'</b>）</div>';}).join('')
+  var sb=VIEW==="owner"?'<div class="msg" style="margin:-2px 0 6px">'+esc(r.slot)+'・'+esc(r.unit)+'</div>':'';
+  h+='<div class="t'+(r.status==="已完成"?' done':'')+(r.owner===""?' nw':'')+'" data-c="'+r.code+'"><h3>'+esc(r.task)+' <span>#'+r.code+(late(r)?' ・<b style="color:var(--bad)">逾期</b>':'')+(r.updated_by?' ・'+esc(r.updated_by)+' '+esc((r.updated_at||"").slice(5,10)):'')+'</span></h3>'+sb+msOf(r).map(function(x){var lt=x.s!=="done"&&x.d<TODAY;return '<div class="msg" style="margin:0 0 6px">↔ 對應期程：'+esc(x.t)+'（'+x.d.slice(5).replace('-','/')+'・<b style="color:'+(x.s==="done"?'var(--ok)':(lt?'var(--bad)':'var(--wr)'))+'">'+(x.s==="done"?'已完成':(lt?'已逾期':'未完成'))+'</b>）</div>';}).join('')
   +'<div class="f"><div><label>負責人</label><input data-f="ow" list="ol" value="'+esc(r.owner)+'" placeholder="（待指定）"></div><div><label>目前狀態</label><select data-f="st">'+so+'</select></div><div><label>預定完工日</label><input data-f="du" type="date" value="'+esc(r.due||"")+'"></div>'
   +'<div style="grid-column:span 2"><label>後續準備事項</label><input data-f="nx" value="'+esc(r.next_step)+'" maxlength="300"></div><div><label>備註／待協調</label><input data-f="nt" value="'+esc(r.note)+'" maxlength="300"></div></div>'
   +'<div class="row" style="margin-top:6px"><button data-a="sv">儲存</button><span class="msg"></span></div></div>';});
  $("list").innerHTML=h===""?'<div class="card">沒有符合的工作</div>':h;}
 function load(cb){call("iaa_task_list",{},function(ok,j){if(ok&&j){rows=j;opts();draw();}cb(ok);});}
+$("vw").onclick=function(e){var v=e.target.getAttribute("data-v");if(v===null){return;}VIEW=v;[].forEach.call($("vw").children,function(c){c.className=c.getAttribute("data-v")===v?"on":"g";});draw();};
 $("bn").onclick=function(e){if(e.target.id==="cc"){CF=null;draw();}};
 $("sum").onclick=function(e){var d=e.target;while(d&&d.getAttribute&&d.getAttribute("data-k")===null){d=d.parentNode;}if(d===null||d.getAttribute===undefined){return;}var k=d.getAttribute("data-k"),v=d.getAttribute("data-v");
  $("fo").value="";$("fs").value="";onlyLate=false;if(k==="s"){$("fs").value=v;}else if(k==="o"){$("fo").value="未指定";}else if(k==="l"){onlyLate=true;}draw();};
