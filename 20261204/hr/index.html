@@ -126,12 +126,12 @@ $("lkg").onclick=function(){$("lkn").className="msg";call("iaa_hr_app_link",{i:l
 $("lkp").onclick=function(){$("lkm").select();try{document.execCommand("copy");$("lkn").textContent="已複製";}catch(e){$("lkn").textContent="請手動複製";}};
 function qtxt(a){return a.qual_type==="創新獎得主"?"創新獎得主："+esc(a.award_year)+" "+esc(a.award_cat)+esc(a.award_prize)+"《"+esc(a.award_work)+"》":esc(a.qual_type);}
 function pill(t,c){return '<span class="tag" style="background:'+c+'">'+t+'</span>';}
-function loadA(){call("iaa_hr_app_list",{},function(ok,l){if(ok&&l){arows=l;drawA();}});}
+function loadA(){call("iaa_hr_app_list_v2",{},function(ok,l){if(ok&&l){arows=l;drawA();}});}
 function drawA(){var n=arows.filter(function(a){return a.status==="待審核";}).length;$("bg").textContent=n;$("bg").hidden=(n===0);
  $("al").innerHTML=arows.map(function(a){var col={"待填寫":"#8a90a8","待審核":"#d98a00","退回補件":"#1F5FBF","通過":"#2E7D6B","不符資格":"#c0392b"}[a.status]||"#8a90a8";
   var h='<div class="chp"><h3>'+esc(a.name)+' <span>'+esc(a.chapter)+'・'+(a.recruit_kind==="回歸"?"原退會":"新會友")+(a.match_state==="未比對"?'・<b style="color:#c0392b">未比對邀約名單</b>':'')+'</span> '+pill(a.status,col)+'</h3>';
   h+='<div style="font-size:15px;line-height:1.8">資格預審（發連結前）：'+(a.qual_prechecked?'<b style="color:#2E7D6B">已核對</b>':'<b style="color:#d98a00">未核對</b>')+'　入會費：'+esc(a.entry_fee)+'　常年會費：'+esc(a.annual_fee)+'　已確認繳費合計：'+a.paid_total+' 元</div>';
-  if(a.status!=="待填寫"){h+='<div style="font-size:15px;line-height:1.8;margin-top:6px">手機：'+esc(a.phone)+'　LINE：'+esc(a.line_name)+'<br>公司：'+esc(a.company)+'　職稱：'+esc(a.title)+'<br>營業內容：'+esc(a.biz)+'　產業：'+esc(a.industry)+'<br><b>參加資格：'+qtxt(a)+'</b><br>邀約人：'+esc(a.inviter)+'　送出：'+esc((a.submitted_at||"").slice(0,16).replace("T"," "))+'</div>';}
+  if(a.status!=="待填寫"){h+='<div style="font-size:15px;line-height:1.8;margin-top:6px">Email：'+esc(a.email)+'　手機：'+esc(a.phone)+'　LINE：'+esc(a.line_name)+'<br>生日：'+esc(a.birthday)+'　性別：'+esc(a.gender)+'　餐食：'+esc(a.meal)+'　加入IMC：'+esc(a.imc_since)+'<br>地址：'+esc(a.address)+'<br>公司：'+esc(a.company)+'　職稱：'+esc(a.title)+'<br>營業內容：'+esc(a.biz)+'　產業：'+esc(a.industry)+'　公司電話：'+esc(a.company_tel)+'<br>需求：'+esc(a.needs||'（未勾選）')+'<br><b>參加資格：'+qtxt(a)+'</b><br>邀約人：'+esc(a.inviter)+'　送出：'+esc((a.submitted_at||"").slice(0,16).replace("T"," "))+'</div>';}
   else{h+='<div class="fee" style="margin-top:6px">尚未送出申請表（專屬連結已產生）</div>';}
   if(a.review_note){h+='<div class="fee" style="margin-top:4px">審核備註：'+esc(a.review_note)+'</div>';}
   if(a.refund_status==="待退費"||a.refund_status==="已退費"){h+='<div style="margin-top:8px;padding:8px 10px;border-radius:10px;background:'+(a.refund_status==="待退費"?"#FDECEA":"#EAF5F1")+'"><b>'+esc(a.refund_status)+'</b>　'+esc(a.refund_note)+(a.refund_status==="待退費"?' <button class="s ok" data-ra="done" data-id="'+a.id+'">標記已退費</button>':'')+'</div>';}
