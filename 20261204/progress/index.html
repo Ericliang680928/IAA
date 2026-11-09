@@ -150,7 +150,11 @@ document.getElementById("list").addEventListener("click",function(e){var a=e.tar
 document.getElementById("list").addEventListener("change",function(e){var t=e.target;if(t.getAttribute&&t.getAttribute("data-id")){save(t.getAttribute("data-id"),t.value,t);}});
 document.getElementById("lock").addEventListener("click",function(){
   if(edit){edit=false;pass="";try{sessionStorage.removeItem("iaapw");}catch(e){}msg("",false);render();return;}
-  var v=window.prompt("請輸入更新密碼");if(v){pass=v.trim();edit=true;try{sessionStorage.setItem("iaapw",pass);}catch(e){}msg("編輯模式：用每項右側的下拉選單更改狀態",false);render();}
+  var v=window.prompt("請輸入更新密碼");if(v){v=v.trim();msg("驗證中…",false);var x=new XMLHttpRequest();x.open("POST",SB+"/rest/v1/rpc/iaa_set_progress");x.setRequestHeader("apikey",KEY);x.setRequestHeader("Authorization","Bearer "+KEY);x.setRequestHeader("Content-Type","application/json");
+   x.onload=function(){var r={};try{r=JSON.parse(x.responseText);}catch(e){}
+    if(r.error==="bad_password"){msg("密碼不正確，請再試一次",true);return;}
+    pass=v;edit=true;try{sessionStorage.setItem("iaapw",pass);}catch(e){}msg("編輯模式：用每項右側的下拉選單更改狀態",false);render();taskStats();};
+   x.onerror=function(){msg("連線失敗，請稍後再試",true);};x.send(JSON.stringify({p_pass:v,p_id:"__chk",p_status:"todo",p_by:null}));}
 });
 document.getElementById("flt").addEventListener("click",function(e){var b=e.target.closest("button");if(b===null){return;}filt=b.getAttribute("data-f");[].forEach.call(this.children,function(c){c.className=c===b?"on":"";});render();});
 
