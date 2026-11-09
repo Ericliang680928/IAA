@@ -27,7 +27,7 @@ h2{font-size:18px;margin:4px 0 8px}
 <div class="role"><b>責任分工</b><br>・<b>社召集人</b>：負責聯繫該社的新會友與原退會會友，回報邀約結果與繳費。<br>・<b>區總召</b>：督導所轄各社的進度。<br>・<b>人資長（李敏妃）與副人資長</b>：統籌名單、辦理入會作業（按「完成入會」才會進入會友名冊）。<br>・<b>財務長</b>：審核入會費與常年會費，確認後才算已繳。</div>
 <div class="role" style="margin-top:10px"><b>這些名單是什麼？</b><br>・<b>責任分配、全部名單</b>＝<b>「邀約名單」</b>：還<u>沒有入會</u>、需要有人去邀請的人，分兩類：<b>新會友</b>（創新獎得獎者、會友推薦等第一次加入）與<b>原退會</b>（以前退會、邀請回來的會友）。已經是會友的人不會出現在這裡。<br>・<b>進度</b>：待邀請 → 邀請中 → 已同意 → 人資按「完成入會」→ 已入會。已入會才會進入「會友名冊」。<br>・<b>未繳／已確認</b>：前面是<b>入會費</b>、後面是<b>常年會費</b>；回報後要財務長審核確認，才算已繳。<br>・<b>目前的會友（已入會者）</b>請到「會友名冊」分頁查詢、新增或修改。</div>
 <div class="sum" id="sum" style="margin-top:12px"></div>
-<div class="card"><div class="row tabs"><button id="t1" class="on">責任分配</button><button id="t2">全部名單</button><button id="t3">邀約名單 新增／編輯</button><button id="t5">會友名冊</button><button id="t4">產生分派訊息</button>
+<div class="card"><div class="row tabs"><button id="t1" class="on">責任分配</button><button id="t2">全部名單</button><button id="t3">邀約名單 新增／編輯</button><button id="t5">會友名冊</button><button id="t4">產生分派訊息</button><button id="t6">邀請與關懷</button>
 <select id="fr" style="margin-left:auto"><option value="">全部區域</option><option>北區</option><option>中區</option><option>南區</option></select></div></div>
 <div id="v1"></div>
 <div class="card sc" id="v2" hidden><h2>全部邀約名單 <span style="font-weight:400;font-size:14px;color:#6b7390">尚未入會的新會友與原退會會友</span></h2><div class="row" style="margin-bottom:8px"><select id="fs"><option value="">全部進度</option><option>待邀請</option><option>邀請中</option><option>已同意</option><option>已入會</option><option>婉拒</option><option>暫緩</option></select><select id="fk"><option value="">新會友＋回歸</option><option>新會友</option><option>回歸</option></select></div>
@@ -42,6 +42,14 @@ h2{font-size:18px;margin:4px 0 8px}
 <div class="row" style="margin-top:14px"><input id="mq" placeholder="搜尋姓名或社別" style="flex:1;min-width:160px"><select id="mf"><option value="">全部狀態</option><option>有效</option><option>回歸</option><option>有望</option><option>退會</option></select></div>
 <div class="sc" style="margin-top:8px"><table><thead><tr><th>姓名</th><th>社別／區域</th><th>狀態</th><th>繳費（入會費／常年會費）</th><th>備註</th><th></th></tr></thead><tbody id="mb"></tbody></table></div></div>
 <div class="card" id="v4" hidden><h2>產生給召集人／總召的分派訊息</h2><div class="row"><select id="ms"></select><button id="mk">產生</button><button class="g" id="cp">複製</button></div><textarea id="mt" style="margin-top:10px"></textarea><div class="msg" id="m4"></div></div>
+<div class="card f" id="v6" hidden><h2>邀請與關懷 <span style="font-weight:400;font-size:14px;color:#6b7390">有望新會友每 2 週、原退會會友每月關懷（可個別調整週期）</span></h2>
+<div class="sum" id="csum" style="margin-bottom:10px"></div>
+<div class="row" style="margin-bottom:8px"><select id="cf"><option value="due">今日待關懷（含逾期）</option><option value="all">全部（未入會、未婉拒）</option><option value="new">只看有望新會友</option><option value="back">只看原退會會友</option><option value="done">已入會／婉拒</option></select></div>
+<div class="sc"><table><thead><tr><th>姓名</th><th>社別／邀約人</th><th>類別／進度</th><th>上次關懷</th><th>下次關懷</th><th>最近紀錄</th><th></th></tr></thead><tbody id="cb"></tbody></table></div>
+<div id="cform" hidden style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px"><h2 id="ct">記錄關懷</h2>
+<div class="g2"><div><label>聯繫方式</label><select id="cv"><option>電話</option><option>LINE</option><option>當面</option><option>Email</option><option>其他</option></select></div><div><label>進度</label><select id="cs"><option value="">不變</option><option>待邀請</option><option>邀請中</option><option>已同意</option><option>婉拒</option><option>暫緩</option></select></div><div id="crw"><label>退會原因（大類，不記細節）</label><select id="cr"><option value="">未說明</option><option>時間</option><option>費用</option><option>興趣不符</option><option>工作變動</option><option>其他</option></select></div><div><label>下次關懷日</label><input id="cn" type="date"></div><div><label>關懷週期（天）</label><input id="cd" type="number" min="3" max="180"></div><div><label>聯繫人</label><input id="cby" maxlength="20" placeholder="例如 李敏妃"></div></div>
+<label>結果摘要（勿記健康、家庭等敏感細節）</label><input id="cx6" maxlength="300">
+<div class="row" style="margin-top:12px"><button id="csv">儲存紀錄</button><button class="g" id="ccx">取消</button></div><div class="msg" id="cm"></div></div></div>
 <div class="card f" id="pd" hidden><h2 id="pt">代為回報繳費</h2><div class="g2"><div><label>項目</label><select id="pf"><option>入會費</option><option>常年會費</option></select></div><div><label>方式</label><select id="pm"><option>匯款</option><option>現金</option></select></div><div><label>金額</label><input id="pa" type="number"></div><div><label>匯款後5碼</label><input id="pl" maxlength="5"></div><div><label>日期</label><input id="pe" type="date"></div></div><label>備註</label><input id="pn" maxlength="100"><div class="row" style="margin-top:12px"><button id="ps">送出給財務長審核</button><button class="g" id="pc">取消</button></div><div class="msg" id="m5"></div></div>
 </div></div>
 <script>
@@ -78,8 +86,8 @@ function draw(){
 }
 function opts(){$("mc").innerHTML='<option value="">請選擇社別</option>'+NS.map(function(c){return '<option>'+c+'</option>';}).join("");$("ec").innerHTML='<option value="">請選擇社別</option>'+NS.map(function(c){return '<option>'+c+'</option>';}).join("");
  $("ms").innerHTML=Object.keys(REG).map(function(r){return '<option value="R:'+r+'">'+r+'總召（全區）</option>';}).join("")+NS.map(function(c){return '<option value="C:'+c+'">'+c+'召集人</option>';}).join("");}
-function show(n){tab=n;["t1","t2","t3","t4","t5"].forEach(function(id,i){$(id).className=(i+1===n)?"on":"";});$("v5").hidden=(n===5)?false:true;if(n===5){loadM();}$("v1").hidden=(n===1)?false:true;$("v2").hidden=(n===2)?false:true;$("v3").hidden=(n===3)?false:true;$("v4").hidden=(n===4)?false:true;$("pd").hidden=true;}
-["t1","t2","t3","t4","t5"].forEach(function(id,i){$(id).onclick=function(){show(i+1);};});
+function show(n){tab=n;["t1","t2","t3","t4","t5","t6"].forEach(function(id,i){$(id).className=(i+1===n)?"on":"";});$("v6").hidden=(n===6)?false:true;if(n===6){loadC();}$("v5").hidden=(n===5)?false:true;if(n===5){loadM();}$("v1").hidden=(n===1)?false:true;$("v2").hidden=(n===2)?false:true;$("v3").hidden=(n===3)?false:true;$("v4").hidden=(n===4)?false:true;$("pd").hidden=true;}
+["t1","t2","t3","t4","t5","t6"].forEach(function(id,i){$(id).onclick=function(){show(i+1);};});
 $("fr").onchange=function(){draw();drawM();};$("fs").onchange=draw;$("fk").onchange=draw;
 $("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";load(function(ok){if(ok){$("lg").hidden=true;$("app").hidden=false;opts();var q=new URLSearchParams(location.search);if(q.get("region")){$("fr").value=q.get("region");draw();}$("pe").value=new Date(Date.now()+288e5).toISOString().slice(0,10);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
@@ -112,6 +120,27 @@ $("msv").onclick=function(){$("mm").className="msg";if($("mn").value.trim()===""
  var nm=$("mn").value.trim();
  call("iaa_hr_member_save",{i:mid,n:nm,c:$("mc").value,s:$("ms5").value,nw:$("mw").value==="1",nt:$("mo").value},function(ok,j){
   if(ok){mclr();$("mm").textContent="已儲存："+nm+"（會友名冊約 30 秒內同步到前台）";loadM();load(function(){});}else{$("mm").className="msg err";$("mm").textContent=(j&&j.message)?(j.message.indexOf("duplicate")>=0?"名冊已有同名會友，請用編輯":j.message):"儲存失敗";}});};
+var crows=[],cid=null;
+function today(){return new Date(Date.now()+288e5).toISOString().slice(0,10);}
+function loadC(){call("iaa_hr_care_list",{},function(ok,l){if(ok&&l){crows=l;drawC();}});}
+function drawC(){var t=today(),f=$("cf").value,rg=$("fr").value;
+ var open=crows.filter(function(r){return r.status!=="已入會"&&r.status!=="婉拒";});
+ var due=open.filter(function(r){return r.next_care&&r.next_care<=t;});
+ var nn=open.filter(function(r){return r.kind==="新會友";}).length,bb=open.filter(function(r){return r.kind==="回歸";}).length;
+ $("csum").innerHTML='<div><small>今日待關懷</small><b>'+due.length+'</b></div><div><small>有望新會友（進行中）</small><b>'+nn+'</b></div><div><small>原退會會友（進行中）</small><b>'+bb+'</b></div>';
+ var list=crows.filter(function(r){var o=(r.status!=="已入會"&&r.status!=="婉拒");
+  if(f==="due"){return o&&r.next_care&&r.next_care<=t;}if(f==="all"){return o;}if(f==="new"){return o&&r.kind==="新會友";}if(f==="back"){return o&&r.kind==="回歸";}return o===false;});
+ $("cb").innerHTML=list.map(function(r){var late=(r.next_care&&r.next_care<t)?' style="color:#c0392b;font-weight:700"':'';
+  var lg=(r.logs&&r.logs.length)?r.logs.slice(0,2).map(function(g){return esc(g.at)+' '+esc(g.via)+'：'+esc(g.result);}).join('<br>'):'<small style="color:#6b7390">尚無紀錄</small>';
+  return '<tr><td><b>'+esc(r.name)+'</b></td><td>'+esc(r.chapter)+'<br><small style="color:#6b7390">邀約人 '+esc(r.inviter||"—")+'</small></td><td>'+(r.kind==="回歸"?"原退會":"新會友")+'<br><span class="tag '+sc(r.status)+'">'+esc(r.status)+'</span>'+(r.reason?'<br><small>原因：'+esc(r.reason)+'</small>':'')+'</td><td>'+esc(r.last_care||"—")+'</td><td'+late+'>'+esc(r.next_care||"—")+'<br><small style="color:#6b7390">每 '+esc(r.care_days)+' 天</small></td><td><small>'+lg+'</small></td><td><button class="s g" data-cid="'+r.id+'">記錄關懷</button></td></tr>';}).join("")||'<tr><td colspan="7" class="fee">目前沒有符合的名單</td></tr>';}
+$("cf").onchange=drawC;
+$("cb").onclick=function(e){var id=e.target.getAttribute("data-cid");if(id===null){return;}var r=crows.filter(function(x){return String(x.id)===id;})[0];if(!r){return;}
+ cid=r.id;$("ct").textContent="記錄關懷：「"+r.name+"」";$("crw").hidden=(r.kind==="回歸")?false:true;$("cs").value="";$("cr").value=r.reason||"";$("cx6").value="";$("cd").value=r.care_days;$("cn").value="";$("cm").textContent="";$("cform").hidden=false;$("cform").scrollIntoView();};
+$("ccx").onclick=function(){$("cform").hidden=true;cid=null;};
+$("csv").onclick=function(){$("cm").className="msg";var d=parseInt($("cd").value||"0",10),cur=crows.filter(function(x){return x.id===cid;})[0];if(!cur){return;}
+ function go(){call("iaa_hr_care_add",{i:cid,via:$("cv").value,res:$("cx6").value,nx:$("cn").value||null,byn:$("cby").value,rs:$("cr").value,st:$("cs").value},function(ok,j){
+  if(ok){$("cm").textContent=j;$("cform").hidden=true;cid=null;loadC();load(function(){});}else{$("cm").className="msg err";$("cm").textContent=(j&&j.message)?j.message:"儲存失敗";}});}
+ if(d>=3&&d!==cur.care_days){call("iaa_hr_care_days",{i:cid,d:d},function(ok,j){if(ok){go();}else{$("cm").className="msg err";$("cm").textContent=(j&&j.message)?j.message:"週期更新失敗";}});}else{go();}};
 function build(){var v=$("ms").value,isR=v.slice(0,2)==="R:",nm=v.slice(2),list=rows.filter(function(r){return isR?r.region===nm:r.chapter===nm;});
  var who=isR?(LEAD[nm]||"總召"):(CONV[nm]||"召集人"),t=who+(isR?" 總召":" 召集人")+"您好，以下是"+nm+(isR?"所轄各社":"")+"需要您協助跟進的新會友與原退會會友名單（人資組 "+new Date(Date.now()+288e5).toISOString().slice(0,10)+"）：\n";
  ["待邀請","邀請中","已同意","已入會"].forEach(function(st){var l=list.filter(function(r){return r.status===st;});if(l.length===0){return;}
