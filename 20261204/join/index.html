@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>IAA 入會申請表</title>
+<style>
+:root{--ink:#1a2547;--mut:#6b7390;--line:#e2e6f0;--pk:#B3267F;--bg:#f5f6fb;--ok:#2E7D6B}
+*{box-sizing:border-box}body{margin:0;font:19px/1.65 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink)}
+.w{max-width:620px;margin:0 auto;padding:16px}h1{font-size:28px;margin:8px 0 2px}.sub{color:var(--mut);font-size:17px;margin:0 0 10px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+label{display:block;font-weight:700;font-size:19px;margin:18px 0 6px}label small{font-weight:400;color:var(--mut);font-size:16px}
+input,select,textarea,button{font:inherit;width:100%;padding:14px 14px;min-height:54px;font-size:19px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input[readonly]{background:#f3f5fb;color:var(--mut)}
+button{background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700;cursor:pointer;margin-top:14px}
+.steps{background:#EEF3FF;border:1px solid #C9D8F5;border-radius:12px;padding:12px 14px;font-size:17px;line-height:1.9}.steps a{color:var(--pk);font-weight:700}
+.warn{background:#FFF5DB;border:1px solid #F0D9A8;border-radius:12px;padding:12px 14px;font-size:17px}
+.bad{background:#FDECEA;border:1px solid #F3C2BC;border-radius:12px;padding:12px 14px;font-size:17px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:17px;margin-top:18px}.chk input{width:24px;height:24px;min-height:0;margin-top:4px;flex:none}
+.msg{min-height:24px;font-size:17px;margin-top:8px}.err{color:#c0392b}
+[hidden]{display:none!important}
+#dn{position:fixed;inset:0;background:rgba(20,30,60,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}#dn.on{display:flex}#dn .bx{background:#fff;border-radius:18px;padding:28px 24px;max-width:420px;width:100%;text-align:center}#dn .ck{width:72px;height:72px;border-radius:50%;background:var(--ok);color:#fff;font-size:44px;line-height:72px;margin:0 auto 12px}#dn h2{margin:0 0 8px;font-size:26px}#dn p{margin:0 0 16px;font-size:18px;line-height:1.6;color:#44506f}
+</style></head><body><div class="w">
+<h1>入會申請表</h1><p class="sub">IAA 創新加速聯盟會・請填寫入會資料，經人資長審核後正式入會</p>
+<div class="steps"><b>入會流程</b><br>① 完成繳費：<a href="../dues/">會費繳費回報</a>（入會費、常年會費），財務長確認後才算收到<br>② 加入 <a href="https://line.me/ti/p/bTaxGeBEY7" target="_blank" rel="noopener">IAA LINE 官方帳號</a><br>③ 填寫本申請表<br>④ 人資長審核資格與資料，通過後即正式成為會友</div>
+<div class="card" id="st" hidden></div>
+<div class="card" id="fm">
+<div id="gen"><label for="gc">社別</label><select id="gc"></select><label for="gn">姓名</label><input id="gn" maxlength="30" placeholder="請填寫與報名相同的姓名"></div>
+<div id="tk" hidden><label>姓名</label><input id="tn" readonly><label>社別</label><input id="tc" readonly></div>
+<label for="ph">手機</label><input id="ph" inputmode="tel" maxlength="20" placeholder="例如 0912-345678">
+<label for="ln">LINE 顯示名稱 <small>（方便人資辨識）</small></label><input id="ln" maxlength="60">
+<label for="co">公司名稱</label><input id="co" maxlength="100">
+<label for="ti">公司職稱</label><input id="ti" maxlength="60">
+<label for="bz">公司營業內容</label><input id="bz" maxlength="200" placeholder="例如 食品加工、原料販售">
+<label for="ind">產業類別</label><select id="ind"></select>
+<label for="qt">參加資格（入會依據）</label><select id="qt"><option value="">請選擇</option><option>創新獎得主</option><option>發起人</option><option>歷屆創新主委</option><option>歷屆創新副主委</option><option>歷屆聯合會理事長</option></select>
+<div id="aw" hidden><label for="ac">創新獎類別</label><select id="ac"><option value="">請選擇</option><option>服務行銷類</option><option>研發製造類</option><option>新創企劃類</option></select>
+<label for="ap">獎項</label><select id="ap"><option value="">請選擇</option><option value="卓越獎">卓越獎（第一名）</option><option value="傑出獎">傑出獎（第二名）</option><option value="優良獎">優良獎（第三名）</option></select>
+<label for="ay">得獎年度／屆別</label><input id="ay" maxlength="12" placeholder="例如 2026 或 第21屆">
+<label for="aw2">得獎作品名稱</label><input id="aw2" maxlength="200"></div>
+<label for="iv">邀約人／推薦人 <small>（選填）</small></label><input id="iv" maxlength="60">
+<label class="chk"><input type="checkbox" id="cs"><span>我同意 IAA 創新加速聯盟會依會務需要，蒐集、處理及使用以上個人資料（僅供會務聯繫與會友名冊使用，不對外公開手機號碼）。</span></label>
+<button id="sub">送出入會申請</button><div class="msg" id="msg"></div></div>
+</div>
+<div id="dn"><div class="bx"><div class="ck">✓</div><h2>已送出申請</h2><p>人資長將審核您的資格與資料，審核結果會由人資組透過 LINE 通知您。若有需要補件，也會一併告知。</p><button id="dok">好，我知道了</button></div></div>
+<script>
+(function(){
+var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI";
+var NS=["基隆社","台北社","宜蘭社","桃園社","新竹社","苗栗社","台中社","彰化社","南投社","雲林社","嘉義社","南瀛社","台南市社","高雄社","屏東社"];
+var IND=["食品/餐飲/伴手禮","機械/設備/金屬製造","生技/醫療/保健","顧問/專業服務","建築/營造/不動產","綠能/環保/能源","觀光/住宿/旅遊","化工/材料","文創/藝術/設計印刷","美妝/保養品","紡織/傘具","家具/家飾/寢飾","資訊/電子/科技","汽機車/零件","農業/林業","社團/組織","珠寶/禮品","運輸/物流","其他"];
+var T=new URLSearchParams(location.search).get("t")||"";
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function rpc(fn,body,cb){var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
+ x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
+$("gc").innerHTML='<option value="">請選擇社別</option>'+NS.map(function(c){return '<option>'+c+'</option>';}).join("");
+$("ind").innerHTML='<option value="">請選擇</option>'+IND.map(function(c){return '<option>'+c+'</option>';}).join("");
+$("qt").onchange=function(){$("aw").hidden=($("qt").value!=="創新獎得主");};
+function fill(r){$("ph").value=r.phone||"";$("ln").value=r.line_name||"";$("co").value=r.company||"";$("ti").value=r.title||"";$("bz").value=r.biz||"";$("ind").value=r.industry||"";$("qt").value=r.qual_type||"";$("ac").value=r.award_cat||"";$("ap").value=r.award_prize||"";$("ay").value=r.award_year||"";$("aw2").value=r.award_work||"";$("iv").value=r.inviter||"";$("qt").onchange();}
+if(T!==""){$("gen").hidden=true;$("tk").hidden=false;
+ rpc("iaa_join_get",{t:T},function(ok,l){
+  if(!ok||!l||l.length===0){$("fm").hidden=true;$("st").hidden=false;$("st").className="card bad";$("st").innerHTML="<b>連結不正確或已失效</b><br>請向人資組索取您的專屬入會連結。";return;}
+  var r=l[0];$("tn").value=r.name;$("tc").value=r.chapter;
+  if(r.status==="通過"){$("fm").hidden=true;$("st").hidden=false;$("st").className="card";$("st").innerHTML="<b>您的入會申請已通過審核。</b>歡迎加入 IAA！";return;}
+  if(r.status==="不符資格"){$("fm").hidden=true;$("st").hidden=false;$("st").className="card bad";$("st").innerHTML="<b>此申請已結案</b><br>如有疑問請洽人資長。"+(r.review_note?"<br>說明："+esc(r.review_note):"");return;}
+  if(r.status==="退回補件"){$("st").hidden=false;$("st").className="card warn";$("st").innerHTML="<b>人資長請您補充資料後重新送出</b><br>"+esc(r.review_note||"");}
+  if(r.status==="待審核"){$("st").hidden=false;$("st").className="card warn";$("st").innerHTML="<b>您已送出申請，目前待人資長審核。</b>如需修改，可更正後重新送出。";}
+  fill(r);});}
+$("sub").onclick=function(){var m=$("msg");m.className="msg";
+ if(T===""&&($("gc").value===""||$("gn").value.trim()==="")){m.className="msg err";m.textContent="請選擇社別並填寫姓名";return;}
+ if($("qt").value===""){m.className="msg err";m.textContent="請選擇參加資格";return;}
+ m.textContent="送出中…";$("sub").disabled=true;
+ rpc("iaa_join_submit",{t:T||null,n:$("gn").value,c:$("gc").value,ph:$("ph").value,ln:$("ln").value,co:$("co").value,ti:$("ti").value,bz:$("bz").value,ind:$("ind").value,qt:$("qt").value,ac:$("ac").value,ap:$("ap").value,ay:$("ay").value,aw:$("aw2").value,iv:$("iv").value,cs:$("cs").checked},function(ok,j){
+  $("sub").disabled=false;
+  if(ok){m.textContent="";$("dn").className="on";}else{m.className="msg err";m.textContent=(j&&j.message)?j.message:"送出失敗，請稍後再試";}});};
+$("dok").onclick=function(){$("dn").className="";location.reload();};
+})();
+</script></body></html>

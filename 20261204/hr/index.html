@@ -25,9 +25,9 @@ h2{font-size:18px;margin:4px 0 8px}
 <div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="人資組密碼" autocomplete="current-password"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
 <div id="app" hidden>
 <div class="role"><b>責任分工</b><br>・<b>社召集人</b>：負責聯繫該社的新會友與原退會會友，回報邀約結果與繳費。<br>・<b>區總召</b>：督導所轄各社的進度。<br>・<b>人資長（李敏妃）與副人資長</b>：統籌名單、辦理入會作業（按「完成入會」才會進入會友名冊）。<br>・<b>財務長</b>：審核入會費與常年會費，確認後才算已繳。</div>
-<div class="role" style="margin-top:10px"><b>這些名單是什麼？</b><br>・<b>責任分配、全部名單</b>＝<b>「邀約名單」</b>：還<u>沒有入會</u>、需要有人去邀請的人，分兩類：<b>新會友</b>（創新獎得獎者、會友推薦等第一次加入）與<b>原退會</b>（以前退會、邀請回來的會友）。已經是會友的人不會出現在這裡。<br>・<b>進度</b>：待邀請 → 邀請中 → 已同意 → 人資按「完成入會」→ 已入會。已入會才會進入「會友名冊」。<br>・<b>未繳／已確認</b>：前面是<b>入會費</b>、後面是<b>常年會費</b>；回報後要財務長審核確認，才算已繳。<br>・<b>目前的會友（已入會者）</b>請到「會友名冊」分頁查詢、新增或修改。</div>
+<div class="role" style="margin-top:10px"><b>這些名單是什麼？</b><br>・<b>責任分配、全部名單</b>＝<b>「邀約名單」</b>：還<u>沒有入會</u>、需要有人去邀請的人，分兩類：<b>新會友</b>（創新獎得獎者、會友推薦等第一次加入）與<b>原退會</b>（以前退會、邀請回來的會友）。已經是會友的人不會出現在這裡。<br>・<b>進度</b>：待邀請 → 邀請中 → 已同意 → 人資按「完成入會」→ 已入會。已入會才會進入「會友名冊」。<br>・<b>未繳／已確認</b>：前面是<b>入會費</b>、後面是<b>常年會費</b>；回報後要財務長審核確認，才算已繳。<br>・<b>目前的會友（已入會者）</b>請到「會友名冊」分頁查詢、新增或修改。<br>・<b>新會友入會流程</b>：核對資格 → 在「全部名單」按<b>「產生入會連結」</b>傳給對方 → 對方繳費（財務長確認）、加入 IAA LINE@、填寫入會申請表 → <b>人資長</b>在「入會申請審核」分頁審核，通過後自動更新會友名冊與名單。</div>
 <div class="sum" id="sum" style="margin-top:12px"></div>
-<div class="card"><div class="row tabs"><button id="t1" class="on">責任分配</button><button id="t2">全部名單</button><button id="t3">邀約名單 新增／編輯</button><button id="t5">會友名冊</button><button id="t4">產生分派訊息</button><button id="t6">邀請與關懷</button>
+<div class="card"><div class="row tabs"><button id="t1" class="on">責任分配</button><button id="t2">全部名單</button><button id="t3">邀約名單 新增／編輯</button><button id="t5">會友名冊</button><button id="t4">產生分派訊息</button><button id="t6">邀請與關懷</button><button id="t7">入會申請審核 <span id="bg" style="background:#d98a00;color:#fff;border-radius:999px;padding:0 8px;font-size:13px" hidden></span></button>
 <select id="fr" style="margin-left:auto"><option value="">全部區域</option><option>北區</option><option>中區</option><option>南區</option></select></div></div>
 <div id="v1"></div>
 <div class="card sc" id="v2" hidden><h2>全部邀約名單 <span style="font-weight:400;font-size:14px;color:#6b7390">尚未入會的新會友與原退會會友</span></h2><div class="row" style="margin-bottom:8px"><select id="fs"><option value="">全部進度</option><option>待邀請</option><option>邀請中</option><option>已同意</option><option>已入會</option><option>婉拒</option><option>暫緩</option></select><select id="fk"><option value="">新會友＋回歸</option><option>新會友</option><option>回歸</option></select></div>
@@ -38,9 +38,16 @@ h2{font-size:18px;margin:4px 0 8px}
 <label>備註</label><input id="eb" maxlength="300"><div class="row" style="margin-top:12px"><button id="sv">儲存</button><button class="g" id="cx">清除</button></div><div class="msg" id="m1"></div></div>
 <div class="card f" id="v5" hidden><p class="sub" style="margin:0 0 6px">此處為<b>會友名冊</b>（已經是 IAA 會友的人，含有效、回歸、有望、退會）。可直接新增新會友、修改社別／狀態／備註。</p><h2 id="mt5">新增會友</h2>
 <div class="g2"><div><label>姓名</label><input id="mn"></div><div><label>社別</label><select id="mc"></select></div><div><label>狀態</label><select id="ms5"><option>有效</option><option>回歸</option><option>有望</option><option>退會</option></select></div><div><label>新會友 NEW 標籤</label><select id="mw"><option value="1">是</option><option value="0">否</option></select></div></div>
+<div class="g2"><div><label>手機</label><input id="mph" maxlength="20"></div><div><label>公司名稱</label><input id="mco" maxlength="100"></div><div><label>公司職稱</label><input id="mti" maxlength="60"></div><div><label>營業內容</label><input id="mbz" maxlength="200"></div><div><label>產業類別</label><input id="mind" maxlength="40"></div><div><label>參加資格</label><select id="mqt"><option value="">未填</option><option>創新獎得主</option><option>發起人</option><option>歷屆創新主委</option><option>歷屆創新副主委</option><option>歷屆聯合會理事長</option></select></div><div><label>資格得獎年度</label><input id="may" maxlength="12"></div><div><label>得獎紀錄</label><input id="mad" maxlength="300" placeholder="例如 2015 服務行銷類卓越獎"></div></div>
 <label>備註</label><input id="mo" maxlength="300" placeholder="例如 鄭群亮夫人、共同參賽成員"><div class="row" style="margin-top:12px"><button id="msv">儲存</button><button class="g" id="mcx">清除／取消編輯</button></div><div class="msg" id="mm"></div>
 <div class="row" style="margin-top:14px"><input id="mq" placeholder="搜尋姓名或社別" style="flex:1;min-width:160px"><select id="mf"><option value="">全部狀態</option><option>有效</option><option>回歸</option><option>有望</option><option>退會</option></select></div>
 <div class="sc" style="margin-top:8px"><table><thead><tr><th>姓名</th><th>社別／區域</th><th>狀態</th><th>繳費（入會費／常年會費）</th><th>備註</th><th></th></tr></thead><tbody id="mb"></tbody></table></div></div>
+<div class="card f" id="lk" hidden><h2 id="lkt">產生入會連結</h2><p class="sub" style="margin:0 0 8px">先核對資格再產生連結，避免收費後才發現不符。對方依連結繳費、加 LINE@、填入會申請表，再由人資長審核。</p>
+<label style="display:flex;gap:8px;align-items:flex-start;font-weight:400"><input type="checkbox" id="lkq" style="width:22px;height:22px;margin-top:4px"><span>我已核對此人的參加資格（創新獎對照得獎名單，或發起人／歷屆主委／理事長對照名冊）</span></label>
+<div class="row" style="margin-top:10px"><button id="lkg">產生連結與訊息</button><button class="g" id="lkc">關閉</button></div>
+<textarea id="lkm" style="margin-top:10px;min-height:260px" hidden></textarea><div class="row" style="margin-top:8px"><button class="g" id="lkp" hidden>複製訊息</button></div><div class="msg" id="lkn"></div></div>
+<div class="card f" id="v7" hidden><h2>入會申請審核</h2><p class="sub" style="margin:0 0 8px">新會友填寫入會申請表後出現在這裡。<b>審核僅限人資長</b>，需輸入人資長審核密碼；其他人只能查看。</p>
+<div class="row"><input id="cpw" type="password" placeholder="人資長審核密碼" style="max-width:260px"><button class="g" id="rl">重新整理</button></div><div class="msg" id="m6"></div><div id="al"></div></div>
 <div class="card" id="v4" hidden><h2>產生給召集人／總召的分派訊息</h2><div class="row"><select id="ms"></select><button id="mk">產生</button><button class="g" id="cp">複製</button></div><textarea id="mt" style="margin-top:10px"></textarea><div class="msg" id="m4"></div></div>
 <div class="card f" id="v6" hidden><h2>邀請與關懷 <span style="font-weight:400;font-size:14px;color:#6b7390">有望新會友每 2 週、原退會會友每月關懷（可個別調整週期）</span></h2>
 <div class="sum" id="csum" style="margin-bottom:10px"></div>
@@ -80,22 +87,23 @@ function draw(){
  var fs=$("fs").value,fk=$("fk").value;
  var list=v.filter(function(r){return (fs===""||r.status===fs)&&(fk===""||r.kind===fk);});
  $("tb").innerHTML=list.map(function(r){var act='<button class="s g" data-a="e" data-id="'+r.id+'">編輯</button>';
-  if(r.status==="已同意"||(r.status==="邀請中"&&false)){act+=' <button class="s ok" data-a="j" data-id="'+r.id+'">完成入會</button>';}
+  if(r.status==="已同意"||r.status==="邀請中"){act+=' <button class="s ok" data-a="l" data-id="'+r.id+'">產生入會連結</button>';}if(r.status==="已同意"){act+=' <button class="s g" data-a="j" data-id="'+r.id+'" title="不走申請表，直接入會">直接入會</button>';}
   if(r.status==="已入會"){act+=' <button class="s g" data-a="p" data-id="'+r.id+'">代回報繳費</button>';}
   return '<tr><td><b>'+esc(r.name)+'</b><br><small style="color:#6b7390">'+esc(r.source)+'</small></td><td>'+esc(r.chapter)+'<br><small style="color:#6b7390">召集人 '+esc(r.convener||"—")+'／總召 '+esc(r.region_lead||"—")+'</small></td><td>'+(r.kind=="回歸"?"原退會":"新會友")+'</td><td><span class="tag '+sc(r.status)+'">'+esc(r.status)+'</span></td><td>'+fee(r)+'</td><td>'+act+'</td></tr>';}).join("")||'<tr><td colspan="6" style="color:#6b7390">沒有資料</td></tr>';
 }
 function opts(){$("mc").innerHTML='<option value="">請選擇社別</option>'+NS.map(function(c){return '<option>'+c+'</option>';}).join("");$("ec").innerHTML='<option value="">請選擇社別</option>'+NS.map(function(c){return '<option>'+c+'</option>';}).join("");
  $("ms").innerHTML=Object.keys(REG).map(function(r){return '<option value="R:'+r+'">'+r+'總召（全區）</option>';}).join("")+NS.map(function(c){return '<option value="C:'+c+'">'+c+'召集人</option>';}).join("");}
-function show(n){tab=n;["t1","t2","t3","t4","t5","t6"].forEach(function(id,i){$(id).className=(i+1===n)?"on":"";});$("v6").hidden=(n===6)?false:true;if(n===6){loadC();}$("v5").hidden=(n===5)?false:true;if(n===5){loadM();}$("v1").hidden=(n===1)?false:true;$("v2").hidden=(n===2)?false:true;$("v3").hidden=(n===3)?false:true;$("v4").hidden=(n===4)?false:true;$("pd").hidden=true;}
-["t1","t2","t3","t4","t5","t6"].forEach(function(id,i){$(id).onclick=function(){show(i+1);};});
+function show(n){tab=n;["t1","t2","t3","t4","t5","t6","t7"].forEach(function(id,i){$(id).className=(i+1===n)?"on":"";});$("v7").hidden=(n===7)?false:true;$("lk").hidden=true;if(n===7){loadA();}$("v6").hidden=(n===6)?false:true;if(n===6){loadC();}$("v5").hidden=(n===5)?false:true;if(n===5){loadM();}$("v1").hidden=(n===1)?false:true;$("v2").hidden=(n===2)?false:true;$("v3").hidden=(n===3)?false:true;$("v4").hidden=(n===4)?false:true;$("pd").hidden=true;}
+["t1","t2","t3","t4","t5","t6","t7"].forEach(function(id,i){$(id).onclick=function(){show(i+1);};});
 $("fr").onchange=function(){draw();drawM();};$("fs").onchange=draw;$("fk").onchange=draw;
-$("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";load(function(ok){if(ok){$("lg").hidden=true;$("app").hidden=false;opts();var q=new URLSearchParams(location.search);if(q.get("region")){$("fr").value=q.get("region");draw();}$("pe").value=new Date(Date.now()+288e5).toISOString().slice(0,10);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
+$("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";load(function(ok){if(ok){$("lg").hidden=true;$("app").hidden=false;opts();loadA();var q=new URLSearchParams(location.search);if(q.get("region")){$("fr").value=q.get("region");draw();}$("pe").value=new Date(Date.now()+288e5).toISOString().slice(0,10);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
 function byId(id){return rows.filter(function(r){return r.id===id;})[0];}
 function edit(id){var r=byId(id);if(r===undefined){return;}eid=id;$("en").value=r.name;$("ec").value=r.chapter;$("ek").value=r.kind;$("es").value=r.status;$("eo").value=r.source;$("ei").value=r.inviter;$("ed").value=r.invited_date||"";$("eb").value=r.note;$("et").textContent="編輯：「"+r.name+"」";show(3);window.scrollTo(0,0);}
 $("v1").onclick=function(e){var el=e.target;while(el&&el.getAttribute&&el.getAttribute("data-id")===null){el=el.parentNode;}if(el&&el.getAttribute){edit(parseInt(el.getAttribute("data-id"),10));}};
 $("tb").onclick=function(e){var a=e.target.getAttribute("data-a"),id=parseInt(e.target.getAttribute("data-id"),10);if(a===null){return;}
  if(a==="e"){edit(id);return;}
+ if(a==="l"){lkOpen(id);return;}
  if(a==="j"){call("iaa_hr_join",{i:id},function(ok,j){if(ok){window.alert(j);load(function(){});}else{window.alert((j&&j.message)?j.message:"失敗");}});return;}
  if(a==="p"){var r=byId(id);pname=r.name;$("pt").textContent="代為回報繳費：「"+pname+"」";$("pa").value=$("pf").value==="入會費"?1000:6000;$("m5").textContent="";$("pd").hidden=false;$("pd").scrollIntoView();}};
 $("pf").onchange=function(){$("pa").value=$("pf").value==="入會費"?1000:6000;};
@@ -107,18 +115,47 @@ $("cx").onclick=clr;
 $("sv").onclick=function(){$("m1").className="msg";if($("en").value.trim()===""||$("ec").value===""){$("m1").className="msg err";$("m1").textContent="姓名與社別必填";return;}
  call("iaa_hr_save",{i:eid,n:$("en").value,c:$("ec").value,k:$("ek").value,s:$("eo").value,iv:$("ei").value,st:$("es").value,nt:$("eb").value,d:$("ed").value||null},function(ok,j){
   if(ok){$("m1").textContent="已儲存："+$("en").value+"。若進度為「已同意」，請在全部名單按「完成入會」。";clr();load(function(){});}else{$("m1").className="msg err";$("m1").textContent=(j&&j.message)?(j.message.indexOf("duplicate")>=0?"名單已有同名者，請用編輯":j.message):"儲存失敗";}});};
+var lkid=null,lkname="",arows=[];
+function lkOpen(id){var r=byId(id);if(!r){return;}lkid=id;lkname=r.name;$("lkt").textContent="產生入會連結：「"+r.name+"」（"+r.chapter+"）";$("lkq").checked=false;$("lkm").hidden=true;$("lkp").hidden=true;$("lkn").textContent="";$("lk").hidden=false;$("lk").scrollIntoView();}
+$("lkc").onclick=function(){$("lk").hidden=true;};
+$("lkg").onclick=function(){$("lkn").className="msg";call("iaa_hr_app_link",{i:lkid,qp:$("lkq").checked},function(ok,j){
+ if(!ok){$("lkn").className="msg err";$("lkn").textContent=(j&&j.message)?j.message:"產生失敗";return;}
+ var url="https://ericliang680928.github.io/IAA/20261204/join/?t="+j;
+ $("lkm").value=lkname+" 您好，歡迎加入 IAA 創新加速聯盟會！請依序完成入會：\n\n① 繳費：入會費 1,000 元、常年會費 6,000 元，請至 https://ericliang680928.github.io/IAA/20261204/dues/ 回報（財務長確認後才算收到）\n② 加入 IAA LINE 官方帳號：https://line.me/ti/p/bTaxGeBEY7\n③ 填寫入會申請表（您的專屬連結，請勿轉傳）：\n"+url+"\n\n資料送出後由人資長審核，通過後即正式成為會友。謝謝🙏";
+ $("lkm").hidden=false;$("lkp").hidden=false;$("lkn").textContent="已產生。複製訊息後以 LINE 傳給對方；同一人再按會得到同一條連結。";load(function(){});});};
+$("lkp").onclick=function(){$("lkm").select();try{document.execCommand("copy");$("lkn").textContent="已複製";}catch(e){$("lkn").textContent="請手動複製";}};
+function qtxt(a){return a.qual_type==="創新獎得主"?"創新獎得主："+esc(a.award_year)+" "+esc(a.award_cat)+esc(a.award_prize)+"《"+esc(a.award_work)+"》":esc(a.qual_type);}
+function pill(t,c){return '<span class="tag" style="background:'+c+'">'+t+'</span>';}
+function loadA(){call("iaa_hr_app_list",{},function(ok,l){if(ok&&l){arows=l;drawA();}});}
+function drawA(){var n=arows.filter(function(a){return a.status==="待審核";}).length;$("bg").textContent=n;$("bg").hidden=(n===0);
+ $("al").innerHTML=arows.map(function(a){var col={"待填寫":"#8a90a8","待審核":"#d98a00","退回補件":"#1F5FBF","通過":"#2E7D6B","不符資格":"#c0392b"}[a.status]||"#8a90a8";
+  var h='<div class="chp"><h3>'+esc(a.name)+' <span>'+esc(a.chapter)+'・'+(a.recruit_kind==="回歸"?"原退會":"新會友")+(a.match_state==="未比對"?'・<b style="color:#c0392b">未比對邀約名單</b>':'')+'</span> '+pill(a.status,col)+'</h3>';
+  h+='<div style="font-size:15px;line-height:1.8">資格預審（發連結前）：'+(a.qual_prechecked?'<b style="color:#2E7D6B">已核對</b>':'<b style="color:#d98a00">未核對</b>')+'　入會費：'+esc(a.entry_fee)+'　常年會費：'+esc(a.annual_fee)+'　已確認繳費合計：'+a.paid_total+' 元</div>';
+  if(a.status!=="待填寫"){h+='<div style="font-size:15px;line-height:1.8;margin-top:6px">手機：'+esc(a.phone)+'　LINE：'+esc(a.line_name)+'<br>公司：'+esc(a.company)+'　職稱：'+esc(a.title)+'<br>營業內容：'+esc(a.biz)+'　產業：'+esc(a.industry)+'<br><b>參加資格：'+qtxt(a)+'</b><br>邀約人：'+esc(a.inviter)+'　送出：'+esc((a.submitted_at||"").slice(0,16).replace("T"," "))+'</div>';}
+  else{h+='<div class="fee" style="margin-top:6px">尚未送出申請表（專屬連結已產生）</div>';}
+  if(a.review_note){h+='<div class="fee" style="margin-top:4px">審核備註：'+esc(a.review_note)+'</div>';}
+  if(a.refund_status==="待退費"||a.refund_status==="已退費"){h+='<div style="margin-top:8px;padding:8px 10px;border-radius:10px;background:'+(a.refund_status==="待退費"?"#FDECEA":"#EAF5F1")+'"><b>'+esc(a.refund_status)+'</b>　'+esc(a.refund_note)+(a.refund_status==="待退費"?' <button class="s ok" data-ra="done" data-id="'+a.id+'">標記已退費</button>':'')+'</div>';}
+  if(a.status==="待審核"){h+='<div style="margin-top:10px"><label style="display:flex;gap:8px;align-items:center;font-weight:400"><input type="checkbox" id="qc'+a.id+'" style="width:20px;height:20px"> 資格證明已確認（創新獎對照得獎名單／幹部名冊）</label><input id="nt'+a.id+'" placeholder="審核備註（退回補件請寫明要補什麼）" maxlength="300" style="width:100%;margin:6px 0"><div class="row"><button class="s ok" data-ra="通過" data-id="'+a.id+'">通過入會</button><button class="s g" data-ra="退回補件" data-id="'+a.id+'">退回補件</button><button class="s g" data-ra="不符資格" data-id="'+a.id+'" style="color:#c0392b">不符資格</button></div></div>';}
+  return h+'</div>';}).join("")||'<div class="fee">目前沒有入會申請</div>';}
+$("rl").onclick=loadA;
+$("al").onclick=function(e){var d=e.target.getAttribute("data-ra"),id=parseInt(e.target.getAttribute("data-id"),10);if(d===null){return;}
+ $("m6").className="msg";if($("cpw").value===""){$("m6").className="msg err";$("m6").textContent="請輸入人資長審核密碼";return;}
+ if(d==="done"){call("iaa_hr_app_refund",{q:$("cpw").value,i:id,s:"已退費",nt:"已由財務長退款"},function(ok,j){if(ok){$("m6").textContent="已標記為已退費";loadA();}else{$("m6").className="msg err";$("m6").textContent=(j&&j.message)?j.message:"失敗";}});return;}
+ if(d!=="通過"&&!window.confirm("確定要「"+d+"」嗎？")){return;}
+ call("iaa_hr_app_review",{q:$("cpw").value,i:id,d:d,nt:$("nt"+id).value,qc:$("qc"+id).checked},function(ok,j){
+  if(ok){$("m6").textContent=j;loadA();load(function(){});loadM();}else{$("m6").className="msg err";$("m6").textContent=(j&&j.message)?j.message:"審核失敗";}});};
 var mrows=[],mid=null;
 function loadM(){call("iaa_hr_member_list",{},function(ok,l){if(ok&&l){mrows=l;drawM();}});}
 function drawM(){var q=$("mq").value.trim(),f=$("mf").value,rg=$("fr").value;
  var list=mrows.filter(function(r){return (f===""||r.status===f)&&(rg===""||r.region===rg)&&(q===""||r.name.indexOf(q)>=0||r.chapter.indexOf(q)>=0);});
- $("mb").innerHTML=list.map(function(r){return '<tr><td><b>'+esc(r.name)+'</b>'+(r.is_new?' <span class="tag s-b">NEW</span>':'')+'</td><td>'+esc(r.chapter)+'<br><small style="color:#6b7390">'+esc(r.region)+'</small></td><td><span class="tag '+(r.status==="退會"?"s-e":(r.status==="有望"?"s-a":"s-d"))+'">'+esc(r.status)+'</span></td><td>'+fee(r)+'</td><td><small>'+esc(r.note)+'</small></td><td><button class="s g" data-mid="'+r.id+'">編輯</button></td></tr>';}).join("")||'<tr><td colspan="6" style="color:#6b7390">沒有資料</td></tr>';}
-function mclr(){mid=null;$("mn").value="";$("mc").value="";$("ms5").value="有效";$("mw").value="1";$("mo").value="";$("mt5").textContent="新增會友";$("mm").textContent="";}
+ $("mb").innerHTML=list.map(function(r){return '<tr><td><b>'+esc(r.name)+'</b>'+(r.is_new?' <span class="tag s-b">NEW</span>':'')+(r.company?'<br><small style="color:#6b7390">'+esc(r.company)+(r.title?'・'+esc(r.title):'')+'</small>':'')+'</td><td>'+esc(r.chapter)+'<br><small style="color:#6b7390">'+esc(r.region)+'</small></td><td><span class="tag '+(r.status==="退會"?"s-e":(r.status==="有望"?"s-a":"s-d"))+'">'+esc(r.status)+'</span></td><td>'+fee(r)+'</td><td><small>'+esc(r.note)+'</small></td><td><button class="s g" data-mid="'+r.id+'">編輯</button></td></tr>';}).join("")||'<tr><td colspan="6" style="color:#6b7390">沒有資料</td></tr>';}
+function mclr(){mid=null;["mph","mco","mti","mbz","mind","may","mad"].forEach(function(i){$(i).value="";});$("mqt").value="";$("mn").value="";$("mc").value="";$("ms5").value="有效";$("mw").value="1";$("mo").value="";$("mt5").textContent="新增會友";$("mm").textContent="";}
 $("mcx").onclick=mclr;$("mq").oninput=drawM;$("mf").onchange=drawM;
 $("mb").onclick=function(e){var id=e.target.getAttribute("data-mid");if(id===null){return;}var r=mrows.filter(function(x){return String(x.id)===id;})[0];if(!r){return;}
- mid=r.id;$("mn").value=r.name;$("mc").value=r.chapter;$("ms5").value=r.status;$("mw").value=r.is_new?"1":"0";$("mo").value=r.note||"";$("mt5").textContent="編輯：「"+r.name+"」（儲存後才生效）";$("mm").textContent="";window.scrollTo(0,0);};
+ mid=r.id;$("mph").value=r.phone||"";$("mco").value=r.company||"";$("mti").value=r.title||"";$("mbz").value=r.biz||"";$("mind").value=r.industry||"";$("mqt").value=r.qual_type||"";$("may").value=r.award_year||"";$("mad").value=r.award_detail||"";$("mn").value=r.name;$("mc").value=r.chapter;$("ms5").value=r.status;$("mw").value=r.is_new?"1":"0";$("mo").value=r.note||"";$("mt5").textContent="編輯：「"+r.name+"」（儲存後才生效）";$("mm").textContent="";window.scrollTo(0,0);};
 $("msv").onclick=function(){$("mm").className="msg";if($("mn").value.trim()===""||$("mc").value===""){$("mm").className="msg err";$("mm").textContent="姓名與社別必填";return;}
  var nm=$("mn").value.trim();
- call("iaa_hr_member_save",{i:mid,n:nm,c:$("mc").value,s:$("ms5").value,nw:$("mw").value==="1",nt:$("mo").value},function(ok,j){
+ call("iaa_hr_member_save",{i:mid,n:nm,c:$("mc").value,s:$("ms5").value,nw:$("mw").value==="1",nt:$("mo").value,ph:$("mph").value,co:$("mco").value,ti:$("mti").value,bz:$("mbz").value,ind:$("mind").value,qt:$("mqt").value,ay:$("may").value,ad:$("mad").value},function(ok,j){
   if(ok){mclr();$("mm").textContent="已儲存："+nm+"（會友名冊約 30 秒內同步到前台）";loadM();load(function(){});}else{$("mm").className="msg err";$("mm").textContent=(j&&j.message)?(j.message.indexOf("duplicate")>=0?"名冊已有同名會友，請用編輯":j.message):"儲存失敗";}});};
 var crows=[],cid=null;
 function today(){return new Date(Date.now()+288e5).toISOString().slice(0,10);}
