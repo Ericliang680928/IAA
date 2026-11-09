@@ -37,12 +37,17 @@ main{padding:18px 0 40px}
 <div class="top"><div class="wrap"><h1>2026 IAA 年會・籌備進度</h1><div class="sub">第四屆會員大會暨第三屆、第四屆會長交接典禮｜2026/12/04（五）臻愛飯店</div>
 <div class="ov"><div class="pct"><span id="pc">0</span><small>%</small></div><div class="pb"><div class="bar"><i id="bf" style="width:0"></i></div><div class="cnt" id="cnt"></div></div></div></div></div>
 <main><div class="wrap">
+<div class="flt" id="tabs"><button data-t="plan" class="on">籌備期程</button><button data-t="tasks">當日工作查核</button></div>
+<div id="plan">
 <div id="al"></div>
 <div class="flt" id="flt"><button data-f="all" class="on">全部</button><button data-f="open">未完成</button><button data-f="done">已完成</button><button data-f="late">已逾期</button></div>
 <section class="res"><h2>🔗 完成品連結</h2><div class="lk"><a href="https://ericliang680928.github.io/IAA/20261204/" target="_blank" rel="noopener">活動網頁</a><a href="https://forms.gle/c68MPEgx1E7mwaNw6" target="_blank" rel="noopener">報名表單</a><a href="https://ericliang680928.github.io/IAA/20261204/status/" target="_blank" rel="noopener">報名查詢頁</a><a href="https://ericliang680928.github.io/IAA/20261204/poster/poster.png" target="_blank" rel="noopener">講師海報（PNG）</a><a href="https://ericliang680928.github.io/IAA/20261204/poster/poster.pdf" target="_blank" rel="noopener">講師海報（PDF）</a><a href="https://ericliang680928.github.io/IAA/20261204/og.jpg" target="_blank" rel="noopener">LINE 預覽圖</a></div></section>
 <div id="list"></div>
 <p class="foot"><button id="lock" class="lockb"></button></p><p class="foot" id="msg"></p><p class="foot" id="upd"></p>
+</div>
+<iframe id="tf" title="當日工作查核" hidden style="width:100%;border:0;display:block;height:700px"></iframe>
 </div></main>
+<script src="../common/link.js"></script>
 <script>
 (function(){
 var UPDATED="2026-10-29";
@@ -90,10 +95,13 @@ var now=new Date(),today=now.getFullYear()+"-"+p2(now.getMonth()+1)+"-"+p2(now.g
 var WD=["日","一","二","三","四","五","六"];
 function fd(d){var a=d.split("-"),t=new Date(+a[0],+a[1]-1,+a[2]);return [(+a[1])+"/"+(+a[2]),"週"+WD[t.getDay()]];}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
-var all=[],cn=0;
+var all=[],cn=0,TR=null;window.IAAP=all;
 P.forEach(function(g){g[1].forEach(function(x){cn++;all.push({id:"p"+p2(cn),g:g[0],t:x[0],o:x[1],d:x[2],s:x[3],n:x[4],l:x[5]||[]});});});
 var filt="all",edit=false,pass="";
 try{pass=sessionStorage.getItem("iaapw")||"";edit=pass?true:false;}catch(e){}
+function linkHtml(x){if(TR===null){return "";}var cs=window.iaaLinkCodes(x.t);if(cs.length===0){return "";}
+ var l=TR.filter(function(r){return cs.indexOf(r.code)>=0;}),dn=l.filter(function(r){return r.status==="已完成";}).length,no=l.filter(function(r){return r.owner==="";}).length;
+ return '<span class="nt"><a href="#" data-go="'+cs.join(",")+'" data-ti="'+esc(x.t)+'" style="color:var(--mg);font-weight:700">↔ 當日工作 '+dn+'/'+l.length+' 完成'+(no?'・'+no+' 項未指定負責人':'')+'</a></span>';}
 function isLate(x){return x.s!=="done"&&x.d<today;}
 function summary(){
   var n=all.length,dn=all.filter(function(x){return x.s==="done";}).length,dg=all.filter(function(x){return x.s==="doing";}).length;
@@ -114,7 +122,7 @@ function render(){
     h+='<section class="ph"><h2>'+esc(g[0])+'<em>'+d2+' / '+it.length+' 完成</em></h2><div class="pm"><i style="width:'+(d2/it.length*100)+'%"></i></div>';
     rows.forEach(function(x){var f=fd(x.d),k=isLate(x)?"late":x.s;
       var pill=edit?'<select class="sel s-'+k+'" data-id="'+x.id+'" aria-label="更新狀態">'+["todo","doing","conf","done"].map(function(v){return '<option value="'+v+'"'+(x.s===v?' selected':'')+'>'+LBL[v]+'</option>';}).join("")+'</select>':'<div class="st s-'+k+'">'+(isLate(x)?"已逾期":LBL[x.s])+'</div>';
-      h+='<div class="it '+(x.s==="done"?"done":"")+'"><div class="dt">'+f[0]+'<small>'+f[1]+'</small></div><div class="tx"><b>'+esc(x.t)+'</b><span>'+esc(x.o)+'</span>'+(x.n?'<span class="nt">'+esc(x.n)+'</span>':'')+(x.l.length?'<span class="lk">'+x.l.map(function(l){return '<a href="'+esc(l[1])+'" target="_blank" rel="noopener">🔗 '+esc(l[0])+'</a>';}).join("")+'</span>':'')+'</div>'+pill+'</div>';});
+      h+='<div class="it '+(x.s==="done"?"done":"")+'"><div class="dt">'+f[0]+'<small>'+f[1]+'</small></div><div class="tx"><b>'+esc(x.t)+'</b><span>'+esc(x.o)+'</span>'+(x.n?'<span class="nt">'+esc(x.n)+'</span>':'')+linkHtml(x)+(x.l.length?'<span class="lk">'+x.l.map(function(l){return '<a href="'+esc(l[1])+'" target="_blank" rel="noopener">🔗 '+esc(l[0])+'</a>';}).join("")+'</span>':'')+'</div>'+pill+'</div>';});
     h+='</section>';
   });
   document.getElementById("list").innerHTML=h||'<p class="foot">沒有符合的項目</p>';
@@ -138,12 +146,27 @@ function save(id,val,sel){
   x.onerror=function(){msg("連線失敗，請稍後再試",true);load();};
   x.send(JSON.stringify({p_pass:pass,p_id:id,p_status:val,p_by:null}));
 }
+document.getElementById("list").addEventListener("click",function(e){var a=e.target.closest("a");if(a===null||a.getAttribute("data-go")===null){return;}e.preventDefault();showTab("tasks",a.getAttribute("data-go"),a.getAttribute("data-ti"));window.scrollTo(0,0);});
 document.getElementById("list").addEventListener("change",function(e){var t=e.target;if(t.getAttribute&&t.getAttribute("data-id")){save(t.getAttribute("data-id"),t.value,t);}});
 document.getElementById("lock").addEventListener("click",function(){
   if(edit){edit=false;pass="";try{sessionStorage.removeItem("iaapw");}catch(e){}msg("",false);render();return;}
   var v=window.prompt("請輸入更新密碼");if(v){pass=v.trim();edit=true;try{sessionStorage.setItem("iaapw",pass);}catch(e){}msg("編輯模式：用每項右側的下拉選單更改狀態",false);render();}
 });
 document.getElementById("flt").addEventListener("click",function(e){var b=e.target.closest("button");if(b===null){return;}filt=b.getAttribute("data-f");[].forEach.call(this.children,function(c){c.className=c===b?"on":"";});render();});
+
+var tl=false;
+function showTab(n,cs,ti){document.getElementById("plan").style.display=n==="plan"?"block":"none";var f=document.getElementById("tf");f.hidden=(n==="plan");
+ [].forEach.call(document.getElementById("tabs").children,function(c){c.className=c.getAttribute("data-t")===n?"on":"";});
+ if(n==="tasks"){var u="../tasks/"+(cs?"?c="+encodeURIComponent(cs)+"&ti="+encodeURIComponent(ti||""):"");if(tl===false||cs!==undefined){tl=true;f.src=u;}}}
+document.getElementById("tabs").addEventListener("click",function(e){var b=e.target.closest("button");if(b===null){return;}showTab(b.getAttribute("data-t"));});
+document.getElementById("tf").onload=function(){try{var d=this.contentDocument;d.documentElement.style.overflow="hidden";var h=d.querySelector("h1");if(h){h.style.display="none";}var s=d.querySelector(".sub");if(s){s.style.display="none";}}catch(e){}};
+setInterval(function(){var f=document.getElementById("tf");if(f.hidden){return;}try{var h=Math.ceil(f.contentDocument.body.getBoundingClientRect().height)+40;if(Math.abs(f.offsetHeight-h)>4){f.style.height=h+"px";}}catch(e){}},400);
+function taskStats(){if(pass===""){return;}var x=new XMLHttpRequest();x.open("POST",SB+"/rest/v1/rpc/iaa_task_list");x.setRequestHeader("apikey",KEY);x.setRequestHeader("Content-Type","application/json");
+ x.onload=function(){if(x.status!==200){return;}var r=JSON.parse(x.responseText),dn=0,no=0;TR=r;render();r.forEach(function(a){if(a.status==="已完成"){dn++;}if(a.owner===""){no++;}});
+  var el=document.getElementById("tst");if(el===null){el=document.createElement("div");el.id="tst";el.className="cnt";document.getElementById("cnt").parentNode.appendChild(el);}
+  el.innerHTML='<span>當日工作 '+r.length+' 項</span><span>已完成 '+dn+'</span><span>未指定負責人 '+no+'</span>';};x.send(JSON.stringify({p:pass}));}
+var q=location.search.match(/[?&]t=([a-z]+)/);if(q&&q[1]==="tasks"){showTab("tasks");}
+taskStats();
 render();load();setInterval(function(){if(document.activeElement&&document.activeElement.tagName==="SELECT"){return;}load();},30000);
 })();
 </script></body></html>

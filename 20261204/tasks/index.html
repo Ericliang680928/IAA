@@ -21,11 +21,14 @@ button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);fon
 <div class="sum" id="sum"></div>
 <div class="card"><div class="row"><select id="fo"></select><select id="fs"><option value="">全部狀態</option><option>未填</option><option>未開始</option><option>進行中</option><option>已完成</option><option>待解決</option></select><select id="fu"></select><input id="fq" placeholder="搜尋工作" style="flex:1;min-width:120px"><button class="g" id="xl">匯出 CSV</button></div>
 <div class="row" style="margin-top:8px"><span class="sub" style="margin:0">填寫人：</span><input id="by" placeholder="你的名字" maxlength="20" style="width:140px"><span class="msg" id="mt"></span></div></div>
+<div id="bn"></div>
 <div id="list"></div>
 <datalist id="ol"></datalist>
 </div></div>
+<script src="../common/link.js"></script>
 <script>
 (function(){
+if(window.top===window){location.replace("../progress/?t=tasks");return;}
 var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",rows=[];
 var OWN=["Office 秘書長","Office 執行長","Office 人資組","Office 財務長","Office 知識組"];
 function $(i){return document.getElementById(i);}
@@ -43,19 +46,23 @@ function opts(){var os={};OWN.forEach(function(x){os[x]=1;});rows.forEach(functi
  var ks=Object.keys(os);var cur=$("fo").value;$("fo").innerHTML='<option value="">全部負責人</option><option value="未指定">未指定負責人</option>'+ks.map(function(k){return '<option>'+esc(k)+'</option>';}).join("");$("fo").value=cur;
  $("ol").innerHTML=ks.map(function(k){return '<option value="'+esc(k)+'">';}).join("");
  var us=[];rows.forEach(function(r){if(us.indexOf(r.unit)<0){us.push(r.unit);}});var cu=$("fu").value;$("fu").innerHTML='<option value="">全部單元</option>'+us.map(function(u){return '<option>'+esc(u)+'</option>';}).join("");$("fu").value=cu;}
-var onlyLate=false;
+var onlyLate=false,CF=null,CT="";
+(function(){var m=location.search.match(/[?&]c=([^&]*)/);if(m){CF=decodeURIComponent(m[1]).split(",");var t=location.search.match(/[?&]ti=([^&]*)/);CT=t?decodeURIComponent(t[1]):"";}})();
+function msOf(r){var o=[];try{var P=window.parent.IAAP;if(P&&window.parent!==window){window.iaaLinkTitles(r.code).forEach(function(k){P.forEach(function(x){if(x.t.indexOf(k)>=0&&o.indexOf(x)<0){o.push(x);}});});}}catch(e){}return o;}
 function draw(){summary();var fo=$("fo").value,fs=$("fs").value,fu=$("fu").value,q=$("fq").value.replace(/\s/g,"");
  var l=rows.filter(function(r){if(fo==="未指定"){if(r.owner!==""){return false;}}else if(fo!==""&&r.owner!==fo){return false;}
-  if(fs!==""&&stat(r)!==fs){return false;}if(fu!==""&&r.unit!==fu){return false;}if(q!==""&&r.task.indexOf(q)<0){return false;}if(onlyLate&&late(r)===false){return false;}return true;});
+  if(fs!==""&&stat(r)!==fs){return false;}if(fu!==""&&r.unit!==fu){return false;}if(q!==""&&r.task.indexOf(q)<0){return false;}if(onlyLate&&late(r)===false){return false;}if(CF!==null&&CF.indexOf(r.code)<0){return false;}return true;});
+ $("bn").innerHTML=CF===null?"":'<div class="card">只顯示與期程「'+esc(CT)+'」相關的 '+l.length+' 項　<button class="g" id="cc">顯示全部</button></div>';
  var h="",last="";
  l.forEach(function(r){var u=r.unit+"|"+r.slot;if(u!==last){last=u;h+='<div class="unit">'+esc(r.unit)+' <small>'+esc(r.slot)+'</small></div>';}
   var so=["","未開始","進行中","已完成","待解決"].map(function(s){return '<option value="'+s+'"'+(r.status===s?' selected':'')+'>'+(s===""?"（未填）":s)+'</option>';}).join("");
-  h+='<div class="t'+(r.status==="已完成"?' done':'')+(r.owner===""?' nw':'')+'" data-c="'+r.code+'"><h3>'+esc(r.task)+' <span>#'+r.code+(late(r)?' ・<b style="color:var(--bad)">逾期</b>':'')+(r.updated_by?' ・'+esc(r.updated_by)+' '+esc((r.updated_at||"").slice(5,10)):'')+'</span></h3>'
+  h+='<div class="t'+(r.status==="已完成"?' done':'')+(r.owner===""?' nw':'')+'" data-c="'+r.code+'"><h3>'+esc(r.task)+' <span>#'+r.code+(late(r)?' ・<b style="color:var(--bad)">逾期</b>':'')+(r.updated_by?' ・'+esc(r.updated_by)+' '+esc((r.updated_at||"").slice(5,10)):'')+'</span></h3>'+msOf(r).map(function(x){var lt=x.s!=="done"&&x.d<TODAY;return '<div class="msg" style="margin:0 0 6px">↔ 對應期程：'+esc(x.t)+'（'+x.d.slice(5).replace('-','/')+'・<b style="color:'+(x.s==="done"?'var(--ok)':(lt?'var(--bad)':'var(--wr)'))+'">'+(x.s==="done"?'已完成':(lt?'已逾期':'未完成'))+'</b>）</div>';}).join('')
   +'<div class="f"><div><label>負責人</label><input data-f="ow" list="ol" value="'+esc(r.owner)+'" placeholder="（待指定）"></div><div><label>目前狀態</label><select data-f="st">'+so+'</select></div><div><label>預定完工日</label><input data-f="du" type="date" value="'+esc(r.due||"")+'"></div>'
   +'<div style="grid-column:span 2"><label>後續準備事項</label><input data-f="nx" value="'+esc(r.next_step)+'" maxlength="300"></div><div><label>備註／待協調</label><input data-f="nt" value="'+esc(r.note)+'" maxlength="300"></div></div>'
   +'<div class="row" style="margin-top:6px"><button data-a="sv">儲存</button><span class="msg"></span></div></div>';});
  $("list").innerHTML=h===""?'<div class="card">沒有符合的工作</div>':h;}
 function load(cb){call("iaa_task_list",{},function(ok,j){if(ok&&j){rows=j;opts();draw();}cb(ok);});}
+$("bn").onclick=function(e){if(e.target.id==="cc"){CF=null;draw();}};
 $("sum").onclick=function(e){var d=e.target;while(d&&d.getAttribute&&d.getAttribute("data-k")===null){d=d.parentNode;}if(d===null||d.getAttribute===undefined){return;}var k=d.getAttribute("data-k"),v=d.getAttribute("data-v");
  $("fo").value="";$("fs").value="";onlyLate=false;if(k==="s"){$("fs").value=v;}else if(k==="o"){$("fo").value="未指定";}else if(k==="l"){onlyLate=true;}draw();};
 ["fo","fs","fu"].forEach(function(i){$(i).onchange=function(){onlyLate=false;draw();};});$("fq").oninput=draw;
@@ -72,6 +79,6 @@ function enter(p){pw=p;try{window.sessionStorage.setItem("iaa_task_pw",p);$("by"
 function tryp(p,cb){pw=p;load(function(ok){cb(ok);});}
 $("go").onclick=function(){var p=$("pw").value;$("m0").className="msg";$("m0").textContent="登入中…";tryp(p,function(ok){if(ok){enter(p);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
-try{var s=window.sessionStorage.getItem("iaa_task_pw")||window.sessionStorage.getItem("iaa_fin_pw")||window.sessionStorage.getItem("iaa_hr_pw");if(s){tryp(s,function(ok){if(ok){enter(s);}});}}catch(e){}
+try{var s=window.sessionStorage.getItem("iaa_task_pw")||window.sessionStorage.getItem("iaapw")||window.sessionStorage.getItem("iaa_fin_pw")||window.sessionStorage.getItem("iaa_hr_pw");if(s){tryp(s,function(ok){if(ok){enter(s);}});}}catch(e){}
 })();
 </script></body></html>
