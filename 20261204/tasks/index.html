@@ -21,7 +21,8 @@ button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);fon
 <div class="sum" id="sum"></div>
 <div class="row" id="vw" style="margin-top:10px"><button data-v="owner" class="on">依負責人（各自回報）</button><button data-v="slot" class="g">依時段（全流程）</button></div>
 <div class="card"><div class="row"><select id="fo"></select><select id="fs"><option value="">全部狀態</option><option>未填</option><option>未開始</option><option>進行中</option><option>已完成</option><option>待解決</option></select><select id="fu"></select><input id="fq" placeholder="搜尋工作" style="flex:1;min-width:120px"><button class="g" id="xl">匯出 CSV</button></div>
-<div class="row" style="margin-top:8px"><span class="sub" style="margin:0">填寫人：</span><input id="by" placeholder="你的名字" maxlength="20" style="width:140px"><span class="msg" id="mt"></span></div></div>
+<div class="row" style="margin-top:8px"><span class="sub" style="margin:0">填寫人：</span><input id="by" placeholder="你的名字" maxlength="20" style="width:140px"><span class="msg" id="mt"></span><button class="g" id="lkb" style="margin-left:auto">負責人專屬連結</button></div></div>
+<div class="card" id="lkp" hidden></div>
 <div id="bn"></div>
 <div id="list"></div>
 <datalist id="ol"></datalist>
@@ -29,7 +30,8 @@ button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);fon
 <script src="../common/link.js"></script>
 <script>
 (function(){
-if(window.top===window){location.replace("../progress/?t=tasks");return;}
+var OM=location.search.match(/[?&]o=([^&]*)/),OF=OM?decodeURIComponent(OM[1]):"";
+if(window.top===window&&OF===""){location.replace("../progress/?t=tasks");return;}
 var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",rows=[];
 var OWN=["Office 秘書長","Office 執行長","Office 人資組","Office 財務長","Office 知識組"];
 function $(i){return document.getElementById(i);}
@@ -81,7 +83,14 @@ $("xl").onclick=function(){var h=["編號","時段","活動單元","項次","工
  rows.forEach(function(r){o.push([r.code,r.slot,r.unit,r.item_no,r.task,r.owner,r.status,r.next_step,r.due||"",r.note]);});
  var s="﻿"+o.map(function(a){return a.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(",");}).join("\r\n");
  var b=new Blob([s],{type:"text/csv;charset=utf-8"});var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="年會工作查核_"+TODAY+".csv";document.body.appendChild(a);a.click();document.body.removeChild(a);};
-function enter(p){pw=p;try{window.sessionStorage.setItem("iaa_task_pw",p);$("by").value=window.sessionStorage.getItem("iaa_task_by")||"";}catch(e){}$("lg").style.display="none";$("app").hidden=false;}
+function ownerMode(){if(OF===""){return;}$("fo").value=OF;$("fo").style.display="none";$("vw").style.display="none";$("lkb").style.display="none";$("fu").style.display="none";
+ document.querySelector("h1").textContent=OF+"・我的工作";document.querySelector(".sub").textContent="這裡只列出你負責的工作，請填寫目前狀態、後續準備事項與預定完工日，按「儲存」即可";document.title="年會工作查核｜"+OF;if($("by").value===""){$("by").value=OF;}draw();}
+function linkPanel(){var base=location.origin+location.pathname.replace(/\/progress\/.*$/,"/tasks/");var os={};OWN.forEach(function(x){os[x]=1;});rows.forEach(function(r){if(r.owner!==""){os[r.owner]=1;}});
+ return '<b>負責人專屬連結</b><div class="sub">複製後傳給各負責人，打開只會看到自己的工作（仍需輸入後台密碼）</div>'+Object.keys(os).map(function(k){var u=base+"?o="+encodeURIComponent(k);var n=rows.filter(function(r){return r.owner===k;}).length;
+  return '<div class="row" style="margin:6px 0"><span style="min-width:120px"><b>'+esc(k)+'</b> <small>'+n+' 項</small></span><input readonly value="'+esc(u)+'" style="flex:1;min-width:160px;font-size:12px"><button class="g" data-cp="'+esc(u)+'">複製</button></div>';}).join("");}
+$("lkb").onclick=function(){var p=$("lkp");p.hidden=p.hidden===false;if(p.hidden===false){p.innerHTML=linkPanel();}};
+$("lkp").onclick=function(e){var u=e.target.getAttribute("data-cp");if(u===null){return;}var b=e.target;try{navigator.clipboard.writeText(u).then(function(){b.textContent="已複製 ✓";});}catch(x){var i=b.previousSibling;i.select();document.execCommand("copy");b.textContent="已複製 ✓";}};
+function enter(p){pw=p;try{window.sessionStorage.setItem("iaa_task_pw",p);$("by").value=window.sessionStorage.getItem("iaa_task_by")||"";}catch(e){}$("lg").style.display="none";$("app").hidden=false;ownerMode();}
 function tryp(p,cb){pw=p;load(function(ok){cb(ok);});}
 $("go").onclick=function(){var p=$("pw").value;$("m0").className="msg";$("m0").textContent="登入中…";tryp(p,function(ok){if(ok){enter(p);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
