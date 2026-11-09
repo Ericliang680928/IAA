@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>IAA 年會工作查核</title>
+<style>
+:root{--ink:#1a2547;--mut:#6b7390;--line:#e2e6f0;--pk:#B3267F;--bg:#f5f6fb;--ok:#2E7D6B;--bad:#c0392b;--wr:#d98a00;--bl:#1F5FBF}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink)}
+.w{max-width:1000px;margin:0 auto;padding:14px}h1{font-size:23px;margin:4px 0 2px}.sub{color:var(--mut);font-size:14px;margin:0 0 8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+input,select,button{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700}button.g{background:#fff;color:var(--ink);border-color:var(--line);font-weight:500}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px}.sum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 12px;cursor:pointer}.sum b{font-size:22px;display:block}.sum small{color:var(--mut)}
+.unit{border-left:6px solid var(--pk);padding-left:10px;margin:16px 0 6px;font-weight:700;font-size:18px}.unit small{color:var(--mut);font-weight:400}
+.t{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}.t.done{background:#f1f8f5}.t.nw{border-color:var(--wr)}
+.t h3{margin:0 0 6px;font-size:16px}.t h3 span{color:var(--mut);font-weight:400;font-size:13px}
+.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}.f label{font-size:12px;color:var(--mut);display:block}.f input,.f select{width:100%}
+.msg{min-height:20px;font-size:13px;color:var(--mut)}.err{color:var(--bad)}.ok{color:var(--ok)}
+</style></head><body><div class="w">
+<h1>年會工作查核</h1><p class="sub">2026/12/04 年會・各項工作負責人、狀態、後續準備與預定完工日</p>
+<div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="後台密碼" style="flex:1"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
+<div id="app" hidden>
+<div class="sum" id="sum"></div>
+<div class="card"><div class="row"><select id="fo"></select><select id="fs"><option value="">全部狀態</option><option>未填</option><option>未開始</option><option>進行中</option><option>已完成</option><option>待解決</option></select><select id="fu"></select><input id="fq" placeholder="搜尋工作" style="flex:1;min-width:120px"><button class="g" id="xl">匯出 CSV</button></div>
+<div class="row" style="margin-top:8px"><span class="sub" style="margin:0">填寫人：</span><input id="by" placeholder="你的名字" maxlength="20" style="width:140px"><span class="msg" id="mt"></span></div></div>
+<div id="list"></div>
+<datalist id="ol"></datalist>
+</div></div>
+<script>
+(function(){
+var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",rows=[];
+var OWN=["Office 秘書長","Office 執行長","Office 人資組","Office 財務長","Office 知識組"];
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s===null||s===undefined?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function call(fn,body,cb){body.p=pw;var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
+ x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
+var TODAY=new Date(Date.now()+288e5).toISOString().slice(0,10);
+function late(r){return r.status!=="已完成"&&r.due!==null&&r.due<TODAY;}
+function stat(r){return r.status===""?"未填":r.status;}
+function summary(){var n=rows.length,o=0,c={"已完成":0,"進行中":0,"未開始":0,"待解決":0,"未填":0},l=0;
+ rows.forEach(function(r){if(r.owner!==""){o++;}c[stat(r)]++;if(late(r)){l++;}});
+ var items=[["全部",n,"","",""],["已完成",c["已完成"],"s","已完成"],["進行中",c["進行中"],"s","進行中"],["未開始",c["未開始"],"s","未開始"],["待解決",c["待解決"],"s","待解決"],["未填狀態",c["未填"],"s","未填"],["未指定負責人",n-o,"o","未指定"],["逾期",l,"l",""]];
+ $("sum").innerHTML=items.map(function(i){return '<div data-k="'+i[2]+'" data-v="'+i[3]+'"><b>'+i[1]+'</b><small>'+i[0]+'</small></div>';}).join("");}
+function opts(){var os={};OWN.forEach(function(x){os[x]=1;});rows.forEach(function(r){if(r.owner!==""){os[r.owner]=1;}});
+ var ks=Object.keys(os);var cur=$("fo").value;$("fo").innerHTML='<option value="">全部負責人</option><option value="未指定">未指定負責人</option>'+ks.map(function(k){return '<option>'+esc(k)+'</option>';}).join("");$("fo").value=cur;
+ $("ol").innerHTML=ks.map(function(k){return '<option value="'+esc(k)+'">';}).join("");
+ var us=[];rows.forEach(function(r){if(us.indexOf(r.unit)<0){us.push(r.unit);}});var cu=$("fu").value;$("fu").innerHTML='<option value="">全部單元</option>'+us.map(function(u){return '<option>'+esc(u)+'</option>';}).join("");$("fu").value=cu;}
+var onlyLate=false;
+function draw(){summary();var fo=$("fo").value,fs=$("fs").value,fu=$("fu").value,q=$("fq").value.replace(/\s/g,"");
+ var l=rows.filter(function(r){if(fo==="未指定"){if(r.owner!==""){return false;}}else if(fo!==""&&r.owner!==fo){return false;}
+  if(fs!==""&&stat(r)!==fs){return false;}if(fu!==""&&r.unit!==fu){return false;}if(q!==""&&r.task.indexOf(q)<0){return false;}if(onlyLate&&late(r)===false){return false;}return true;});
+ var h="",last="";
+ l.forEach(function(r){var u=r.unit+"|"+r.slot;if(u!==last){last=u;h+='<div class="unit">'+esc(r.unit)+' <small>'+esc(r.slot)+'</small></div>';}
+  var so=["","未開始","進行中","已完成","待解決"].map(function(s){return '<option value="'+s+'"'+(r.status===s?' selected':'')+'>'+(s===""?"（未填）":s)+'</option>';}).join("");
+  h+='<div class="t'+(r.status==="已完成"?' done':'')+(r.owner===""?' nw':'')+'" data-c="'+r.code+'"><h3>'+esc(r.task)+' <span>#'+r.code+(late(r)?' ・<b style="color:var(--bad)">逾期</b>':'')+(r.updated_by?' ・'+esc(r.updated_by)+' '+esc((r.updated_at||"").slice(5,10)):'')+'</span></h3>'
+  +'<div class="f"><div><label>負責人</label><input data-f="ow" list="ol" value="'+esc(r.owner)+'" placeholder="（待指定）"></div><div><label>目前狀態</label><select data-f="st">'+so+'</select></div><div><label>預定完工日</label><input data-f="du" type="date" value="'+esc(r.due||"")+'"></div>'
+  +'<div style="grid-column:span 2"><label>後續準備事項</label><input data-f="nx" value="'+esc(r.next_step)+'" maxlength="300"></div><div><label>備註／待協調</label><input data-f="nt" value="'+esc(r.note)+'" maxlength="300"></div></div>'
+  +'<div class="row" style="margin-top:6px"><button data-a="sv">儲存</button><span class="msg"></span></div></div>';});
+ $("list").innerHTML=h===""?'<div class="card">沒有符合的工作</div>':h;}
+function load(cb){call("iaa_task_list",{},function(ok,j){if(ok&&j){rows=j;opts();draw();}cb(ok);});}
+$("sum").onclick=function(e){var d=e.target;while(d&&d.getAttribute&&d.getAttribute("data-k")===null){d=d.parentNode;}if(d===null||d.getAttribute===undefined){return;}var k=d.getAttribute("data-k"),v=d.getAttribute("data-v");
+ $("fo").value="";$("fs").value="";onlyLate=false;if(k==="s"){$("fs").value=v;}else if(k==="o"){$("fo").value="未指定";}else if(k==="l"){onlyLate=true;}draw();};
+["fo","fs","fu"].forEach(function(i){$(i).onchange=function(){onlyLate=false;draw();};});$("fq").oninput=draw;
+$("list").onclick=function(e){if(e.target.getAttribute("data-a")!=="sv"){return;}var t=e.target;while(t.getAttribute("data-c")===null){t=t.parentNode;}
+ var c=t.getAttribute("data-c");function g(f){return t.querySelector('[data-f="'+f+'"]').value;}var du=g("du"),m=t.querySelector(".msg");
+ var by=$("by").value;try{window.sessionStorage.setItem("iaa_task_by",by);}catch(x){}
+ m.className="msg";m.textContent="儲存中…";
+ call("iaa_task_save",{c:c,ow:g("ow"),st:g("st"),nx:g("nx"),du:du===""?null:du,nt:g("nt"),by:by},function(ok,j){if(ok){m.className="msg ok";m.textContent="已儲存";var r=rows.filter(function(x){return x.code===c;})[0];r.owner=g("ow");r.status=g("st");r.next_step=g("nx");r.due=du===""?null:du;r.note=g("nt");r.updated_by=by;r.updated_at=new Date().toISOString();summary();opts();}else{m.className="msg err";m.textContent=(j&&j.message)?j.message:"儲存失敗";}});};
+$("xl").onclick=function(){var h=["編號","時段","活動單元","項次","工作細項","負責人","目前狀態","後續準備事項","預定完工日","備註／待協調"];var o=[h];
+ rows.forEach(function(r){o.push([r.code,r.slot,r.unit,r.item_no,r.task,r.owner,r.status,r.next_step,r.due||"",r.note]);});
+ var s="﻿"+o.map(function(a){return a.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(",");}).join("\r\n");
+ var b=new Blob([s],{type:"text/csv;charset=utf-8"});var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="年會工作查核_"+TODAY+".csv";document.body.appendChild(a);a.click();document.body.removeChild(a);};
+function enter(p){pw=p;try{window.sessionStorage.setItem("iaa_task_pw",p);$("by").value=window.sessionStorage.getItem("iaa_task_by")||"";}catch(e){}$("lg").style.display="none";$("app").hidden=false;}
+function tryp(p,cb){pw=p;load(function(ok){cb(ok);});}
+$("go").onclick=function(){var p=$("pw").value;$("m0").className="msg";$("m0").textContent="登入中…";tryp(p,function(ok){if(ok){enter(p);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
+$("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
+try{var s=window.sessionStorage.getItem("iaa_task_pw")||window.sessionStorage.getItem("iaa_fin_pw")||window.sessionStorage.getItem("iaa_hr_pw");if(s){tryp(s,function(ok){if(ok){enter(s);}});}}catch(e){}
+})();
+</script></body></html>
