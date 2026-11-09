@@ -33,7 +33,7 @@ button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);fon
 var OM=location.search.match(/[?&]o=([^&]*)/),OF=OM?decodeURIComponent(OM[1]):"";
 if(window.top===window&&OF===""){location.replace("../progress/?t=tasks");return;}
 var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/rpc/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",rows=[];
-var OWN=["Office 秘書長","Office 執行長","Office 人資組","Office 財務長","Office 知識組"];
+var OWN=["秘書長","執行長","人資組","財務長","知識組"];
 function $(i){return document.getElementById(i);}
 function esc(s){return String(s===null||s===undefined?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function call(fn,body,cb){body.p=pw;var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
