@@ -22,7 +22,8 @@ button{background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700;cu
 <div class="card">
 <label for="ch">① 先選社別</label><select id="ch"><option value="">請選擇社別</option></select>
 <label for="nm">② 再選姓名</label><select id="nm" disabled><option value="">請先選社別</option></select>
-<label for="ft">繳費項目</label><select id="ft"><option value="常年會費">常年會費</option><option value="入會費">入會費（新會友／回歸）</option></select>
+<div id="gw" hidden><label for="gn">來賓姓名（多位請用頓號分隔）</label><input id="gn" maxlength="80" placeholder="例如 王小明、王太太"><label for="gh">邀請的會友（選填）</label><select id="gh"><option value="">請選擇</option></select></div>
+<label for="ft">繳費項目</label><select id="ft"><option value="常年會費">常年會費</option><option value="入會費">入會費（新會友／回歸）</option><option value="活動費用">活動費用（例會／年會）</option></select>
 <label>繳費方式</label>
 <div class="opt"><label><input type="radio" name="m" value="匯款" checked> 匯款</label><label><input type="radio" name="m" value="現金"> 現金</label></div>
 <div id="l5w"><label for="l5">匯出帳號後 5 碼（匯款必填）</label><input id="l5" inputmode="numeric" maxlength="5" placeholder="例如 12345"></div>
@@ -47,21 +48,24 @@ call("GET","iaa_members?select=name,chapter&order=name",null,function(ok,l){if(o
  $("ch").innerHTML='<option value="">請選擇社別</option>'+cs.map(function(c){return '<option>'+esc(c)+'</option>';}).join("");}});
 $("ch").onchange=function(){var c=$("ch").value;
  if(c===""){$("nm").disabled=true;$("nm").innerHTML='<option value="">請先選社別</option>';return;}
- $("nm").disabled=false;$("nm").innerHTML='<option value="">請選擇姓名</option>'+MEM.filter(function(m){return m.chapter===c;}).map(function(m){return '<option>'+esc(m.name)+'</option>';}).join("");};
+ $("nm").disabled=false;var mo=MEM.filter(function(m){return m.chapter===c;}).map(function(m){return '<option>'+esc(m.name)+'</option>';}).join("");$("nm").innerHTML='<option value="">請選擇姓名</option>'+mo+'<option value="__guest">＋ 寶眷來賓（非會友）</option>';$("gh").innerHTML='<option value="">請選擇</option>'+mo;gst();};
+function gst(){var g=($("nm").value==="__guest");$("gw").hidden=g?false:true;if(g){$("ft").value="活動費用";$("ft").disabled=true;}else{$("ft").disabled=false;}}
+$("nm").onchange=gst;
 $("dt").value=new Date(Date.now()+288e5).toISOString().slice(0,10);
 function meth(){return document.querySelector('input[name="m"]:checked').value;}
 function tog(){$("l5w").hidden=(meth()==="匯款")?false:true;}
 document.querySelectorAll('input[name="m"]').forEach(function(r){r.onchange=tog;});tog();
 $("sub").onclick=function(){
- var n=$("nm").value.trim(),m=meth(),l5=$("l5").value.trim(),am=$("am").value;
+ var n=$("nm").value.trim(),m=meth(),l5=$("l5").value.trim(),am=$("am").value,nt=$("nt").value,isg=(n==="__guest");
+ if(isg){var gn=$("gn").value.trim();if($("ch").value===""||gn===""){$("msg").className="msg err";$("msg").textContent="請填寫來賓姓名";return;}n="寶眷來賓（"+$("ch").value+"）";nt="來賓："+gn+($("gh").value!==""?"｜邀請會友："+$("gh").value:"")+($("nt").value!==""?"｜"+$("nt").value:"");}
  $("msg").className="msg";
  if(n===""){$("msg").className="msg err";$("msg").textContent="請輸入姓名";return;}
  if(m==="匯款"&&/^[0-9]{5}$/.test(l5)===false){$("msg").className="msg err";$("msg").textContent="匯款請填 5 位數字的帳號後 5 碼";return;}
  if(am===""){$("msg").className="msg err";$("msg").textContent="請填寫金額";return;}
  $("sub").disabled=true;$("msg").textContent="送出中…";
- call("POST","rpc/iaa_dues_submit",{n:n,m:m,amt:parseInt(am,10),l5:l5,d:$("dt").value||null,nt:$("nt").value,ft:$("ft").value},function(ok,j){
+ call("POST","rpc/iaa_dues_submit",{n:n,m:m,amt:parseInt(am,10),l5:l5,d:$("dt").value||null,nt:nt,ft:$("ft").value},function(ok,j){
   $("sub").disabled=false;
-  if(ok){$("msg").className="msg ok";$("msg").textContent="已填寫登錄，等待財務長審核確認。確認後報名查詢頁才會顯示已繳費。";$("dnt").textContent=n+"，您的"+$("ft").value+"回報已登錄成功。財務長審核確認後，報名查詢頁才會顯示「已繳」（非即時）。";$("dn").className="on";$("l5").value="";$("am").value="";$("nt").value="";}
+  if(ok){$("msg").className="msg ok";$("msg").textContent="已填寫登錄，等待財務長審核確認。確認後報名查詢頁才會顯示已繳費。";$("dnt").textContent=n+"，您的"+$("ft").value+"回報已登錄成功。財務長審核確認後，報名查詢頁才會顯示「已繳」（非即時）。";$("dn").className="on";$("l5").value="";$("am").value="";$("nt").value="";$("gn").value="";}
   else{$("msg").className="msg err";$("msg").textContent=(j&&j.message)?j.message:"送出失敗，請稍後再試";}
  });
 };
