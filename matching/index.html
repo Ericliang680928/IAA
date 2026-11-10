@@ -284,6 +284,7 @@
         <li>第 2 輪不用再選，直接按「結算第二輪」。</li>
         <li>需要紀錄時，按「匯出配對結果」，檔案會包含每個人的新創階段、產品、服務、專長、資源。</li>
         <li>大螢幕：投影時打開「大螢幕」分頁，按「全螢幕」，會顯示每一輪誰和誰配對。</li>
+        <li>測試完或要重來時，在「主辦端」按「配對歸零」，只會清空大螢幕上的配對結果，名單、報到和會友填的志願都保留。</li>
         <li>下一場活動前，按「歸零」，會清除名單和所有資料。請先匯出。</li>
       </ol>
       <p class="hint">重新結算第一輪，會清掉第二輪的結果。會友用手機打開同一個網址，就能自己報到和選人，不需要登入。</p>
@@ -426,7 +427,7 @@
     db: null, user: null, dl: null, uid: null, admin: false, tab: 'help',
     roster: null, r1: null, r2: null, picks: [],
     loaded: {}, timeout: false, err: '', meId: null,
-    checkins: [], screenRound: null, busy: false, confirmReset: false, confirmZero: false, confirmImport: false,
+    checkins: [], screenRound: null, busy: false, confirmReset: false, confirmZero: false, confirmShow: false, confirmImport: false,
     adminMsg: '', adminErr: false, importMsg: '', importErr: false,
     pickMsg: '', pickErr: false,
     behalf: { 1: { who: '', t: ['', '', ''], stage: -1 } }, draft: ['', '', ''], draftClub: [undefined, undefined, undefined], draftText: [undefined, undefined, undefined], forceMine: false, draftStage: -1, draftProf: {}, draftFor: null, builtNames: ''
@@ -670,7 +671,7 @@
     S.busy = true; S.adminMsg = ''; render();
     try { await fn(); S.adminMsg = okMsg || ''; S.adminErr = false; }
     catch (e) { S.adminMsg = '操作失敗：' + ((e && (e.message || e.code)) || '請稍後再試'); S.adminErr = true; }
-    finally { S.busy = false; S.confirmReset = false; S.confirmZero = false; render(); }
+    finally { S.busy = false; S.confirmReset = false; S.confirmZero = false; S.confirmShow = false; render(); }
   }
   async function delDoc(path) { await S.db.doc(path).delete(); }
   async function resetRounds() {
@@ -709,7 +710,7 @@
     }, on ? '已全部報到。' : '已清除所有報到。');
   }
   function doZero() {
-    if (!S.confirmZero) { S.confirmZero = true; S.confirmReset = false; render(); return; }
+    if (!S.confirmZero) { S.confirmZero = true; S.confirmReset = false; S.confirmShow = false; render(); return; }
     run(async function () { await resetRounds(); await clearCheckins(); await delDoc('roster/main'); S.behalf[1] = { who: '', t: ['', '', ''], stage: -1 }; }, '已歸零：名單、報到、輪次和所有會友填寫的資料都已清除。');
   }
   async function doImport() {
@@ -731,8 +732,14 @@
   }
   function genR1() { return run(async function () { await S.db.doc('rounds/r1').set(buildRound(1)); await delDoc('rounds/r2'); }, '第一輪已結算。'); }
   function genR2() { return run(async function () { await S.db.doc('rounds/r2').set(buildRound(2)); }, '第二輪已結算。'); }
+  // 配對歸零：只清大螢幕上的配對結果（第 1、2 輪），名單、報到、會友填的志願都保留
+  function doClearShow() {
+    if (!S.confirmShow) { S.confirmShow = true; S.confirmReset = false; S.confirmZero = false; render(); return; }
+    run(async function () { await delDoc('rounds/r1'); await delDoc('rounds/r2'); await delDoc('rounds/r3'); S.screenRound = null; },
+      '大螢幕配對已歸零。名單、報到與會友填的志願都還在，可以重新結算。');
+  }
   function doReset() {
-    if (!S.confirmReset) { S.confirmReset = true; render(); return; }
+    if (!S.confirmReset) { S.confirmReset = true; S.confirmShow = false; render(); return; }
     run(resetRounds, '已清除所有輪次與選擇，名單保留。');
   }
   function behalfSave() {
@@ -1001,6 +1008,14 @@
           h('input', { type: 'checkbox', checked: on, disabled: S.busy, onchange: function (e) { adminCheckin(m.id, e.target.checked); } }),
           h('div', { class: 't' }, h('b', {}, m.name), h('span', {}, [m.club, m.company].filter(Boolean).join('・'))));
       }))));
+    var shown = (S.r1 ? pairsOf(S.r1).length : 0) + (S.r2 ? pairsOf(S.r2).length : 0);
+    box.append(h('div', { class: 'panel' },
+      h('h2', {}, '配對大螢幕'),
+      h('p', { class: 'stat' }, shown ? ('大螢幕目前有配對結果：第一輪 ' + (S.r1 ? pairsOf(S.r1).length : 0) + ' 組、第二輪 ' + (S.r2 ? pairsOf(S.r2).length : 0) + ' 組。') : '大螢幕目前沒有配對結果。'),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn danger', type: 'button', disabled: S.busy || !shown, onclick: doClearShow }, S.confirmShow ? '再按一次，確認配對歸零' : '配對歸零（清空大螢幕）'),
+        S.confirmShow ? h('button', { class: 'btn ghost', type: 'button', onclick: function () { S.confirmShow = false; render(); } }, '取消') : null),
+      h('p', { class: 'hint' }, '只清掉第一、二輪的配對結果，大螢幕會變回空白。名單、報到和會友填的志願都保留，之後可以重新結算。')));
     box.append(roundPanel(1, 3, S.r1, true, genR1));
     box.append(roundPanel(2, 4, S.r2, !!S.r1, genR2));
     box.append(h('div', { class: 'panel' },
