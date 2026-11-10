@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>IAA 會務助理工作台</title>
+<style>
+:root{--ink:#1a2547;--mut:#6b7390;--line:#e2e6f0;--pk:#B3267F;--bg:#f5f6fb;--ok:#2E7D6B;--bad:#c0392b;--wr:#d98a00;--bl:#1F5FBF}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink)}
+.w{max-width:1000px;margin:0 auto;padding:14px}h1{font-size:23px;margin:4px 0 2px}.sub{color:var(--mut);font-size:14px;margin:0 0 8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+input,select,button,textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+textarea{width:100%;min-height:110px}
+button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);font-weight:700}button.g{background:#fff;color:var(--ink);border-color:var(--line);font-weight:500}button.on{background:var(--ink);border-color:var(--ink);color:#fff}button.s{padding:4px 10px;font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px}.sum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 12px}.sum b{font-size:22px;display:block}.sum small{color:var(--mut)}
+.t{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}.t.done{background:#f1f8f5}.t.stuck{border-color:var(--bad)}.t.late{border-color:var(--wr)}
+.t h3{margin:0 0 6px;font-size:16px}.t h3 span{color:var(--mut);font-weight:400;font-size:13px}
+.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px}.f label{font-size:12px;color:var(--mut);display:block}.f input,.f select{width:100%}
+.grp{border-left:6px solid var(--pk);padding-left:10px;margin:16px 0 6px;font-weight:700;font-size:18px}.grp small{color:var(--mut);font-weight:400}
+.msg{min-height:20px;font-size:13px;color:var(--mut)}.err{color:var(--bad)}.ok{color:var(--ok)}
+.chip{display:inline-block;font-size:12px;border-radius:999px;padding:1px 9px;margin-left:6px;font-weight:700}.chip.ok{background:#e4f3ee;color:var(--ok)}.chip.lv{background:#fbe6da;color:#B8491A}.chip.pd{background:#e9edf3;color:#5a6679}.chip.wr{background:#FFF1D6;color:#8a5a00}
+.tabs button{flex:1}
+[hidden]{display:none!important}
+</style></head><body><div class="w">
+<h1>會務助理工作台</h1><p class="sub">決議追蹤・年度規劃・口徑字典・出席聯繫（內部使用，需後台密碼）</p>
+<div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="後台密碼" style="flex:1"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
+<div id="app" hidden>
+<div class="row tabs" id="tabs"><button data-t="d" class="on">決議追蹤</button><button data-t="p" class="g">年度規劃</button><button data-t="k" class="g">口徑字典</button><button data-t="a" class="g">出席聯繫</button></div>
+<div class="row" style="margin-top:8px"><span class="sub" style="margin:0">填寫人：</span><input id="by" placeholder="你的名字" maxlength="20" style="width:140px"><span class="msg" id="mt"></span></div>
+
+<div id="pd">
+<div class="sum" id="sd"></div>
+<div class="card"><b>會議紀錄助理：貼上會議紀錄，整理成決議與待辦</b>
+<p class="sub">每行一件事，格式：<code>內容｜負責人｜期限</code>（負責人、期限可省略；期限寫 2026-12-04 或 12/4）。行首的「決議：」「待辦：」「－」「1.」會自動去掉。</p>
+<div class="row"><input id="mg" placeholder="會議名稱，例：2026/11 長發會" style="flex:1;min-width:200px"></div>
+<textarea id="mx" placeholder="例：&#10;決議：年會報名截止延至 11/20｜李敏妃｜11/13&#10;待辦：確認屏東社召集人｜黃雅堂"></textarea>
+<div class="row"><button id="mp">解析</button><button class="g" id="ms" hidden>全部存入</button><span class="msg" id="mm"></span></div>
+<div id="mv"></div></div>
+<div class="row"><select id="fs"><option value="">全部狀態</option><option>待辦</option><option>進行中</option><option>卡住</option><option>已完成</option></select><select id="fg"></select><button class="g" id="fb">產生會前摘要</button></div>
+<div class="card" id="fbx" hidden><textarea id="fbt" readonly></textarea><div class="row"><button id="fbc">複製</button></div></div>
+<div id="ld"></div></div>
+
+<div id="pp" hidden>
+<div class="card"><b>年度規劃助理：依「獎 × 錢 × 人」三軸，產出每場例會的準備清單</b>
+<p class="sub">下列是通用範本，產出後可逐項修改、刪除，再存入。</p>
+<div class="f"><div><label>例會／活動名稱</label><input id="pn" placeholder="例：2027/01 例會"></div><div><label>日期</label><input id="pdt" type="date"></div><div><label>講師／主題（選填）</label><input id="ptp"></div></div>
+<div class="row" style="margin-top:8px"><button id="pg">產生準備清單</button><button class="g" id="ps" hidden>全部存入</button><span class="msg" id="pm"></span></div>
+<div id="pv"></div></div>
+<div id="lp"></div></div>
+
+<div id="pk" hidden>
+<p class="sub">各名詞只定一個口徑；沒定案的一律答「待定案」。</p>
+<div class="card"><div class="f"><div><label>名詞</label><input id="kt" maxlength="60"></div><div><label>狀態</label><select id="ks"><option>待定案</option><option>已定案</option></select></div><div><label>拍板人</label><input id="kb" maxlength="30"></div></div>
+<label style="font-size:12px;color:var(--mut)">口徑說明</label><textarea id="kd" style="min-height:70px"></textarea>
+<div class="row"><input id="kn" placeholder="備註（選填）" style="flex:1"><button id="kv">儲存</button><button class="g" id="kx">清空</button></div><div class="msg" id="kk"></div></div>
+<div id="lk"></div></div>
+
+<div id="pa" hidden>
+<p class="sub">年會（12/04）報名資料每次按「同步」從報名表讀取，對照 2027 有效會員名冊；為未回覆、請假者記錄原因大類並產生提醒訊息（不自動發送）。原因只記大類，不記健康、家庭等細節。</p>
+<div class="row"><button id="as">同步報名資料</button><label style="font-size:14px"><input type="checkbox" id="ao"> 只看未報名</label><span class="msg" id="am"></span></div>
+<div class="sum" id="asu" style="margin-top:8px"></div><div id="la"></div></div>
+</div>
+<script>
+(function(){
+var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI";
+var SHEET="1mNXScGB7Gn3wE32R8zFa1B0VhOSbty8J7hEYfAQHHJY",TAB_RESP="回",EVT="2026年會-12/04",FORM="https://forms.gle/c68MPEgx1E7mwaNw6",STAT="https://ericliang680928.github.io/IAA/20261204/status/";
+var PW="",ITEMS=[],GL=[],ATT={},ROS=[],PEOPLE=null,PREV=[],PPREV=[],seq=0;
+var REASONS=["","時間衝突","工作因素","家庭因素","身體因素","距離交通","費用考量","興趣不符","其他"];
+function $(i){return document.getElementById(i);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function rpc(fn,body,cb){var x=new XMLHttpRequest();x.open("POST",B+"rpc/"+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
+ x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
+function call(fn,body,cb){body.p=PW;rpc(fn,body,cb);}
+function say(id,t,bad){$(id).className="msg "+(bad?"err":"ok");$(id).textContent=t;}
+function who(){return $("by").value.trim();}
+function today(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
+function addDays(s,n){var p=s.split("-"),d=new Date(+p[0],+p[1]-1,+p[2]+n);return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
+function parseDue(s){s=(s||"").trim();if(!s){return "";}var m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);if(m){return m[1]+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[3]).slice(-2);}
+ m=s.match(/^(\d{1,2})[\/.-](\d{1,2})$/);if(m){var y=new Date().getFullYear();return y+"-"+("0"+m[1]).slice(-2)+"-"+("0"+m[2]).slice(-2);}return "";}
+
+$("go").onclick=function(){PW=$("pw").value;rpc("iaa_task_chk",{p:PW},function(ok){if(!ok){say("m0","密碼不正確",1);return;}$("lg").hidden=true;$("app").hidden=false;loadItems();loadGl();});};
+$("pw").onkeydown=function(e){if(e.keyCode===13){$("go").onclick();}};
+$("tabs").onclick=function(e){var t=e.target.getAttribute("data-t");if(!t){return;}
+ var bs=$("tabs").getElementsByTagName("button");for(var i=0;i<bs.length;i++){bs[i].className=(bs[i]===e.target)?"on":"g";}
+ $("pd").hidden=t!=="d";$("pp").hidden=t!=="p";$("pk").hidden=t!=="k";$("pa").hidden=t!=="a";};
+
+/* ---------- 決議／規劃事項 ---------- */
+function loadItems(){call("iaa_as_items_list",{},function(ok,l){if(ok&&l){ITEMS=l;drawD();drawP();}});}
+function late(a){return a.status!=="已完成"&&a.due&&a.due<today();}
+function itemHtml(a){
+ var cls="t"+(a.status==="已完成"?" done":"")+(a.status==="卡住"?" stuck":"")+(late(a)?" late":"");
+ return '<div class="'+cls+'" data-id="'+a.id+'"><h3>'+esc(a.title)+(a.axis?' <span>['+esc(a.axis)+']</span>':'')+(late(a)?'<span class="chip wr">逾期</span>':'')+'</h3>'+
+ '<div class="f"><div><label>負責人</label><input data-k="o" value="'+esc(a.owner)+'" maxlength="40"></div><div><label>期限</label><input data-k="d" type="date" value="'+esc(a.due||"")+'"></div>'+
+ '<div><label>狀態</label><select data-k="s">'+["待辦","進行中","卡住","已完成"].map(function(x){return '<option'+(x===a.status?' selected':'')+'>'+x+'</option>';}).join("")+'</select></div>'+
+ '<div><label>備註（卡在哪）</label><input data-k="n" value="'+esc(a.note)+'" maxlength="400"></div></div>'+
+ '<div class="row" style="margin-top:6px"><button class="s" data-a="sv">儲存</button><button class="s g" data-a="rm">刪除</button><span class="msg">'+(a.updated_by?'上次：'+esc(a.updated_by)+' '+esc((a.updated_at||"").slice(0,10)):'')+'</span></div></div>';}
+function group(list,boxId,kind){
+ var gs=[],map={};list.forEach(function(a){if(!map[a.grp]){map[a.grp]=[];gs.push(a.grp);}map[a.grp].push(a);});
+ $(boxId).innerHTML=gs.map(function(g){var l=map[g],dn=l.filter(function(a){return a.status==="已完成";}).length;
+  return '<div class="grp">'+esc(g||"（未命名）")+' <small>完成 '+dn+' / '+l.length+'</small></div>'+l.map(itemHtml).join("");}).join("")||'<div class="card sub">還沒有資料</div>';}
+function drawD(){
+ var l=ITEMS.filter(function(a){return a.kind==="決議";});
+ var gs=[];l.forEach(function(a){if(gs.indexOf(a.grp)<0){gs.push(a.grp);}});
+ var cur=$("fg").value;$("fg").innerHTML='<option value="">全部會議</option>'+gs.map(function(g){return '<option>'+esc(g)+'</option>';}).join("");$("fg").value=gs.indexOf(cur)>=0?cur:"";
+ var c={a:l.length,t:0,p:0,s:0,d:0,l:0};l.forEach(function(a){if(a.status==="待辦"){c.t++;}if(a.status==="進行中"){c.p++;}if(a.status==="卡住"){c.s++;}if(a.status==="已完成"){c.d++;}if(late(a)){c.l++;}});
+ $("sd").innerHTML=[["全部",c.a],["待辦",c.t],["進行中",c.p],["卡住",c.s],["已完成",c.d],["逾期",c.l]].map(function(x){return '<div><b>'+x[1]+'</b><small>'+x[0]+'</small></div>';}).join("");
+ var fs=$("fs").value,fg=$("fg").value;
+ group(l.filter(function(a){return (!fs||a.status===fs)&&(!fg||a.grp===fg);}),"ld");}
+function drawP(){group(ITEMS.filter(function(a){return a.kind==="規劃";}),"lp");}
+$("fs").onchange=drawD;$("fg").onchange=drawD;
+function itemClick(e){var b=e.target.getAttribute("data-a");if(!b){return;}var box=e.target.parentNode.parentNode,id=parseInt(box.getAttribute("data-id"),10);
+ var a=ITEMS.filter(function(x){return x.id===id;})[0];if(!a){return;}
+ if(b==="rm"){if(!window.confirm("確定刪除這一項？")){return;}call("iaa_as_item_del",{i:id},function(ok){if(ok){loadItems();}else{say("mt","刪除失敗",1);}});return;}
+ var v={};var ins=box.querySelectorAll("[data-k]");for(var i=0;i<ins.length;i++){v[ins[i].getAttribute("data-k")]=ins[i].value;}
+ call("iaa_as_item_save",{i:id,k:a.kind,g:a.grp,t:a.title,o:v.o,d:v.d,s:v.s,a:a.axis,n:v.n,b:who()},function(ok,j){if(ok){say("mt","已儲存");loadItems();}else{say("mt",(j&&j.message)||"儲存失敗",1);}});}
+$("ld").onclick=itemClick;$("lp").onclick=itemClick;
+
+$("mp").onclick=function(){var g=$("mg").value.trim();if(!g){say("mm","請先填會議名稱",1);return;}
+ PREV=[];$("mx").value.split("\n").forEach(function(ln){ln=ln.replace(/^\s*(\d+[.、)）]|[-－•○●*])\s*/,"").replace(/^(決議|待辦|行動)[:：]\s*/,"").trim();if(!ln){return;}
+  var p=ln.split(/[｜|\t]/);PREV.push({t:p[0].trim(),o:(p[1]||"").trim(),d:parseDue(p[2])});});
+ $("mv").innerHTML=PREV.map(function(x){return '<div class="t"><b>'+esc(x.t)+'</b><div class="sub" style="margin:2px 0 0">負責人：'+esc(x.o||"（未填）")+'　期限：'+esc(x.d||"（未填）")+'</div></div>';}).join("");
+ $("ms").hidden=!PREV.length;say("mm",PREV.length?"解析出 "+PREV.length+" 項，確認後按「全部存入」":"沒有可解析的內容",!PREV.length);};
+function saveAll(list,kind,grp,axisOf,done){var n=0,fail=0;if(!list.length){done(0,0);return;}
+ list.forEach(function(x){call("iaa_as_item_save",{i:null,k:kind,g:grp,t:x.t,o:x.o||"",d:x.d||"",s:"待辦",a:axisOf?axisOf(x):"",n:"",b:who()},function(ok){if(!ok){fail++;}n++;if(n===list.length){done(list.length-fail,fail);}});});}
+$("ms").onclick=function(){$("ms").disabled=true;saveAll(PREV,"決議",$("mg").value.trim(),null,function(ok,fail){$("ms").disabled=false;say("mm","已存入 "+ok+" 項"+(fail?"，失敗 "+fail+" 項":""),fail>0);if(ok){PREV=[];$("mv").innerHTML="";$("mx").value="";$("ms").hidden=true;loadItems();}});};
+$("fb").onclick=function(){var g=$("fg").value;if(!g){say("mt","請先選一場會議",1);return;}
+ var l=ITEMS.filter(function(a){return a.kind==="決議"&&a.grp===g;}),dn=l.filter(function(a){return a.status==="已完成";}),open=l.filter(function(a){return a.status!=="已完成";});
+ var t=g+" 決議追蹤：完成 "+dn.length+" / "+l.length+" 件\n";
+ var st=open.filter(function(a){return a.status==="卡住";});if(st.length){t+="\n【卡住】\n"+st.map(function(a){return "・"+a.title+"（"+(a.owner||"未指定")+"）"+(a.note?"：卡在 "+a.note:"");}).join("\n")+"\n";}
+ var rest=open.filter(function(a){return a.status!=="卡住";});if(rest.length){t+="\n【未完成】\n"+rest.map(function(a){return "・"+a.title+"（"+(a.owner||"未指定")+(a.due?"，"+a.due:"")+"）"+(late(a)?" ⚠逾期":"");}).join("\n")+"\n";}
+ $("fbt").value=t;$("fbx").hidden=false;};
+$("fbc").onclick=function(){$("fbt").select();try{document.execCommand("copy");say("mt","已複製");}catch(e){say("mt","請手動複製",1);}};
+
+/* ---------- 年度規劃 ---------- */
+var TPL=[
+ ["獎",-45,"確認本場主題與創新獎的連結（得主分享、獎項宣傳或新會友介紹）"],
+ ["獎",-30,"確認創新獎得主／講師名單與分享時間"],
+ ["錢",-45,"編列本場預算（講師費、場地、餐點、印刷）並確認預算科目"],
+ ["錢",-21,"確認收費項目與繳費方式（會友、來賓），通知財務長"],
+ ["錢",7,"活動後登記收支並與預算對照"],
+ ["人",-45,"邀約講師並確認檔期"],
+ ["人",-30,"取得講師簡歷、照片與授權，排定程序與司儀稿"],
+ ["人",-21,"公告活動並開放報名（LINE 與報名表）"],
+ ["人",-14,"通知各區總召、各社召集人，提醒會友報名"],
+ ["人",-7,"依報名資料提醒未回覆者"],
+ ["人",-3,"確認出席名單、座位與場控人選"],
+ ["人",3,"活動後關懷未出席者並記錄原因"]];
+$("pg").onclick=function(){var n=$("pn").value.trim(),d=$("pdt").value;if(!n||!d){say("pm","請填活動名稱與日期",1);return;}
+ var tp=$("ptp").value.trim();
+ PPREV=TPL.map(function(r){var t=r[2];if(tp&&r[2].indexOf("講師")===0){t=r[2]+"（"+tp+"）";}return {ax:r[0],t:t,d:addDays(d,r[1]),o:""};});drawPV();$("ps").hidden=false;say("pm","可修改日期、內容或刪除不需要的項目，再按「全部存入」");};
+function drawPV(){$("pv").innerHTML=PPREV.map(function(x,i){return '<div class="t"><div class="f"><div style="grid-column:span 2"><label>['+x.ax+'] 內容</label><input data-i="'+i+'" data-f="t" value="'+esc(x.t)+'"></div><div><label>期限</label><input type="date" data-i="'+i+'" data-f="d" value="'+x.d+'"></div><div><label>負責人</label><input data-i="'+i+'" data-f="o" value="'+esc(x.o)+'"></div></div><div class="row" style="margin-top:4px"><button class="s g" data-x="'+i+'">移除</button></div></div>';}).join("");}
+$("pv").oninput=function(e){var i=e.target.getAttribute("data-i");if(i===null){return;}PPREV[+i][e.target.getAttribute("data-f")]=e.target.value;};
+$("pv").onclick=function(e){var x=e.target.getAttribute("data-x");if(x===null){return;}PPREV.splice(+x,1);drawPV();};
+$("ps").onclick=function(){$("ps").disabled=true;var g=$("pn").value.trim();
+ saveAll(PPREV,"規劃",g,function(x){return x.ax;},function(ok,fail){$("ps").disabled=false;say("pm","已存入 "+ok+" 項"+(fail?"，失敗 "+fail+" 項":""),fail>0);if(ok){PPREV=[];$("pv").innerHTML="";$("ps").hidden=true;loadItems();}});};
+
+/* ---------- 口徑字典 ---------- */
+function loadGl(){call("iaa_as_gloss_list",{},function(ok,l){if(ok&&l){GL=l;drawK();}});}
+function drawK(){$("lk").innerHTML=GL.map(function(g,i){return '<div class="t'+(g.status==="待定案"?' late':'')+'"><h3>'+esc(g.term)+'<span class="chip '+(g.status==="待定案"?"wr":"ok")+'">'+esc(g.status)+'</span></h3><div>'+esc(g.definition)+'</div><div class="sub" style="margin:4px 0 0">'+(g.decided_by?'拍板：'+esc(g.decided_by)+'　':'')+esc(g.note)+'</div><div class="row" style="margin-top:6px"><button class="s g" data-e="'+i+'">編輯</button></div></div>';}).join("");}
+$("lk").onclick=function(e){var i=e.target.getAttribute("data-e");if(i===null){return;}var g=GL[+i];$("kt").value=g.term;$("ks").value=g.status;$("kb").value=g.decided_by;$("kd").value=g.definition;$("kn").value=g.note;window.scrollTo(0,$("pk").offsetTop);};
+$("kx").onclick=function(){$("kt").value="";$("kb").value="";$("kd").value="";$("kn").value="";$("ks").value="待定案";};
+$("kv").onclick=function(){call("iaa_as_gloss_save",{t:$("kt").value,df:$("kd").value,s:$("ks").value,db:$("kb").value,n:$("kn").value},function(ok,j){if(ok){say("kk","已儲存");$("kx").onclick();loadGl();}else{say("kk",(j&&j.message)||"儲存失敗",1);}});};
+
+/* ---------- 出席聯繫（連動年會報名） ---------- */
+function bare(s){return String(s).split("(")[0].split("（")[0].trim();}
+function splitNames(s){return String(s||"").split(/[,，、;；\n]+/).map(function(x){return x.trim();}).filter(function(x){return x&&x!=="--";});}
+function gviz(tab,cb){var name="__gv"+(seq++),sc=document.createElement("script"),done=false;
+ function end(ok,res){if(done){return;}done=true;clearTimeout(tm);try{delete window[name];}catch(e){window[name]=undefined;}if(sc.parentNode){sc.parentNode.removeChild(sc);}cb(ok,res);}
+ var tm=setTimeout(function(){end(false);},15000);window[name]=function(r){end(true,r);};sc.onerror=function(){end(false);};
+ sc.src="https://docs.google.com/spreadsheets/d/"+SHEET+"/gviz/tq?tqx=out:json;responseHandler:"+name+"&sheet="+encodeURIComponent(tab)+"&_="+Date.now();document.body.appendChild(sc);}
+function toMatrix(res){var t=res&&res.table;if(!t){return [];}var m=[(t.cols||[]).map(function(c){return c.label||"";})];(t.rows||[]).forEach(function(r){m.push((r.c||[]).map(function(c){return c&&c.v!=null?String(c.v):"";}));});return m;}
+function parseResp(res){var m=toMatrix(res),h=-1,i,j,col={};
+ for(i=0;i<Math.min(m.length,6)&&h<0;i++){var hn=false,hr=false;for(j=0;j<m[i].length;j++){var x=String(m[i][j]).trim();if(x==="姓名"){hn=true;}if(x==="報名"){hr=true;}}if(hn&&hr){h=i;}}
+ if(h<0){return null;}
+ var H=m[h].map(function(x){return String(x).trim();});function find(f){for(var k=0;k<H.length;k++){if(f(H[k])){return k;}}return -1;}
+ col.stat=find(function(x){return x==="報名";});col.who=find(function(x){return x==="姓名";});
+ col.reg=[find(function(x){return x==="北區姓名";}),find(function(x){return x==="中區姓名";}),find(function(x){return x==="南區姓名";})];
+ var out={};function cell(r,k){return k>=0?(r[k]||""):"";}
+ for(i=h+1;i<m.length;i++){var r=m[i];if(!r||!cell(r,col.who)&&!cell(r,col.stat)){continue;}
+  var st=cell(r,col.stat).indexOf("請假")>=0?"請假":(cell(r,col.stat).indexOf("參加")>=0?"參加":"");if(!st){continue;}
+  var any=false;col.reg.forEach(function(k){splitNames(cell(r,k)).forEach(function(n){var b=bare(n);if(b){out[b]=st;any=true;}});});
+  if(!any){var w=bare(cell(r,col.who));if(w){out[w]=st;}}}
+ return out;}
+function loadRoster(cb){var x=new XMLHttpRequest();x.open("GET",B+"iaa_members?select=name,chapter,region&status=eq.%E6%9C%89%E6%95%88&order=chapter,name");x.setRequestHeader("apikey",K);
+ x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status===200&&j?j:null);};x.onerror=function(){cb(null);};x.send();}
+function syncA(){say("am","同步中…");$("as").disabled=true;var pend=3,okAll=true;
+ function fin(){if(--pend>0){return;}$("as").disabled=false;if(!okAll){say("am","部分資料讀取失敗，請稍後再試",1);}else{say("am","已同步 "+new Date().toLocaleTimeString());}drawA();}
+ loadRoster(function(l){if(l){ROS=l.map(function(r){return {name:String(r.name).replace(/\s/g,""),chap:r.chapter,region:r.region};});}else{okAll=false;}fin();});
+ gviz(TAB_RESP,function(ok,res){if(ok){var o=parseResp(res);if(o){PEOPLE=o;}else{okAll=false;}}else{okAll=false;}fin();});
+ call("iaa_as_att_list",{e:EVT},function(ok,l){if(ok&&l){ATT={};l.forEach(function(a){ATT[a.member_name]=a;});}else{okAll=false;}fin();});}
+$("as").onclick=syncA;$("ao").onchange=drawA;
+function stOf(n){if(!PEOPLE){return "";}return PEOPLE[n]||"";}
+function drawA(){if(!ROS.length){return;}
+ var c={a:0,l:0,u:0};ROS.forEach(function(r){var s=stOf(r.name);if(s==="參加"){c.a++;}else if(s==="請假"){c.l++;}else{c.u++;}});
+ $("asu").innerHTML=[["有效會員",ROS.length],["已報名",c.a],["請假",c.l],["未回覆",c.u]].map(function(x){return '<div><b>'+x[1]+'</b><small>'+x[0]+'</small></div>';}).join("");
+ var only=$("ao").checked,gs=[],map={};ROS.forEach(function(r){if(!map[r.chap]){map[r.chap]=[];gs.push(r.chap);}map[r.chap].push(r);});
+ $("la").innerHTML=gs.map(function(g){var l=map[g],un=l.filter(function(r){return stOf(r.name)!=="參加"&&stOf(r.name)!=="請假";});
+  var show=only?l.filter(function(r){return stOf(r.name)!=="參加";}):l;if(!show.length){return "";}
+  return '<div class="grp">'+esc(g)+' <small>'+l.length+' 位・未回覆 '+un.length+'</small> <button class="s g" data-cp="'+esc(g)+'">複製提醒訊息</button></div>'+show.map(function(r){var s=stOf(r.name),a=ATT[r.name]||{reason_cat:"",note:"",contacted:false};
+   var chip=s==="參加"?'<span class="chip ok">已報名</span>':(s==="請假"?'<span class="chip lv">請假</span>':'<span class="chip pd">尚未回覆</span>');
+   var ed=s==="參加"?'':'<div class="f" style="margin-top:6px"><div><label>原因大類</label><select data-k="rc">'+REASONS.map(function(x){return '<option'+(x===a.reason_cat?' selected':'')+' value="'+x+'">'+(x||"（未記錄）")+'</option>';}).join("")+'</select></div><div><label>備註（不記細節）</label><input data-k="n" maxlength="200" value="'+esc(a.note)+'"></div><div><label>已聯繫</label><select data-k="ct"><option value="0">否</option><option value="1"'+(a.contacted?' selected':'')+'>是</option></select></div><div style="align-self:end"><button class="s" data-sa="'+esc(r.name)+'">儲存</button></div></div>';
+   return '<div class="t" data-nm="'+esc(r.name)+'"><b>'+esc(r.name)+'</b>'+chip+ed+'</div>';}).join("");}).join("");}
+$("la").onclick=function(e){var cp=e.target.getAttribute("data-cp"),sa=e.target.getAttribute("data-sa");
+ if(cp!==null){var un=ROS.filter(function(r){return r.chap===cp&&stOf(r.name)!=="參加"&&stOf(r.name)!=="請假";}).map(function(r){return r.name;});
+  var t=cp+"夥伴好，2026 IAA 年會（12/04）報名截止 11/20。"+(un.length?"目前尚未回覆："+un.join("、")+"。":"本社目前都已回覆，謝謝！")+"\n請至報名表回覆（參加或請假）："+FORM+"\n也可查詢是否報名成功："+STAT;
+  var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();var okc=false;try{okc=document.execCommand("copy");}catch(x){}document.body.removeChild(ta);
+  say("am",okc?"已複製「"+cp+"」提醒訊息":"請手動複製",!okc);if(!okc){window.prompt("請複製",t);}return;}
+ if(sa!==null){var box=e.target.parentNode.parentNode.parentNode,v={};var ins=box.querySelectorAll("[data-k]");for(var i=0;i<ins.length;i++){v[ins[i].getAttribute("data-k")]=ins[i].value;}
+  call("iaa_as_att_save",{e:EVT,m:sa,rc:v.rc,n:v.n,ct:v.ct==="1",b:who()},function(ok,j){if(ok){say("am","已儲存 "+sa);ATT[sa]={reason_cat:v.rc,note:v.n,contacted:v.ct==="1"};}else{say("am",(j&&j.message)||"儲存失敗",1);}});}};
+})();
+</script></div></body></html>
