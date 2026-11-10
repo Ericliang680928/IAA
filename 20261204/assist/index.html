@@ -75,7 +75,7 @@ function addDays(s,n){var p=s.split("-"),d=new Date(+p[0],+p[1]-1,+p[2]+n);retur
 function parseDue(s){s=(s||"").trim();if(!s){return "";}var m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);if(m){return m[1]+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[3]).slice(-2);}
  m=s.match(/^(\d{1,2})[\/.-](\d{1,2})$/);if(m){var y=new Date().getFullYear();return y+"-"+("0"+m[1]).slice(-2)+"-"+("0"+m[2]).slice(-2);}return "";}
 
-$("go").onclick=function(){PW=$("pw").value;rpc("iaa_task_chk",{p:PW},function(ok){if(!ok){say("m0","密碼不正確",1);return;}$("lg").hidden=true;$("app").hidden=false;loadItems();loadGl();});};
+$("go").onclick=function(){PW=$("pw").value;rpc("iaa_as_gloss_list",{p:PW},function(ok,j){if(!ok||!j||j.message){say("m0",(j&&j.message==="bad password")?"密碼不正確":"登入失敗，請稍後再試",1);return;}GL=j;$("lg").hidden=true;$("app").hidden=false;drawK();loadItems();});};
 $("pw").onkeydown=function(e){if(e.keyCode===13){$("go").onclick();}};
 $("tabs").onclick=function(e){var t=e.target.getAttribute("data-t");if(!t){return;}
  var bs=$("tabs").getElementsByTagName("button");for(var i=0;i<bs.length;i++){bs[i].className=(bs[i]===e.target)?"on":"g";}
