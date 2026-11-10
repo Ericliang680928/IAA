@@ -27,10 +27,20 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 6px;
 <div class="row" style="margin-top:8px"><input id="an" list="nl" placeholder="會友姓名" size="10"><datalist id="nl"></datalist><select id="am"><option>現金</option><option>匯款</option></select><input id="aa" type="number" placeholder="金額" style="width:110px"><input id="al" placeholder="後5碼" maxlength="5" style="width:90px"><input id="ad" type="date"><input id="ao" placeholder="備註" style="flex:1;min-width:140px"><button id="ab">登記</button></div><div class="msg" id="m1"></div></div>
 <p class="msg">確認後，報名查詢頁會顯示該會友「已繳會費」。退回的紀錄不會顯示。</p>
 </div></div>
+<style>#em{position:fixed;inset:0;background:rgba(20,30,60,.5);display:none;align-items:center;justify-content:center;padding:14px;z-index:60}#em.on{display:flex}#em .bx{background:#fff;border-radius:14px;padding:18px;max-width:440px;width:100%;max-height:92vh;overflow:auto}#em label{display:block;margin:10px 0 3px;font-size:13px;color:#6b7390}#em input,#em select{width:100%;padding:9px;border:1px solid #d5dbea;border-radius:8px;font-size:15px}</style>
+<div id="em"><div class="bx"><b id="eh">修改繳費紀錄</b>
+<label for="en">姓名（會友；來賓請輸入「寶眷來賓（社別）」）</label><input id="en" list="nl2" autocomplete="off"><datalist id="nl2"></datalist>
+<label for="ef">繳費項目</label><select id="ef"><option>常年會費</option><option>入會費</option><option>活動費用</option></select>
+<label for="em2">繳費方式</label><select id="em2"><option>匯款</option><option>現金</option></select>
+<label for="el">帳號後 5 碼（匯款必填）</label><input id="el" inputmode="numeric" maxlength="5">
+<label for="ea">金額（元）</label><input id="ea" type="number" inputmode="numeric" min="1">
+<label for="ed2">匯款／繳款日期</label><input id="ed2" type="date">
+<label for="eo">備註</label><input id="eo" maxlength="200">
+<div class="row" style="margin-top:14px"><button id="esv">儲存修改</button><button class="g" id="ecx">取消</button></div><div class="msg" id="emsg"></div></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script>if(window.top===window){location.replace("../finance/");}
 (function(){
-var B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",rows=[],mem=[],tab=1;
+var EID=0,B="https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/",K="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI",pw="",rows=[],mem=[],tab=1;
 function $(i){return document.getElementById(i);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function call(method,path,body,cb){var x=new XMLHttpRequest();x.open(method,B+path);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
@@ -57,12 +67,17 @@ $("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";
  call("GET","iaa_members?select=name,chapter,status&order=name",null,function(ok,l){if(ok&&l){mem=l;CH={};l.forEach(function(m){CH[m.name]=m.chapter;});}
   load(function(ok2){if(ok2){$("lg").hidden=true;$("app").hidden=false;$("ad").value=new Date(Date.now()+288e5).toISOString().slice(0,10);}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
+$("ecx").onclick=function(){$("em").className="";};
+$("esv").onclick=function(){var am=parseInt($("ea").value,10),mm=$("em2").value,l5=$("el").value.trim();$("emsg").className="msg";
+ if(isNaN(am)||am<=0){$("emsg").className="msg err";$("emsg").textContent="金額格式不正確";return;}
+ if(mm==="匯款"&&/^[0-9]{5}$/.test(l5)===false){$("emsg").className="msg err";$("emsg").textContent="匯款請填 5 位數字的後 5 碼";return;}
+ $("esv").disabled=true;
+ call("POST","rpc/iaa_dues_edit2",{p:pw,i:EID,n:$("en").value,amt:am,ft:$("ef").value,m:mm,l5:l5,d:$("ed2").value||null,nt:$("eo").value},function(ok,j){$("esv").disabled=false;
+  if(ok){$("em").className="";load(function(){});}else{$("emsg").className="msg err";$("emsg").textContent=(j&&j.message)?j.message:"修改失敗";}});};
 $("tb").onclick=function(e){var a=e.target.getAttribute("data-a"),id=e.target.getAttribute("data-id");if(a===null){return;}
  if(a==="ed"){var rr=rows.filter(function(x){return String(x.id)===id;})[0];if(rr===undefined){return;}
-  var na=window.prompt("修改「"+rr.member_name+"」的金額（元）",String(rr.amount));if(na===null){return;}
-  var nv=parseInt(na,10);if(isNaN(nv)||nv<=0){window.alert("金額格式不正確");return;}
-  var nf=window.prompt("繳費項目：輸入 1＝常年會費，2＝入會費，3＝活動費用",(rr.fee_type||"常年會費")==="入會費"?"2":((rr.fee_type||"")==="活動費用"?"3":"1"));if(nf===null){return;}
-  call("POST","rpc/iaa_dues_edit",{p:pw,i:parseInt(id,10),amt:nv,ft:nf.trim()==="2"?"入會費":(nf.trim()==="3"?"活動費用":"常年會費"),m:rr.method,l5:rr.last5||"",d:rr.paid_date||null,nt:rr.note||""},function(ok,j){if(ok){load(function(){});}else{window.alert((j&&j.message)?j.message:"修改失敗");}});return;}
+  EID=parseInt(id,10);$("eh").textContent="修改繳費紀錄（"+rr.status+"）";$("en").value=rr.member_name;$("ef").value=rr.fee_type||"常年會費";$("em2").value=rr.method;$("el").value=rr.last5||"";$("ea").value=rr.amount==null?"":rr.amount;$("ed2").value=rr.paid_date||"";$("eo").value=rr.note||"";$("emsg").textContent="";$("emsg").className="msg";
+  $("nl2").innerHTML=mem.map(function(m){return '<option value="'+esc(m.name)+'">'+esc(m.chapter)+'</option>';}).join("");$("em").className="on";return;}
  var s=a==="ok"?"已確認":(a==="no"?"退回":"待審核"),rn="";
  if(a==="no"){rn=window.prompt("退回原因（會顯示給會友，可留空）","")||"";}
  call("POST","rpc/iaa_dues_review",{p:pw,i:parseInt(id,10),s:s,rn:rn},function(ok){if(ok){load(function(){});}else{window.alert("操作失敗");}});};
@@ -124,8 +139,7 @@ $("xls").onclick=function(){
  wb.xlsx.writeBuffer().then(function(buf){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));a.download="IAA會費收繳_"+today+".xlsx";document.body.appendChild(a);a.click();document.body.removeChild(a);});
 };
 try{var sp=window.sessionStorage.getItem("iaa_fin_pw");if(sp){$("pw").value=sp;$("go").onclick();}}catch(e){}
-})();
-
 function syncAll(){if(document.hidden===false&&$("app").hidden===false){call("GET","iaa_members?select=name,chapter,status&order=name",null,function(ok,l){if(ok&&l){mem=l;CH={};l.forEach(function(m){CH[m.name]=m.chapter;});}load(function(){});});}}
 setInterval(syncAll,45000);window.addEventListener("focus",syncAll);
+})();
 </script></body></html>
