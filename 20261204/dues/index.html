@@ -74,7 +74,7 @@ function q(){var n=$("qn").value.trim();if(n===""){return;}$("qr").innerHTML="�
   if(ok===false){$("qr").innerHTML="查詢失敗";return;}
   if(l.length===0){$("qr").innerHTML='<div class="st">查無回報紀錄</div>';return;}
   $("qr").innerHTML=l.map(function(r){var c=r.status==="已確認"?"p2":(r.status==="退回"?"p3":"p1");
-   return '<div class="st"><span class="pill '+c+'">'+esc(r.status)+'</span> '+esc(r.fee_type||'常年會費')+'・'+esc(r.method)+'・'+esc(r.submitted_at.slice(0,10))+(r.review_note?'<br><small>財務長備註：'+esc(r.review_note)+'</small>':'')+'</div>';}).join("");
+   return '<div class="st"><span class="pill '+c+'">'+esc(r.status)+'</span> '+esc(r.fee_type||'常年會費')+'・'+esc(r.method)+'・'+esc(new Date(new Date(r.submitted_at).getTime()+288e5).toISOString().slice(0,10))+(r.review_note?'<br><small>財務長備註：'+esc(r.review_note)+'</small>':'')+'</div>';}).join("");
  });}
 $("qb").onclick=q;
 $("dok").onclick=function(){$("dn").className="";};

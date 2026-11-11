@@ -47,7 +47,8 @@ function load(cb){call("iaa_fin_overview",{f:116},function(ok,b){if(ok===false||
  call("iaa_ledger_list",{f:116},function(ok2,l){if(ok2===false||l===null){cb(false);return;}led=l;draw();cb(true);});});}
 function draw(){
  var ie=0,ia=0,oe=0,oa=0,html="";
- bud.forEach(function(b){if(b.kind==="收入"){ie+=Number(b.amount);ia+=Number(b.actual);}else{oe+=Number(b.amount);oa+=Number(b.actual);}});
+ var un={"收入":0,"支出":0},unc={"收入":0,"支出":0};bud.forEach(function(b){if(b.kind==="收入"){ie+=Number(b.amount);ia+=Number(b.actual);}else{oe+=Number(b.amount);oa+=Number(b.actual);}});
+ led.forEach(function(r){if(r.voided===false&&r.budget_id===null&&un[r.kind]!==undefined){un[r.kind]+=Number(r.amount);unc[r.kind]+=1;}});ia+=un["收入"];oa+=un["支出"];
  $("sum").innerHTML='<div><small>收入　實際／預算</small><b>'+N(ia)+'</b> <em>／ '+N(ie)+'（'+(ie?Math.round(ia/ie*100):0)+'%）</em></div><div><small>支出　實際／預算</small><b>'+N(oa)+'</b> <em>／ '+N(oe)+'（'+(oe?Math.round(oa/oe*100):0)+'%）</em></div><div><small>目前結餘（實收－實支）</small><b>'+N(ia-oa)+'</b></div><div><small>預算支出尚餘</small><b style="color:'+((oe-oa)<0?'#c0392b':'#2E7D6B')+'">'+N(oe-oa)+'</b></div>';
  function part(kind){var rows=bud.filter(function(b){return b.kind===kind;}),ta=0,tb=0,h='<h2>'+kind+'預算對照</h2><table><thead><tr><th>項目</th><th class="n">預算</th><th class="n">實際</th><th class="n">'+(kind==="支出"?"尚餘":"差額")+'</th><th>進度</th><th>狀態</th></tr></thead><tbody>';
   rows.forEach(function(b){var a=Number(b.actual),e=Number(b.amount),pc=e?a/e*100:(a>0?100:0),tg;ta+=a;tb+=e;
@@ -55,6 +56,7 @@ function draw(){
    else{tg=a>=e?'<span class="tag t-ok">已達成</span>':(a===0?'<span class="tag t-n">尚未收入</span>':'<span class="tag t-wr">進行中</span>');}
    var d=kind==="支出"?e-a:a-e;
    h+='<tr><td><b>'+esc(b.item)+'</b><br><small style="color:#6b7390">'+N(b.qty)+esc(b.unit)+' × '+N(b.unit_price)+'・'+b.cnt+' 筆</small></td><td class="n">'+N(e)+'</td><td class="n">'+N(a)+'</td><td class="n" style="color:'+(kind==="支出"&&d<0?'#c0392b':'inherit')+'">'+N(d)+'</td><td><div class="bar"><i style="width:'+Math.min(pc,100)+'%;background:'+(kind==="支出"&&a>e?'#c0392b':(pc>=90&&kind==="支出"?'#d98a00':'#2E7D6B'))+'"></i></div><small>'+Math.round(pc)+'%</small></td><td>'+tg+'</td></tr>';});
+  if(unc[kind]>0){ta+=un[kind];h+='<tr><td><b>（未歸類）</b><br><small style="color:#c0392b">'+unc[kind]+' 筆沒有對應預算科目，請到流水帳補上科目</small></td><td class="n">0</td><td class="n">'+N(un[kind])+'</td><td class="n">'+N(kind==="支出"?-un[kind]:un[kind])+'</td><td></td><td><span class="tag t-wr">未歸類</span></td></tr>';}
   var td=kind==="支出"?tb-ta:ta-tb;
   return h+'<tr class="tot"><td>'+kind+'合計</td><td class="n">'+N(tb)+'</td><td class="n">'+N(ta)+'</td><td class="n">'+N(td)+'</td><td></td><td></td></tr></tbody></table>';}
  $("v1").innerHTML=part("收入")+'<div style="height:18px"></div>'+part("支出");
@@ -94,7 +96,7 @@ $("bs").onclick=function(){if($("bi").value.trim()===""||$("bp").value===""){$("
   if(ok){$("m3").className="msg";$("m3").textContent="已儲存預算項目";$("bc").onclick();load(function(){});}else{$("m3").className="msg err";$("m3").textContent=(j&&j.message)?j.message:"儲存失敗";}});};
 $("csv").onclick=function(){var h=["日期","收支","科目","摘要","金額","方式","對象","憑證","備註","作廢"];
  var t=[h].concat(led.map(function(r){return [r.entry_date,r.kind,bname(r.budget_id),r.description,r.amount,r.method,r.counterparty,r.voucher,r.note,r.voided?"是":""];}));
- var s="﻿"+t.map(function(r){return r.map(function(c){return '"'+String(c==null?"":c).replace(/"/g,'""')+'"';}).join(",");}).join("\r\n");
+ var s="﻿"+t.map(function(r){return r.map(function(c){var v=String(c==null?"":c);if(/^[=+\-@\t\r]/.test(v)&&typeof c!=="number"){v="'"+v;}return '"'+v.replace(/"/g,'""')+'"';}).join(",");}).join("\r\n");
  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/csv;charset=utf-8"}));a.download="IAA116年流水帳.csv";document.body.appendChild(a);a.click();document.body.removeChild(a);};
 
 $("xls").onclick=function(){

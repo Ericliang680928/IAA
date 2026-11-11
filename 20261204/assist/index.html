@@ -118,7 +118,7 @@ $("mp").onclick=function(){var g=$("mg").value.trim();if(!g){say("mm","請先填
  $("mv").innerHTML=PREV.map(function(x){return '<div class="t"><b>'+esc(x.t)+'</b><div class="sub" style="margin:2px 0 0">負責人：'+esc(x.o||"（未填）")+'　期限：'+esc(x.d||"（未填）")+'</div></div>';}).join("");
  $("ms").hidden=!PREV.length;say("mm",PREV.length?"解析出 "+PREV.length+" 項，確認後按「全部存入」":"沒有可解析的內容",!PREV.length);};
 function saveAll(list,kind,grp,axisOf,done){var n=0,fail=0;if(!list.length){done(0,0);return;}
- list.forEach(function(x){call("iaa_as_item_save",{i:null,k:kind,g:grp,t:x.t,o:x.o||"",d:x.d||"",s:"待辦",a:axisOf?axisOf(x):"",n:"",b:who()},function(ok){if(!ok){fail++;}n++;if(n===list.length){done(list.length-fail,fail);}});});}
+ (function next(){var x=list[n];call("iaa_as_item_save",{i:null,k:kind,g:grp,t:x.t,o:x.o||"",d:x.d||"",s:"待辦",a:axisOf?axisOf(x):"",n:"",b:who()},function(ok){if(!ok){fail++;}n++;if(n===list.length){done(list.length-fail,fail);}else{next();}});})();}
 $("ms").onclick=function(){$("ms").disabled=true;saveAll(PREV,"決議",$("mg").value.trim(),null,function(ok,fail){$("ms").disabled=false;say("mm","已存入 "+ok+" 項"+(fail?"，失敗 "+fail+" 項":""),fail>0);if(ok){PREV=[];$("mv").innerHTML="";$("mx").value="";$("ms").hidden=true;loadItems();}});};
 $("fb").onclick=function(){var g=$("fg").value;if(!g){say("mt","請先選一場會議",1);return;}
  var l=ITEMS.filter(function(a){return a.kind==="決議"&&a.grp===g;}),dn=l.filter(function(a){return a.status==="已完成";}),open=l.filter(function(a){return a.status!=="已完成";});

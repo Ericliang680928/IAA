@@ -45,6 +45,7 @@ function $(i){return document.getElementById(i);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function call(method,path,body,cb){var x=new XMLHttpRequest();x.open(method,B+path);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
  x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(body?JSON.stringify(body):null);}
+function lt(s,n){if(!s){return "";}var d=new Date(s);if(isNaN(d.getTime())){return String(s).slice(0,n).replace("T"," ");}return new Date(d.getTime()+288e5).toISOString().slice(0,n).replace("T"," ");}
 function pc(s){return s==="已確認"?"p2":(s==="退回"?"p3":"p1");}
 var CH={};function chap(n){var g=/^寶眷來賓（([^）]+)）$/.exec(n||"");return CH[n]||(g?g[1]:"");}
 function load(cb){call("POST","rpc/iaa_dues_list",{p:pw},function(ok,j){if(ok&&j){rows=j;draw();}cb(ok);});}
@@ -91,7 +92,7 @@ $("ab").onclick=function(){var n=$("an").value.trim();$("m1").className="msg";
   if(ok){$("m1").textContent="已登記："+n;$("an").value="";$("aa").value="";$("al").value="";$("ao").value="";load(function(){});}
   else{$("m1").className="msg err";$("m1").textContent=(j&&j.message)?j.message:"登記失敗（匯款後5碼需為5位數字）";}});};
 $("csv").onclick=function(){var h=["姓名","社別","繳費項目","方式","金額","後5碼","日期","備註","狀態","審核備註","回報時間"];
- var t=[h].concat(rows.map(function(r){return [r.member_name,chap(r.member_name),r.fee_type||"常年會費",r.method,r.amount,r.last5,r.paid_date,r.note,r.status,r.review_note,r.submitted_at];}));
+ var t=[h].concat(rows.map(function(r){return [r.member_name,chap(r.member_name),r.fee_type||"常年會費",r.method,r.amount,r.last5,r.paid_date,r.note,r.status,r.review_note,lt(r.submitted_at,16)];}));
  var s="﻿"+t.map(function(r){return r.map(function(c){var v=String(c==null?"":c);if(/^[=+\-@\t\r]/.test(v)&&typeof c!=="number"){v="'"+v;}return '"'+v.replace(/"/g,'""')+'"';}).join(",");}).join("\r\n");
  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/csv;charset=utf-8"}));a.download="IAA會費紀錄.csv";document.body.appendChild(a);a.click();document.body.removeChild(a);};
 $("xls").onclick=function(){
@@ -115,7 +116,7 @@ $("xls").onclick=function(){
  box(s1);
  var ws=wb.addWorksheet("繳費紀錄");ws.columns=[{width:6},{width:12},{width:10},{width:11},{width:8},{width:12},{width:9},{width:13},{width:26},{width:9},{width:22},{width:18}];
  head(ws,["序","姓名","社別","繳費項目","方式","金額","後5碼","日期","備註","狀態","審核備註","回報時間"]);
- rows.forEach(function(r,i){var x=ws.addRow([i+1,r.member_name,chap(r.member_name),r.fee_type||"常年會費",r.method,r.amount,r.last5||"",r.paid_date||"",r.note||"",r.status,r.review_note||"",(r.submitted_at||"").slice(0,16).replace("T"," ")]);x.getCell(6).numFmt="#,##0";if(r.status==="已確認"){x.getCell(10).font={color:{argb:"FF2E7D6B"},bold:true};}else if(r.status==="退回"){x.getCell(10).font={color:{argb:"FFC0392B"},bold:true};}});
+ rows.forEach(function(r,i){var x=ws.addRow([i+1,r.member_name,chap(r.member_name),r.fee_type||"常年會費",r.method,r.amount,r.last5||"",r.paid_date||"",r.note||"",r.status,r.review_note||"",lt(r.submitted_at,16)]);x.getCell(6).numFmt="#,##0";if(r.status==="已確認"){x.getCell(10).font={color:{argb:"FF2E7D6B"},bold:true};}else if(r.status==="退回"){x.getCell(10).font={color:{argb:"FFC0392B"},bold:true};}});
  var tr=ws.addRow(["","合計（已確認）","","","","","","","","","",""]);var f=ws.addRow([]);
  tr.getCell(6).value={formula:'SUMIFS(F2:F'+(rows.length+1)+',J2:J'+(rows.length+1)+',"已確認")'};tr.getCell(6).numFmt="#,##0";tr.eachCell(function(c){c.font={bold:true};c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFF3F5FB"}};});
  ws.removeRowByIndex?0:0;ws.spliceRows(rows.length+3,1);

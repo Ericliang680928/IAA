@@ -69,6 +69,7 @@ function $(i){return document.getElementById(i);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 function call(fn,body,cb){body.p=pw;try{window.sessionStorage.setItem("iaa_hr_pw",pw);}catch(e){}var x=new XMLHttpRequest();x.open("POST",B+fn);x.setRequestHeader("apikey",K);x.setRequestHeader("Content-Type","application/json");
  x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status>=200&&x.status<300,j);};x.onerror=function(){cb(false,null);};x.send(JSON.stringify(body));}
+function lt(s,n){if(!s){return "";}var d=new Date(s);if(isNaN(d.getTime())){return String(s).slice(0,n).replace("T"," ");}return new Date(d.getTime()+288e5).toISOString().slice(0,n).replace("T"," ");}
 function sc(s){return {"待邀請":"s-a","邀請中":"s-b","已同意":"s-c","已入會":"s-d","婉拒":"s-e","暫緩":"s-f"}[s]||"s-a";}
 function fee(r){function f(v){return v==="已確認"?'<b class="o">已確認</b>':(v==="待審核"?'<b class="w">待審核</b>':v);}return '<span class="fee">'+f(r.entry_fee)+' ／ '+f(r.annual_fee)+'</span>';}
 function load(cb){call("iaa_hr_list",{},function(ok,l){if(ok===false||l===null){cb(false);return;}rows=l;rows.forEach(function(r){if(r.convener){CONV[r.chapter]=r.convener;}if(r.region_lead){LEAD[r.region]=r.region_lead;}});
@@ -114,7 +115,7 @@ function clr(){eid=null;$("en").value="";$("ec").value="";$("eo").value="";$("ei
 $("cx").onclick=clr;
 $("sv").onclick=function(){$("m1").className="msg";if($("en").value.trim()===""||$("ec").value===""){$("m1").className="msg err";$("m1").textContent="姓名與社別必填";return;}
  call("iaa_hr_save",{i:eid,n:$("en").value,c:$("ec").value,k:$("ek").value,s:$("eo").value,iv:$("ei").value,st:$("es").value,nt:$("eb").value,d:$("ed").value||null},function(ok,j){
-  if(ok){$("m1").textContent="已儲存："+$("en").value+"。若進度為「已同意」，請在全部名單按「完成入會」。";clr();load(function(){});}else{$("m1").className="msg err";$("m1").textContent=(j&&j.message)?(j.message.indexOf("duplicate")>=0?"名單已有同名者，請用編輯":j.message):"儲存失敗";}});};
+  if(ok){$("m1").textContent="已儲存："+$("en").value+"。若進度為「已同意」，請在全部名單按「產生入會連結」。";clr();load(function(){});}else{$("m1").className="msg err";$("m1").textContent=(j&&j.message)?(j.message.indexOf("duplicate")>=0?"名單已有同名者，請用編輯":j.message):"儲存失敗";}});};
 var lkid=null,lkname="",arows=[];
 function lkOpen(id){var r=byId(id);if(!r){return;}lkid=id;lkname=r.name;$("lkt").textContent="產生入會連結：「"+r.name+"」（"+r.chapter+"）";$("lkq").checked=false;$("lkm").hidden=true;$("lkp").hidden=true;$("lkn").textContent="";$("lk").hidden=false;$("lk").scrollIntoView();}
 $("lkc").onclick=function(){$("lk").hidden=true;};
@@ -131,7 +132,7 @@ function drawA(){var n=arows.filter(function(a){return a.status==="待審核";})
  $("al").innerHTML=arows.map(function(a){var col={"待填寫":"#8a90a8","待審核":"#d98a00","退回補件":"#1F5FBF","通過":"#2E7D6B","不符資格":"#c0392b"}[a.status]||"#8a90a8";
   var h='<div class="chp"><h3>'+esc(a.name)+' <span>'+esc(a.chapter)+'・'+(a.recruit_kind==="回歸"?"原退會":"新會友")+(a.match_state==="未比對"?'・<b style="color:#c0392b">未比對邀約名單</b>':'')+'</span> '+pill(a.status,col)+'</h3>';
   h+='<div style="font-size:15px;line-height:1.8">資格預審（發連結前）：'+(a.qual_prechecked?'<b style="color:#2E7D6B">已核對</b>':'<b style="color:#d98a00">未核對</b>')+'　入會費：'+esc(a.entry_fee)+'　常年會費：'+esc(a.annual_fee)+'　已確認繳費合計：'+a.paid_total+' 元</div>';
-  if(a.status!=="待填寫"){h+='<div style="font-size:15px;line-height:1.8;margin-top:6px">Email：'+esc(a.email)+'　手機：'+esc(a.phone)+'　LINE：'+esc(a.line_name)+'<br>生日：'+esc(a.birthday)+'　性別：'+esc(a.gender)+'　餐食：'+esc(a.meal)+'　加入IMC：'+esc(a.imc_since)+'<br>地址：'+esc(a.address)+'<br>公司：'+esc(a.company)+'　職稱：'+esc(a.title)+'<br>營業內容：'+esc(a.biz)+'　產業：'+esc(a.industry)+'　公司電話：'+esc(a.company_tel)+'<br>需求：'+esc(a.needs||'（未勾選）')+'<br><b>參加資格：'+qtxt(a)+'</b><br>邀約人：'+esc(a.inviter)+'　送出：'+esc((a.submitted_at||"").slice(0,16).replace("T"," "))+'</div>';}
+  if(a.status!=="待填寫"){h+='<div style="font-size:15px;line-height:1.8;margin-top:6px">Email：'+esc(a.email)+'　手機：'+esc(a.phone)+'　LINE：'+esc(a.line_name)+'<br>生日：'+esc(a.birthday)+'　性別：'+esc(a.gender)+'　餐食：'+esc(a.meal)+'　加入IMC：'+esc(a.imc_since)+'<br>地址：'+esc(a.address)+'<br>公司：'+esc(a.company)+'　職稱：'+esc(a.title)+'<br>營業內容：'+esc(a.biz)+'　產業：'+esc(a.industry)+'　公司電話：'+esc(a.company_tel)+'<br>需求：'+esc(a.needs||'（未勾選）')+'<br><b>參加資格：'+qtxt(a)+'</b><br>邀約人：'+esc(a.inviter)+'　送出：'+esc(lt(a.submitted_at,16))+'</div>';}
   else{h+='<div class="fee" style="margin-top:6px">尚未送出申請表（專屬連結已產生）</div>';}
   if(a.review_note){h+='<div class="fee" style="margin-top:4px">審核備註：'+esc(a.review_note)+'</div>';}
   if(a.refund_status==="待退費"||a.refund_status==="已退費"){h+='<div style="margin-top:8px;padding:8px 10px;border-radius:10px;background:'+(a.refund_status==="待退費"?"#FDECEA":"#EAF5F1")+'"><b>'+esc(a.refund_status)+'</b>　'+esc(a.refund_note)+(a.refund_status==="待退費"?' <button class="s ok" data-ra="done" data-id="'+a.id+'">標記已退費</button>':'')+'</div>';}
@@ -187,7 +188,6 @@ function build(){var v=$("ms").value,isR=v.slice(0,2)==="R:",nm=v.slice(2),list=
  t+="\n請在聯繫後回覆結果（同意／婉拒／再考慮）給人資長李敏妃。繳費請至：https://ericliang680928.github.io/IAA/20261204/dues/ 回報，財務長審核後才會顯示已繳。謝謝🙏";$("mt").value=t;}
 $("mk").onclick=build;
 $("cp").onclick=function(){$("mt").select();try{document.execCommand("copy");$("m4").textContent="已複製";}catch(e){$("m4").textContent="請手動複製";}};
-})();
-
 setInterval(function(){if(document.hidden===false&&$("app").hidden===false){load(function(){});}},45000);
+})();
 </script></body></html>
