@@ -3244,7 +3244,7 @@ x.onload=()=>{if(x.status!==200)return;let s;try{s=JSON.parse(x.responseText);}c
  if(s.tasks)put(ev,'年會當日工作',s.tasks.done+'/'+s.tasks.total,'項','年會當日工作已完成；'+s.tasks.unassigned+' 項尚未指定負責人（即時）');
 };x.send('{}');}catch(e){}
 /* 即時同步（名冊）：從會友名冊讀姓名、社別、狀態（公開欄位，不含聯絡資料），重算各島人數與名單；讀不到就維持上面寫好的數字 */
-try{const y=new XMLHttpRequest();y.open('GET','https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/iaa_members?select=name,chapter,region,status&order=id');y.setRequestHeader('apikey','sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI');
+try{const y=new XMLHttpRequest();y.open('GET','https://ahrgjhlfbrsfznvbokkf.supabase.co/rest/v1/iaa_members?select=name,chapter,region,status&order=chapter,name');y.setRequestHeader('apikey','sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI');
 y.onload=()=>{if(y.status!==200)return;let L;try{L=JSON.parse(y.responseText);}catch(e){return;}
  if(!L||!L.length)return;
  const ok=L.filter(m=>m.status==='有效'||m.status==='回歸');if(!ok.length)return;

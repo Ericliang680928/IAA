@@ -16,6 +16,8 @@ if "<title>" not in html or "THREE" not in html:
 meta = '<meta name="robots" content="noindex, nofollow">'
 if meta not in html:
     html = re.sub(r"(<head[^>]*>)", r"\1\n" + meta, html, count=1, flags=re.I)
+# 匿名讀名冊沒有 id 欄位權限，用 id 排序會整個讀取失敗
+html = html.replace("status&order=id", "status&order=chapter,name")
 old = out.read_text(encoding="utf-8") if out.exists() else ""
 if html == old and verf.exists() and verf.read_text().strip().split()[0] == ver:
     print("沒有變動"); sys.exit(0)

@@ -323,7 +323,7 @@ function loadPaid(){
 var RTN={},PRO={},SBU="https://ahrgjhlfbrsfznvbokkf.supabase.co",SBK="sb_publishable_e_YOmzczThrtX4YD2yC77Q_zHcUJcpI";
 function loadMembers(cb){
   var x=new XMLHttpRequest();
-  x.open("GET",SBU+"/rest/v1/iaa_members?select=name,chapter,region,status,is_new&order=id");
+  x.open("GET",SBU+"/rest/v1/iaa_members?select=name,chapter,region,status,is_new&order=chapter,name");
   x.setRequestHeader("apikey",SBK);
   x.onload=function(){
     var l=null;try{l=JSON.parse(x.responseText);}catch(e){l=null;}
