@@ -178,7 +178,7 @@ function parseResp(res){var m=toMatrix(res),h=-1,i,j,col={};
   var any=false;col.reg.forEach(function(k){splitNames(cell(r,k)).forEach(function(n){var b=bare(n);if(b){out[b]=st;any=true;}});});
   if(!any){var w=bare(cell(r,col.who));if(w){out[w]=st;}}}
  return out;}
-function loadRoster(cb){var x=new XMLHttpRequest();x.open("GET",B+"iaa_members?select=name,chapter,region&status=eq.%E6%9C%89%E6%95%88&order=chapter,name");x.setRequestHeader("apikey",K);
+function loadRoster(cb){var x=new XMLHttpRequest();x.open("GET",B+"iaa_members?select=name,chapter,region&status=in.(%E6%9C%89%E6%95%88,%E5%9B%9E%E6%AD%B8)&order=chapter,name");x.setRequestHeader("apikey",K);
  x.onload=function(){var j=null;try{j=JSON.parse(x.responseText);}catch(e){}cb(x.status===200&&j?j:null);};x.onerror=function(){cb(null);};x.send();}
 function syncA(){say("am","同步中…");$("as").disabled=true;var pend=3,okAll=true;
  function fin(){if(--pend>0){return;}$("as").disabled=false;if(!okAll){say("am","部分資料讀取失敗，請稍後再試",1);}else{say("am","已同步 "+new Date().toLocaleTimeString());}drawA();}

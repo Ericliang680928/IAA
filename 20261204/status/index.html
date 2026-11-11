@@ -110,7 +110,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 </div>
 
 <div class="tiles">
-<div class="tile"><b id="t-roster">–</b><span>會友名冊人數</span></div>
+<div class="tile"><b id="t-roster">–</b><span>有效會友人數</span></div>
 <div class="tile"><b id="t-mem">0</b><span>會友已報名</span></div>
 <div class="tile"><b id="t-gst">0</b><span>來賓</span></div>
 <div class="tile"><b id="t-stf">0</b><span>工作人員</span></div>
@@ -255,7 +255,7 @@ function render(){
   var all=mem+gst+stf;
   $("n-all").textContent=all;
   var pct=Math.min(100,Math.round(all/CAP*100));$("cap-bar").style.width=pct+"%";$("cap-pct").textContent=pct;
-  $("t-roster").textContent=loadedRoster?roster.length:"–";var pdn=0;roster.forEach(function(r){if(PAID[r.name]){pdn+=1;}});$("pd-n").textContent=pdn;$("pd-t").textContent=loadedRoster?roster.length:"–";$("t-mem").textContent=mem;$("t-gst").textContent=gst;$("t-stf").textContent=stf;$("t-lv").textContent=lv;
+  var vn=0,pdn=0;roster.forEach(function(r){if(!r.pro){vn+=1;if(PAID[r.name]){pdn+=1;}}});$("t-roster").textContent=loadedRoster?vn:"–";$("pd-n").textContent=pdn;$("pd-t").textContent=loadedRoster?vn:"–";$("t-mem").textContent=mem;$("t-gst").textContent=gst;$("t-stf").textContent=stf;$("t-lv").textContent=lv;
   var mt=Math.max(all,1);
   ["葷食","素食","不用餐"].forEach(function(k,i){$("m"+(i+1)).textContent=meal[k];$("mb"+(i+1)).style.width=(meal[k]/mt*100)+"%";});
 
@@ -328,7 +328,7 @@ function loadMembers(cb){
   x.onload=function(){
     var l=null;try{l=JSON.parse(x.responseText);}catch(e){l=null;}
     if(x.status===200&&l&&l.length){
-      roster=l.map(function(m){return {name:m.name,chap:m.chapter,region:m.region};});
+      roster=l.map(function(m){return {name:m.name,chap:m.chapter,region:m.region,pro:m.status==='有望'};});
       NEWM={};RTN={};PRO={};l.forEach(function(m){if(m.is_new){NEWM[m.name]=1;}if(m.status==='有望'){PRO[m.name]=1;}if(m.status==="回歸"){RTN[m.name]=1;}});
       byName={};roster.forEach(function(r){byName[r.name]=r;});loadedRoster=true;cb(true);
     }else{fallback(cb);}

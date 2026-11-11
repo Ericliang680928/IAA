@@ -51,14 +51,14 @@ function load(cb){call("POST","rpc/iaa_dues_list",{p:pw},function(ok,j){if(ok&&j
 function draw(){
  var pend=0,okn=0,rej=0,amt=0,paid={};
  rows.forEach(function(r){if(r.status==="待審核"){pend++;}else if(r.status==="已確認"){okn++;amt+=(r.amount||0);if((r.fee_type||'常年會費')==='常年會費'){paid[r.member_name]=1;}}else{rej++;}});
- $("sum").innerHTML='<div><b>'+pend+'</b>待審核</div><div><b>'+okn+'</b>已確認</div><div><b>'+(mem.length-Object.keys(paid).length)+'</b>尚未繳費</div><div><b>'+amt.toLocaleString()+'</b>已確認金額（元）</div><div><b>'+rej+'</b>退回</div>';
+ $("sum").innerHTML='<div><b>'+pend+'</b>待審核</div><div><b>'+okn+'</b>已確認</div><div><b>'+mem.filter(function(m){return m.status!=="有望"&&paid[m.name]!==1;}).length+'</b>尚未繳費（不含有望）</div><div><b>'+amt.toLocaleString()+'</b>已確認金額（元）</div><div><b>'+rej+'</b>退回</div>';
  var list=rows.filter(function(r){return tab===1?r.status==="待審核":true;});
  $("tb").innerHTML=list.length?list.map(function(r){
   var act=r.status==="待審核"?'<button class="s ok" data-a="ok" data-id="'+r.id+'">確認</button> <button class="s no" data-a="no" data-id="'+r.id+'">退回</button>':'<button class="s g" data-a="re" data-id="'+r.id+'">改回待審</button>';
   act+=' <button class="s g" data-a="ed" data-id="'+r.id+'">修改</button> <button class="s no" data-a="del" data-id="'+r.id+'">刪除</button>';
   return '<tr><td><b>'+esc(r.member_name)+'</b><br><small>'+esc(r.fee_type||'常年會費')+'</small></td><td>'+esc(chap(r.member_name))+'</td><td>'+esc(r.method)+'</td><td>'+(r.amount==null?"":r.amount.toLocaleString())+'</td><td>'+esc(r.last5)+'</td><td class="hm">'+esc(r.paid_date||"")+'</td><td class="hm">'+esc(r.note)+(r.review_note?'<br><small>審核備註：'+esc(r.review_note)+'</small>':'')+'</td><td><span class="pill '+pc(r.status)+'">'+esc(r.status)+'</span></td><td>'+act+'</td></tr>';}).join(""):'<tr><td colspan="8" style="color:#6b7390">沒有資料</td></tr>';
  var un=mem.filter(function(m){return (paid[m.name]===1)===false;});
- $("unp").innerHTML='<b>尚未確認繳費（'+un.length+' 位）</b><div class="chips">'+un.map(function(m){return '<span>'+esc(m.name)+'・'+esc(m.chapter.replace("社",""))+(m.status==="有望"?'（有望）':'')+'</span>';}).join("")+'</div>';
+ var unv=un.filter(function(m){return m.status!=="有望";}).length;$("unp").innerHTML='<b>尚未確認繳費（有效會友 '+unv+' 位'+(un.length>unv?'，另有望 '+(un.length-unv)+' 位':'')+'）</b><div class="chips">'+un.map(function(m){return '<span>'+esc(m.name)+'・'+esc(m.chapter.replace("社",""))+(m.status==="有望"?'（有望）':'')+'</span>';}).join("")+'</div>';
  $("nl").innerHTML=mem.map(function(m){return '<option value="'+esc(m.name)+'">';}).join("");
 }
 function show(n){tab=n;["t1","t2","t3","t4"].forEach(function(id,i){$(id).className=(i+1===n)?"on":"";});$("v1").hidden=(n===3||n===4);$("v3").hidden=(n===3)?false:true;$("v4").hidden=(n===4)?false:true;draw();}
@@ -92,7 +92,7 @@ $("ab").onclick=function(){var n=$("an").value.trim();$("m1").className="msg";
   else{$("m1").className="msg err";$("m1").textContent=(j&&j.message)?j.message:"登記失敗（匯款後5碼需為5位數字）";}});};
 $("csv").onclick=function(){var h=["姓名","社別","繳費項目","方式","金額","後5碼","日期","備註","狀態","審核備註","回報時間"];
  var t=[h].concat(rows.map(function(r){return [r.member_name,chap(r.member_name),r.fee_type||"常年會費",r.method,r.amount,r.last5,r.paid_date,r.note,r.status,r.review_note,r.submitted_at];}));
- var s="﻿"+t.map(function(r){return r.map(function(c){return '"'+String(c==null?"":c).replace(/"/g,'""')+'"';}).join(",");}).join("\r\n");
+ var s="﻿"+t.map(function(r){return r.map(function(c){var v=String(c==null?"":c);if(/^[=+\-@\t\r]/.test(v)&&typeof c!=="number"){v="'"+v;}return '"'+v.replace(/"/g,'""')+'"';}).join(",");}).join("\r\n");
  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/csv;charset=utf-8"}));a.download="IAA會費紀錄.csv";document.body.appendChild(a);a.click();document.body.removeChild(a);};
 $("xls").onclick=function(){
  if(typeof ExcelJS==="undefined"){window.alert("Excel 元件載入失敗，請重新整理後再試");return;}
