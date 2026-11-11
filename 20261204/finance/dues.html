@@ -24,7 +24,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 6px;
 <div class="card" id="v1"><table><thead><tr><th>會友</th><th>社別</th><th>方式</th><th>金額</th><th>後5碼</th><th class="hm">日期</th><th class="hm">備註</th><th>狀態</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
 <div class="card" id="v3" hidden><div id="unp"></div></div>
 <div class="card" id="v4" hidden><b>手動登記（直接視為已確認）</b>
-<div class="row" style="margin-top:8px"><input id="an" list="nl" placeholder="會友姓名" size="10"><datalist id="nl"></datalist><select id="am"><option>現金</option><option>匯款</option></select><input id="aa" type="number" placeholder="金額" style="width:110px"><input id="al" placeholder="後5碼" maxlength="5" style="width:90px"><input id="ad" type="date"><input id="ao" placeholder="備註" style="flex:1;min-width:140px"><button id="ab">登記</button></div><div class="msg" id="m1"></div></div>
+<div class="row" style="margin-top:8px"><input id="an" list="nl" placeholder="會友姓名" size="10"><datalist id="nl"></datalist><select id="af"><option>常年會費</option><option>入會費</option><option>活動費用</option></select><select id="am"><option>現金</option><option>匯款</option></select><input id="aa" type="number" placeholder="金額" style="width:110px"><input id="al" placeholder="後5碼" maxlength="5" style="width:90px"><input id="ad" type="date"><input id="ao" placeholder="備註" style="flex:1;min-width:140px"><button id="ab">登記</button></div><div class="msg" id="m1"></div></div>
 <p class="msg">確認後，報名查詢頁會顯示該會友「已繳會費」。退回的紀錄不會顯示。</p>
 </div></div>
 <style>#em{position:fixed;inset:0;background:rgba(20,30,60,.5);display:none;align-items:center;justify-content:center;padding:14px;z-index:60}#em.on{display:flex}#em .bx{background:#fff;border-radius:14px;padding:18px;max-width:440px;width:100%;max-height:92vh;overflow:auto}#em label{display:block;margin:10px 0 3px;font-size:13px;color:#6b7390}#em input,#em select{width:100%;padding:9px;border:1px solid #d5dbea;border-radius:8px;font-size:15px}</style>
@@ -84,9 +84,10 @@ $("tb").onclick=function(e){var a=e.target.getAttribute("data-a"),id=e.target.ge
  var s=a==="ok"?"已確認":(a==="no"?"退回":"待審核"),rn="";
  if(a==="no"){rn=window.prompt("退回原因（會顯示給會友，可留空）","")||"";}
  call("POST","rpc/iaa_dues_review",{p:pw,i:parseInt(id,10),s:s,rn:rn},function(ok){if(ok){load(function(){});}else{window.alert("操作失敗");}});};
+$("an").oninput=function(){if(/^寶眷來賓/.test($("an").value)){$("af").value="活動費用";}};
 $("ab").onclick=function(){var n=$("an").value.trim();$("m1").className="msg";
  if(n===""||$("aa").value===""){$("m1").className="msg err";$("m1").textContent="姓名與金額必填";return;}
- call("POST","rpc/iaa_dues_add",{p:pw,n:n,m:$("am").value,amt:parseInt($("aa").value,10),l5:$("al").value,d:$("ad").value||null,nt:$("ao").value},function(ok,j){
+ call("POST","rpc/iaa_dues_add2",{p:pw,n:n,ft:$("af").value,m:$("am").value,amt:parseInt($("aa").value,10),l5:$("al").value,d:$("ad").value||null,nt:$("ao").value},function(ok,j){
   if(ok){$("m1").textContent="已登記："+n;$("an").value="";$("aa").value="";$("al").value="";$("ao").value="";load(function(){});}
   else{$("m1").className="msg err";$("m1").textContent=(j&&j.message)?j.message:"登記失敗（匯款後5碼需為5位數字）";}});};
 $("csv").onclick=function(){var h=["姓名","社別","繳費項目","方式","金額","後5碼","日期","備註","狀態","審核備註","回報時間"];
