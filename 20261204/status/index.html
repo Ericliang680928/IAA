@@ -336,12 +336,7 @@ function loadMembers(cb){
   x.onerror=function(){fallback(cb);};
   x.send();
 }
-function fallback(cb){
-  gviz(TAB_ROSTER,function(ok,res){
-    if(ok){var l=parseRoster(res);if(l&&l.length){roster=l;byName={};l.forEach(function(r){byName[r.name]=r;});loadedRoster=true;cb(true);return;}}
-    cb(false);
-  });
-}
+function fallback(cb){cb(false);}
 function sync(){
   loadPaid();
   var okR=true,okP=true,pending=2;
