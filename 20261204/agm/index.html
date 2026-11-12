@@ -83,6 +83,9 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:260px minmax(0,1.2fr
 .sl.edit .e[data-g]:hover{outline:4px dashed rgba(179,28,131,.55)}
 .sl.edit .e.sel{outline:5px solid #B31C83}
 .sl .hd{position:absolute;width:30px;height:30px;margin:-15px 0 0 -15px;background:#B31C83;border:4px solid #fff;border-radius:50%;cursor:nwse-resize;touch-action:none;box-shadow:0 0 0 2px #B31C83}
+[data-ed]{border-radius:4px}
+[data-ed]:hover{background:rgba(179,28,131,.09);cursor:text}
+textarea.sed{width:100%;border:2px solid var(--mag);border-radius:6px;padding:6px 8px;font:inherit;background:#fff;color:#222;resize:none;overflow:hidden;line-height:1.5}
 .form{padding:4px 12px 20px;display:grid;gap:14px}
 fieldset{border:1px solid var(--line);border-radius:8px;margin:0;padding:10px 12px 12px;display:grid;gap:10px;min-width:0}
 legend{padding:0 6px;font-weight:700;color:var(--mag);font-size:13px}
@@ -378,6 +381,7 @@ function renderOutline(){
   $('#outline').innerHTML = h;
 }
 function renderScript(){
+  if (document.activeElement && document.activeElement.dataset && document.activeElement.dataset.sed) return;
   const {map} = numbering();
   let h = '';
   S.segments.forEach((g, gi) => {
@@ -385,12 +389,12 @@ function renderScript(){
     g.scenes.forEach((c, ci) => {
       const on = (sel.g === gi && sel.i === ci) ? ' on' : '';
       const n = map[c.id];
-      h += '<div class="sc' + on + '" data-g="' + gi + '" data-i="' + ci + '" id="sc-' + c.id + '"><div class="c"><h4>◎ ' + resolve(c.title, c, true) + (n ? '<span class="p">PPT ' + n + '</span>' : '<span class="p">（無簡報）</span>') + '</h4>';
-      if (c.cue) h += '<div class="cue">' + resolve(c.cue, c, true) + '</div>';
-      if (c.say) h += '<div class="say"><b>司儀：</b>' + resolve(c.say, c, true) + '</div>';
-      else h += '<div class="mini">（尚無口白）</div>';
-      if (c.after) h += '<div class="aft">' + resolve(c.after, c, true) + '</div>';
-      h += '</div><div class="n">' + (c.min ? '<div class="mini">預估 ' + c.min + ' 分</div>' : '') + resolve(c.note, c, true) + '</div></div>';
+      h += '<div class="sc' + on + '" data-g="' + gi + '" data-i="' + ci + '" id="sc-' + c.id + '"><div class="c"><h4>◎ <span data-ed="title" title="連點兩下直接修改">' + resolve(c.title, c, true) + '</span>' + (n ? '<span class="p">PPT ' + n + '</span>' : '<span class="p">（無簡報）</span>') + ((c.lines && c.lines.length) ? '<button class="tb" data-sedl="1" style="margin-left:6px;padding:0 6px;min-height:22px;font-size:12px">名單</button>' : '') + '</h4>';
+      if (c.cue) h += '<div class="cue"><span data-ed="cue" title="連點兩下直接修改">' + resolve(c.cue, c, true) + '</span></div>';
+      if (c.say) h += '<div class="say"><b>司儀：</b><span data-ed="say" title="連點兩下直接修改">' + resolve(c.say, c, true) + '</span></div>';
+      else h += '<div class="mini"><span data-ed="say" title="連點兩下直接輸入口白">（尚無口白，連點兩下輸入）</span></div>';
+      if (c.after) h += '<div class="aft"><span data-ed="after" title="連點兩下直接修改">' + resolve(c.after, c, true) + '</span></div>';
+      h += '</div><div class="n">' + (c.min ? '<div class="mini">預估 ' + c.min + ' 分</div>' : '') + '<div data-ed="note" title="連點兩下直接修改" style="min-height:1.4em">' + resolve(c.note, c, true) + '</div></div></div>';
     });
     h += '</div>';
   });
@@ -573,8 +577,10 @@ function select(g, i, scroll){
 }
 document.addEventListener('click', e => {
   const t = e.target;
+  if (t.dataset && t.dataset.sed) return;
+  const sb = t.closest('[data-sedl]'); if (sb){ const sc0 = sb.closest('.sc'); select(+sc0.dataset.g, +sc0.dataset.i, false); openTextEdit('body'); return; }
   const ol = t.closest('#outline [data-g]'); if (ol){ select(+ol.dataset.g, +ol.dataset.i); if (matchMedia('(max-width:1000px)').matches) setPane('editor'); return; }
-  const sc = t.closest('#script .sc'); if (sc){ select(+sc.dataset.g, +sc.dataset.i, false); if (matchMedia('(max-width:1000px)').matches) setPane('editor'); return; }
+  const sc = t.closest('#script .sc'); if (sc){ if (sel.g === +sc.dataset.g && sel.i === +sc.dataset.i) return; select(+sc.dataset.g, +sc.dataset.i, false); if (matchMedia('(max-width:1000px)').matches) setPane('editor'); return; }
   const b = t.closest('[data-act]'); if (b) act(b.dataset.act);
 });
 function act(a){
@@ -770,6 +776,23 @@ function ensureLib(name, urls){
 }
 const LIB_PPTX = ['https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js', 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js', 'https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'];
 const LIB_DOCX = ['https://cdn.jsdelivr.net/npm/docx@7.8.2/build/index.js', 'https://unpkg.com/docx@7.8.2/build/index.js'];
+/* ---------- 司儀稿欄位直接改（連點兩下）→ 寫回同一份資料，簡報備註／畫面同步 ---------- */
+document.addEventListener('dblclick', e => {
+  const el = e.target.closest && e.target.closest('#script [data-ed]'); if (!el) return;
+  const sc = el.closest('.sc'); if (!sc) return;
+  const f = el.dataset.ed;
+  select(+sc.dataset.g, +sc.dataset.i, false);
+  const {c} = cur(); if (!c) return;
+  const el2 = document.querySelector('#sc-' + c.id + ' [data-ed="' + f + '"]'); if (!el2) return;
+  const ta = document.createElement('textarea'); ta.className = 'sed'; ta.dataset.sed = f; ta.value = c[f] || '';
+  el2.replaceWith(ta);
+  const fit = () => { ta.style.height = 'auto'; ta.style.height = Math.max(40, ta.scrollHeight + 2) + 'px'; };
+  ta.addEventListener('input', () => { c[f] = ta.value; fit(); changed(false); });
+  ta.addEventListener('blur', () => { setTimeout(() => { renderAll(true); }, 0); });
+  ta.addEventListener('keydown', ev => { if (ev.key === 'Escape') ta.blur(); });
+  ta.addEventListener('click', ev => ev.stopPropagation());
+  fit(); ta.focus();
+});
 /* ---------- panes (phone) ---------- */
 function setPane(p){
   document.body.dataset.pane = p;
