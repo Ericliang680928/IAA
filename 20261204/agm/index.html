@@ -355,6 +355,17 @@ function applyOv(c, els){
     if (o.align) e.align = o.align;
   });
 }
+function cw(l){ let w = 0; for (const ch of String(l)) w += /[\x00-\x7f]/.test(ch) ? (ch === ' ' ? 0.3 : 0.58) : 1; return w; }
+function fit1(text, w, sizes){ const t = cw(text); for (const sz of sizes) if (t * sz / 72 * 1.08 <= w) return sz; return 0; }
+function fit2(text, w, h, sizes, lh){ const t = cw(text) * 1.08; for (const sz of sizes){ const n = Math.ceil(t * sz / 72 / w); if (n * sz * lh / 72 <= h) return sz; } return sizes[sizes.length - 1]; }
+function bestGrid(lines, W, H){
+  const n = lines.length, mx = Math.max.apply(null, lines.map(cw));
+  for (const sz of [54, 50, 46, 44, 40, 38, 36, 34, 32, 30, 28, 26, 24, 22, 20]) for (let cols = 1; cols <= 4; cols++){
+    const rowH = sz / 72 * 1.5, rows = Math.ceil(n / cols);
+    if (mx * sz / 72 * 0.97 <= W / cols - 0.2 && rows * rowH <= H) return {sz, cols, rowH};
+  }
+  return {sz: 20, cols: 3, rowH: 0.5};
+}
 function build(c, no){
   const R = t => resolve(t, c, false);
   const els = [];
@@ -362,7 +373,7 @@ function build(c, no){
   const P = (g, x, y, w, h, paras, o) => els.push(Object.assign({t:'text', g, x, y, w, h, paras, size:0, color:DK, bold:false, align:'left', valign:'top'}, o || {}));
   const B = (g, x, y, w, h, fill, o) => els.push(Object.assign({t:'rect', g, x, y, w, h, fill}, o || {}));
   const I = (g, x, y, w, h, p, shp) => els.push({t:'img', g, x, y, w, h, src: p.src, name: p.name, shape: shp || (!p.src || /^data:image\/jpeg/.test(p.src) ? 'round' : 'none')});
-  const lines = (c.lines || []).map(R).filter(s => s.trim());
+  let lines = (c.lines || []).map(R).filter(s => s.trim());
   const title = R(c.title), sub = R(c.sub), kick = R(c.kicker);
   const kind = (c.layout === 'hero' && c.logo) ? 'cover' : c.layout;
   const out = {bg:'inner', els, num:{x:11.2, y:6.95, w:1.0, h:0.4, color:'555555'}};
@@ -376,10 +387,10 @@ function build(c, no){
     const l1 = kick || 'IMC聯合會－創新加速聯盟會', main = sub || R('{{大會名稱}}'), dt = lines[0] || R('日期：{{日期}}');
     T('kicker', 0.88, 0.85, 11.58, 0.9, l1, 40, DK, {align:'center', valign:'middle'});
     T('main', 0.88, 1.8, 11.58, 1.5, main, fit(main, 11.58, 1.5, [44, 40, 36, 32], 1.2), TT, {bold:true, align:'center', valign:'middle'});
-    T('date', 0.88, 3.35, 11.58, 0.6, dt, 24, DK, {align:'center', valign:'middle'});
+    T('date', 0.88, 3.35, 11.58, 0.7, dt, 30, DK, {align:'center', valign:'middle'});
   } else if (kind === 'break'){
     T('title', 0.9, 1.9, 11.0, 1.7, title, fit(title, 11.0, 1.7, [66, 56, 46], 1.2), TT, {bold:true, align:'center', valign:'middle'});
-    if (sub) T('sub', 0.9, 3.8, 11.0, 0.9, sub, 30, DK, {align:'center'});
+    if (sub) T('sub', 0.9, 3.8, 11.0, 0.9, sub, 36, DK, {align:'center'});
   } else if (kind === 'poster'){
     out.bg = 'inner'; out.num.color = 'FFFFFF';
     const bal = t => { if (/\n/.test(t) || t.length < 11 || t.indexOf(' ') < 0) return t; let best = -1, bd = 1e9; for (let i = 0; i < t.length; i++) if (t[i] === ' ' && Math.abs(i - t.length / 2) < bd){ bd = Math.abs(i - t.length / 2); best = i; } return best < 0 ? t : t.slice(0, best) + '\n' + t.slice(best + 1); };
@@ -391,17 +402,17 @@ function build(c, no){
     const hasPic = pn[0] && pn[0].src, cut = hasPic && !/^data:image\/jpeg/.test(pn[0].src);
     if (pn[0]){ if (!hasPic || !cut) I('photo', 8.15, 1.55, 4.6, 4.6, pn[0], 'circle'); else I('photo', 7.65, 0.8, 5.53, 5.6, pn[0], 'none'); }
     B('band', 0, 6.4, 13.334, 1.1, 'B31C83');
-    const kk = kick || title, kw = Math.min(4.2, 0.6 + kk.length * 0.34);
-    B('kicker', 0.7, 0.75, kw, 0.52, 'BCCA29');
-    T('kicker', 0.7, 0.75, kw, 0.52, kk, 20, '122647', {bold:true, align:'center', valign:'middle'});
+    const kk = kick || title, kw = Math.min(4.8, 0.7 + kk.length * 0.4);
+    B('kicker', 0.7, 0.72, kw, 0.6, 'BCCA29');
+    T('kicker', 0.7, 0.72, kw, 0.6, kk, 24, '122647', {bold:true, align:'center', valign:'middle'});
     T('main', 0.7, 1.4, 7.0, 1.5, nm, fit(nm, 7.0, 1.5, [88, 80, 72, 64, 56], 1.1), 'FFFFFF', {bold:true, valign:'middle'});
-    if (sub) T('sub', 0.7, 2.95, 7.0, 1.0, sub, fit(sub, 7.0, 1.0, [26, 24, 22, 20], 1.25), 'DCE4F2', {valign:'top'});
+    if (sub) T('sub', 0.7, 2.95, 7.0, 1.1, sub, fit1(sub, 6.9, [32, 30, 28, 26, 24, 22]) || 22, 'DCE4F2', {valign:'top'});
     if (L1){
       B('card', 0.7, 4.15, 7.0, 2.05, 'FFFFFF'); B('card', 0.7, 4.15, 0.14, 2.05, 'D45824');
-      T('label', 1.15, 4.27, 3.0, 0.4, '演講主題', 16, 'D45824', {bold:true});
+      T('label', 1.15, 4.25, 3.0, 0.42, '演講主題', 20, 'D45824', {bold:true});
       T('body', 1.15, 4.7, 6.3, 1.4, L1, fit(L1, 6.3, 1.4, [40, 36, 32, 28, 24, 20], 1.25), '122647', {bold:true, valign:'middle'});
     }
-    T('foot', 0.7, 6.62, 11.0, 0.66, R('{{日期}}　{{場地}}'), 22, 'FFFFFF', {valign:'middle'});
+    T('foot', 0.7, 6.62, 11.0, 0.66, R('{{日期}}　{{場地}}'), 26, 'FFFFFF', {valign:'middle'});
   } else if (kind === 'hero'){
     if (lines.length){
       const pn = picOf(c), tx = pn.length === 2 ? 5.75 : pn.length === 1 ? 5.4 : 0.9, tw = pn.length ? 12.0 - tx : 11.0;
@@ -415,42 +426,45 @@ function build(c, no){
       if (pn.length === 1 && lines.length === 1){
         const toks = lines[0].split(/\s+/), nms = toks.filter(t => !ROLE_RE.test(t) && t.length <= 4 && !/^[A-Za-z0-9]/.test(t)), rls = toks.filter(t => nms.indexOf(t) < 0);
         const nm1 = nms.length ? nms.join(' ') : lines[0], role1 = sub || rls.join(' '), longer = role1.length > nm1.length ? role1 : nm1;
-        const sz1 = fit(longer, tw - 0.2, 1.3, [72, 66, 60, 54, 48, 44, 40], 1.2);
-        P('body', tx, 2.2, tw, 3.4, [role1 ? [{text: role1, color: DK, bold: true, size: sz1}] : [], [{text: nm1, color: BLUE, bold: true, size: sz1}]].filter(a => a.length), {align:'center', valign:'middle'});
+        const szN = fit(nm1, tw - 0.2, 1.3, [88, 80, 72, 66, 60], 1.2), szR = Math.min(szN, fit(role1 || nm1, tw - 0.2, 1.3, [72, 66, 60, 54, 48, 44, 40], 1.2));
+        P('body', tx, 2.2, tw, 3.4, [role1 ? [{text: role1, color: DK, bold: true, size: szR}] : [], [{text: nm1, color: BLUE, bold: true, size: szN}]].filter(a => a.length), {align:'center', valign:'middle'});
       } else {
-        if (sub) T('sub', tx, pn.length ? 1.95 : 1.9, tw, 0.7, sub, fit(sub, tw, 0.7, [30, 26, 22], 1.2), DK, {align:'center', valign:'middle'});
-        const txt = lines.join('\n'), sz = fit(txt, tw - 0.2, pn.length ? 3.0 : 2.5, [60, 54, 46, 40, 34, 28], 1.35);
-        P('body', tx, pn.length ? 2.7 : 2.7, tw, pn.length ? 3.0 : 2.6, lines.map(l => nameRuns(l, sz)), {align:'center', valign:'middle'});
+        if (sub) T('sub', tx, pn.length ? 1.95 : 1.9, tw, 0.7, sub, fit(sub, tw, 0.7, [38, 34, 30, 26], 1.2), DK, {align:'center', valign:'middle'});
+        const txt = lines.join('\n'), sz = fit(txt, tw - 0.2, pn.length ? 3.0 : 3.0, [66, 60, 54, 46, 40, 34, 28], 1.35);
+        P('body', tx, pn.length ? 2.7 : 2.6, tw, 3.0, lines.map(l => nameRuns(l, sz)), {align:'center', valign:'middle'});
       }
     } else {
       if (kick) pageTitle(kick);
       T('main', 0.9, 2.0, 11.0, 1.8, title, fit(title, 11.0, 1.8, [60, 54, 46, 40], 1.2), TT, {bold:true, align:'center', valign:'middle'});
-      if (sub) T('sub', 0.9, 3.9, 11.0, 0.9, sub, fit(sub, 11.0, 0.9, [30, 26, 22], 1.2), DK, {align:'center'});
+      if (sub) T('sub', 0.9, 3.9, 11.0, 0.9, sub, fit(sub, 11.0, 0.9, [36, 32, 28], 1.2), DK, {align:'center'});
     }
   } else if (kind === 'list'){
     pageTitle(title);
-    if (sub) T('sub', 0.9, 1.65, 11.0, 0.5, sub, 24, DK);
+    if (sub) T('sub', 0.9, 1.65, 11.0, 0.55, sub, 28, DK);
     const lt = lines.map(s => '•  ' + s).join('\n');
     T('body', 0.9, 2.3, 11.0, 3.1, lt, fit(lt, 11.0, 3.1, [32, 28, 24, 20], 1.5), DK);
   } else { /* names / award */
     pageTitle(title);
-    if (sub) T('sub', 0.9, 1.65, 11.0, 0.5, sub, 24, DK);
-    let y0 = sub ? 2.3 : 1.9;
-    const gv = kind === 'award' ? R(c.giver) : '', rv = kind === 'award' ? R(c.receiver) : '';
+    if (sub) T('sub', 0.9, 1.65, 11.0, 0.55, sub, 30, DK);
+    let y0 = sub ? 2.35 : 1.95;
+    const END = 5.9, gv = kind === 'award' ? R(c.giver) : '', rv = kind === 'award' ? R(c.receiver) : '';
     if (gv || rv){
-      const all = gv + ' 頒予 ' + rv, sz = fit(all, 11.0, 1.0, [38, 34, 30, 26], 1.25);
+      const all = gv + ' 頒予 ' + rv;
+      const all1 = gv + '  頒予  ' + rv;
+      let ah = lines.length ? 1.0 : 3.0, sz = fit1(all1, 10.9, lines.length ? [44, 40, 36, 32, 30] : [60, 54, 50, 46, 42, 38, 34, 30]);
+      if (!sz){ ah = lines.length ? 1.9 : 3.0; sz = fit2(all1, 10.6, ah, [38, 36, 34, 32, 30, 28, 26, 24], 1.3); }
       const para = [].concat(gv ? nameRuns(gv, sz) : [], gv && rv ? [{text:'  頒予  ', color:DK, size:Math.round(sz * 0.85)}] : [], rv ? nameRuns(rv, sz) : []);
-      P('award', 0.9, y0, 11.1, lines.length ? 1.0 : 3.0, [para], {valign: lines.length ? 'top' : 'middle', align: lines.length ? 'left' : 'center'});
-      y0 += 1.1;
+      P('award', 0.9, y0, 11.1, ah, [para], {valign: lines.length ? 'top' : 'middle', align: lines.length ? 'left' : 'center'});
+      y0 += ah + 0.1;
     }
+    if (lines.length === 1 && lines[0].indexOf('、') >= 0 && lines[0].length > 24) lines = lines[0].split('、').map(x => x.trim()).filter(Boolean);
     const n = lines.length;
-    if (n > 9){
-      const txt = lines.map(l => l.replace(/\s+/g, '')).join('、'), h = 5.4 - y0;
-      T('body', 0.9, y0, 11.0, h, txt, fit(txt, 11.0, h, [34, 30, 28, 26, 24, 22, 20], 1.4), BLUE, {bold:true});
+    if (n > 9 && !(n <= 12 && Math.max.apply(null, lines.map(cw)) <= 10)){
+      const txt = lines.map(l => l.replace(/\s+/g, '')).join('、'), h = END - y0 - 0.25;
+      T('body', 0.9, y0, 11.0, h, txt, fit(txt, 10.6, h, [40, 36, 34, 32, 30, 28, 26, 24, 22, 20], 1.4), BLUE, {bold:true});
     } else if (n){
-      const cols = n <= 5 ? 2 : 3, sz = n <= 5 ? 34 : 26, rowH = n <= 5 ? 0.85 : 0.7;
-      const colW = 11.0 / cols;
-      lines.forEach((l, k) => P('body', 0.9 + (k % cols) * colW, y0 + Math.floor(k / cols) * rowH, colW - 0.1, rowH, [nameRuns(l, sz)], {valign:'middle'}));
+      const g = bestGrid(lines, 11.0, END - y0), colW = 11.0 / g.cols, gy = y0 + Math.max(0, (END - y0 - Math.ceil(n / g.cols) * g.rowH) / 2 - 0.1);
+      lines.forEach((l, k) => P('body', 0.9 + (k % g.cols) * colW, gy + Math.floor(k / g.cols) * g.rowH, colW - 0.1, g.rowH, [nameRuns(l, g.sz)], {valign:'middle', align: g.cols === 1 ? 'center' : 'left'}));
     }
   }
   applyOv(c, els);
