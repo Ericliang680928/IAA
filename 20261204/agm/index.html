@@ -648,7 +648,7 @@ function renderLayoutPanel(){
   const sel = (id, cur, arr) => '<select id="' + id + '"' + dis + '>' + arr.map(a => '<option value="' + a[0] + '"' + (String(cur) === a[0] ? ' selected' : '') + '>' + a[1] + '</option>').join('') + '</select>';
   const num = (id, label, v, d) => '<div class="f"><label for="' + id + '">' + label + '</label><input type="number" id="' + id + '" step="0.05" value="' + (v || 0) + '"' + (d || dis) + '></div>';
   box.innerHTML = '<fieldset><legend>排版（只改這一頁）</legend>' +
-    '<div class="hint">在上方預覽<b>點一下文字框</b>選取，<b>按住拖曳</b>移動；選取後右下角圓點可拖曳改大小；方向鍵微調（Shift＝大步）。改完 PPT 匯出也會一樣。</div>' +
+    '<div class="hint">在上方預覽<b>點一下文字框</b>選取，<b>按住拖曳</b>移動，<b>連點兩下</b>直接改字；選取後右下角圓點可拖曳改大小；方向鍵微調（Shift＝大步）。改完 PPT 匯出也會一樣。</div>' +
     '<div class="two"><div class="f"><label for="lyG">選取的元素</label><select id="lyG">' + opts + '</select></div>' +
     '<div class="f"><label for="lySize">字級（pt）</label><input type="number" id="lySize" min="6" max="200" step="1" value="' + (ef ? ef.size : '') + '"' + dis + '></div></div>' +
     '<div class="two"><div class="f"><label for="lyBold">粗細</label>' + sel('lyBold', o.bold == null ? '' : (o.bold ? '1' : '0'), [['', '自動'], ['1', '粗體'], ['0', '一般']]) + '</div>' +
@@ -725,6 +725,40 @@ document.addEventListener('keydown', e => {
   setOv('dx', rnd2((o.dx || 0) + d[0] * st)); setOv('dy', rnd2(((c.ov && c.ov[selG] || {}).dy || 0) + d[1] * st));
   changed(false); syncPanelNums();
 });
+
+/* ---------- 雙擊預覽上的文字 → 直接改字（寫回同一份資料，司儀稿同步） ---------- */
+function textFieldsOf(c, g){
+  const cover = c.layout === 'hero' && c.logo, hasLines = (c.lines || []).some(s => String(s).trim());
+  if (g === 'title') return [(c.layout === 'hero' && (c.kicker && (hasLines || true))) ? ['kicker', '小標籤'] : ['title', '大標題']];
+  if (g === 'main') return [cover || c.layout === 'hero' && c.logo ? ['sub', '主標題'] : (c.layout === 'hero' ? ['title', '大標題'] : ['sub', '主標題'])];
+  if (g === 'kicker') return [['kicker', '第一行']];
+  if (g === 'date') return [['line0', '日期（名單第一行）']];
+  if (g === 'sub') return [['sub', '副標題']];
+  if (g === 'award') return [['giver', '頒獎人'], ['receiver', '受獎人']];
+  if (g === 'body') return [['lines', '內容／名單（一行一項）']];
+  return [];
+}
+function fieldVal(c, k){ return k === 'lines' ? (c.lines || []).join('\n') : k === 'line0' ? ((c.lines || [])[0] || '') : (c[k] || ''); }
+function openTextEdit(g){
+  const {c} = cur(); if (!c) return;
+  const fs = textFieldsOf(c, g); if (!fs.length) return;
+  dlg('修改文字：' + (OVG[g] || ''), '<div class="form" style="padding:0;gap:10px">' + fs.map(f => '<div class="f"><label for="te_' + f[0] + '">' + f[1] + '</label>' +
+    (f[0] === 'lines' ? '<textarea id="te_lines" data-te="lines" rows="8">' : '<textarea id="te_' + f[0] + '" data-te="' + f[0] + '" rows="2">') + esc(fieldVal(c, f[0])) + '</textarea></div>').join('') +
+    '<div class="hint">改的是這一頁的資料，司儀稿與簡報備註會一起更新。可用 {{名稱}} 帶入共用變數。</div></div>');
+  const first = document.querySelector('[data-te]'); if (first) first.focus();
+}
+document.addEventListener('dblclick', e => {
+  const el = e.target.closest && e.target.closest('#prevBox .e[data-g]'); if (el){ e.preventDefault(); openTextEdit(el.dataset.g); }
+});
+document.addEventListener('input', e => {
+  const t = e.target, k = t.dataset && t.dataset.te; if (!k) return;
+  const {c} = cur(); if (!c) return;
+  if (k === 'lines') c.lines = t.value.split('\n').map(s => s.trim()).filter(Boolean);
+  else if (k === 'line0'){ const L = (c.lines || []).slice(); if (t.value.trim()) L[0] = t.value; else L.shift(); c.lines = L; }
+  else c[k] = t.value;
+  changed(false);
+});
+document.addEventListener('change', e => { if (e.target.dataset && e.target.dataset.te) renderEditor(); });
 
 /* ---------- panes (phone) ---------- */
 function setPane(p){
