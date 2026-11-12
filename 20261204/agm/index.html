@@ -760,6 +760,16 @@ document.addEventListener('input', e => {
 });
 document.addEventListener('change', e => { if (e.target.dataset && e.target.dataset.te) renderEditor(); });
 
+function ensureLib(name, urls){
+  if (typeof window[name] !== 'undefined') return Promise.resolve(true);
+  return urls.reduce((p, u) => p.then(ok => ok || new Promise(res => {
+    const s = document.createElement('script'); s.src = u;
+    s.onload = () => res(typeof window[name] !== 'undefined'); s.onerror = () => { s.remove(); res(false); };
+    document.head.appendChild(s);
+  })), Promise.resolve(false));
+}
+const LIB_PPTX = ['https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js', 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js', 'https://unpkg.com/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'];
+const LIB_DOCX = ['https://cdn.jsdelivr.net/npm/docx@7.8.2/build/index.js', 'https://unpkg.com/docx@7.8.2/build/index.js'];
 /* ---------- panes (phone) ---------- */
 function setPane(p){
   document.body.dataset.pane = p;
@@ -826,7 +836,7 @@ async function offer(name, data){
 }
 const dayTag = () => { const m = /(\d{4})年(\d{1,2})月(\d{1,2})日/.exec(S.vars['日期'] || ''); return m ? m[1] + ('0' + m[2]).slice(-2) + ('0' + m[3]).slice(-2) : 'draft'; };
 $('#bPptx').onclick = async () => {
-  if (typeof PptxGenJS === 'undefined'){ toast('簡報匯出元件沒有載入，請重新整理'); return; }
+  status('載入匯出元件…'); if (!await ensureLib('PptxGenJS', LIB_PPTX)){ status('匯出元件載入失敗'); toast('簡報匯出元件載入失敗，請檢查網路後再按一次'); return; }
   status('產生簡報…');
   try {
     const p = new PptxGenJS(); p.layout = 'LAYOUT_WIDE'; p.title = resolve('{{簡稱}}', null, false);
@@ -857,7 +867,7 @@ $('#bPptx').onclick = async () => {
   } catch (e) { status('簡報匯出失敗'); toast('簡報匯出失敗：' + (e && e.message || e)); }
 };
 $('#bDocx').onclick = async () => {
-  if (typeof docx === 'undefined'){ toast('司儀稿匯出元件沒有載入，請重新整理'); return; }
+  status('載入匯出元件…'); if (!await ensureLib('docx', LIB_DOCX)){ status('匯出元件載入失敗'); toast('司儀稿匯出元件載入失敗，請檢查網路後再按一次'); return; }
   status('產生司儀稿…');
   try {
     const D = docx, F = 'Microsoft JhengHei', {map} = numbering(), R = (t, c) => resolve(t, c, false);
