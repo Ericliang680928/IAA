@@ -720,6 +720,11 @@
       S.confirmImport = true; S.importMsg = '重新匯入會清除目前所有輪次與選擇。確定的話，請再按一次「確認重新匯入」。'; S.importErr = true; render(); return;
     }
     if (S.busy) return;
+    // 重新匯入時，同名會友沿用原本的編號，已報到的紀錄才不會對到別人
+    var oldIds = {}, maxN = 0;
+    members().forEach(function (m) { oldIds[m.name] = m.id; var n = parseInt(String(m.id).slice(1), 10); if (n > maxN) maxN = n; });
+    S.checkins.forEach(function (c) { var n = parseInt(String(c.memberId || '').slice(1), 10); if (n > maxN) maxN = n; });
+    res.members.forEach(function (m) { m.id = oldIds[m.name] || ('m' + (++maxN)); });
     S.busy = true; render();
     try {
       await S.db.doc('roster/main').set({ members: res.members, ts: Date.now() });
@@ -773,7 +778,7 @@
   }
   async function doExport() {
     if (!S.dl) return;
-    var q = function (s) { return '"' + String(s || '').replace(/"/g, '""') + '"'; };
+    var q = function (s) { s = String(s || ''); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };
     var nm = function (id) { var m = byId(id); return m ? m.name : ''; };
     var rows = ['姓名,社別,公司,產業,報到,新創階段,產品,服務,專長,資源,第1輪,第2輪'];
     members().forEach(function (m) {
