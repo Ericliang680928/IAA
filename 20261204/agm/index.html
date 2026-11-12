@@ -227,6 +227,18 @@ function nameRuns(line, size){
   if (toks.length === 1) return [{text: toks[0], color: BLUE, bold: true, size}];
   const hasTitle = toks.some(t => TITLE_RE.test(t));
   if (!names.length || !hasTitle && roles.length) return [{text: toks.join(' '), color: DK, bold: true, size}];
+  if (names.length > 1 || /、/.test(line)){
+    /* 一行多人（含「台中社 賴賀結 社長、南投社 黃昱盛 社長」）：保留原順序，人名藍色粗體、其餘深灰 */
+    const tk = String(line).replace(/：/g, '： ').replace(/、/g, ' 、 ').split(/\s+/).filter(Boolean), runs = [];
+    tk.forEach((t, i) => {
+      const nm = t !== '、' && isName(t), sep = i === 0 || t === '、' || tk[i - 1] === '、' ? '' : ' ';
+      const last = runs[runs.length - 1];
+      if (last && last.nm === nm) last.text += sep + t;
+      else runs.push({text: (runs.length ? sep || '' : '') + t, nm, color: nm ? BLUE : DK, bold: nm, size: nm ? size : Math.round(size * 0.9)});
+    });
+    runs.forEach((r, i) => { if (i && r.text[0] !== '、') r.text = ' ' + r.text.replace(/^ /, ''); delete r.nm; });
+    return runs;
+  }
   const out = [{text: names.join('  '), color: BLUE, bold: true, size}];
   if (roles.length) out.push({text: '  ' + roles.join(' '), color: DK, bold: false, size: Math.round(size * 0.9)});
   return out;
