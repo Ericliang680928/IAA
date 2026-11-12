@@ -147,7 +147,12 @@
      "note": "貴賓只唸名單；請逐一確認到場貴賓並以目光確認位置",
      "min": 3,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 35
+      }
+     }
     },
     {
      "id": "s7",
@@ -172,7 +177,12 @@
      "note": "",
      "min": null,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 41
+      }
+     }
     },
     {
      "id": "s8",
@@ -196,7 +206,12 @@
      "note": "",
      "min": null,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 41
+      }
+     }
     },
     {
      "id": "s9",
@@ -316,7 +331,7 @@
      "giver": "",
      "receiver": "",
      "lines": [
-      "監交：{{理事長}} 理事長"
+      "{{理事長}} 理事長 監交"
      ],
      "cue": "",
      "say": "會長交接～請2026年{{卸任會長}}會長上台交接，請{{理事長}}理事長監交，也請第三屆執行長{{卸任執行長}}、第四屆執行長{{新任執行長}}上台協助交接。",
@@ -448,7 +463,12 @@
      "note": "",
      "min": 6,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 30
+      }
+     }
     },
     {
      "id": "s23",
@@ -480,7 +500,15 @@
      "note": "",
      "min": 5,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 30,
+       "dh": 0.85,
+       "dw": -0.2,
+       "dy": -0.3
+      }
+     }
     }
    ]
   },
@@ -571,7 +599,13 @@
      "note": "2027 長發會委員僅新增：苗栗社江德利、台北社黃金龍（創新主委）、彰化社陳州德（創新主委）、2027理事長張永賢；不含李茂全。名單待確認",
      "min": 3,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 30,
+       "dh": 0.85
+      }
+     }
     },
     {
      "id": "s28",
@@ -597,7 +631,12 @@
      "note": "",
      "min": 2,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 30
+      }
+     }
     },
     {
      "id": "s29",
@@ -610,7 +649,7 @@
      "lines": [
       "宜蘭社 黃雅堂",
       "台北社 黃金龍",
-      "桃園社 楊琛",
+      "桃園社 楊    琛",
       "新竹社 黃唯洲",
       "苗栗社 江淑萍",
       "台中社 呂金豐",
@@ -629,7 +668,14 @@
      "note": "",
      "min": 2,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 30,
+       "dh": 0.15,
+       "dw": 0.6
+      }
+     }
     },
     {
      "id": "s30",
@@ -656,7 +702,12 @@
      "note": "",
      "min": 2,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 30
+      }
+     }
     }
    ]
   },
@@ -869,7 +920,14 @@
      "note": "布條準備；協助拍攝",
      "min": null,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "size": 45,
+       "dy": 0.15,
+       "dx": 0.1
+      }
+     }
     },
     {
      "id": "s45",
@@ -935,7 +993,13 @@
      "note": "不參加晚宴者繳回識別證",
      "min": null,
      "slide": true,
-     "logo": false
+     "logo": false,
+     "ov": {
+      "body": {
+       "dw": -1.5,
+       "dx": 1.15
+      }
+     }
     }
    ]
   }
