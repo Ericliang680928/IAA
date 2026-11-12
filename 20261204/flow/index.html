@@ -38,11 +38,19 @@ li b{font-weight:700}
 .note ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.75}
 .note.hr{border-top:4px solid var(--c2)}.note.fin{border-top:4px solid var(--c3)}
 .sub a{color:var(--c2);font-weight:700}.note p{margin:0;font-size:14px;line-height:1.8;color:var(--mute)}
+.mob{display:none;list-style:none;margin:0;padding:0;flex-direction:column;gap:10px}
+.st{border-radius:10px;padding:12px 14px;border-left:6px solid var(--line);background:var(--card);position:relative}
+.st .tg{font-size:12.5px;font-weight:700;margin-bottom:2px}.st b{font-size:16px}.st p{margin:4px 0 0;font-size:14px;line-height:1.7}
+.st.l0{border-color:var(--c0);background:var(--f0)}.st.l0 .tg{color:var(--c0)}.st.l1{border-color:var(--c1);background:var(--f1)}.st.l1 .tg{color:var(--c1)}.st.l2{border-color:var(--c2);background:var(--f2)}.st.l2 .tg{color:var(--c2)}.st.l3{border-color:var(--c3);background:var(--f3)}.st.l3 .tg{color:var(--c3)}.st.l4{border-color:var(--c4);background:var(--f4)}.st.l4 .tg{color:var(--c4)}
+.st+.st::before{content:"↓";position:absolute;left:12px;top:-14px;font-size:14px;color:var(--mute)}
+.ok{color:var(--c1);font-weight:700}.bk{color:var(--c3);font-weight:700}.no{color:#C0392B;font-weight:700}
+@media (max-width:720px){.scroll{display:none}.txt{display:none}.mob{display:flex}h1{font-size:22px}.note{padding:14px}}
 </style>
 </head><body>
 <div class="wrap">
 <header><h1>新會員加入作業流程</h1>
 <p class="sub">從邀約到成為正式會友，共五個角色接力。先審資格再收費，通過後名冊、邀約名單、通訊錄與會務群島都由系統自動更新。</p></header>
+<ol class="mob" aria-label="新會員加入步驟（手機版）"><li class="st l1"><div class="tg">1　社召集人／邀約人</div><b>邀約跟進</b><p>人資後台邀約名單，進度：待邀請→邀請中→已同意</p></li><li class="st l2"><div class="tg">2　人資組</div><b>核對參加資格</b><p>創新獎對照得獎名單；發起人、歷屆主委對照名冊</p><p>不符資格：結案，不收費</p></li><li class="st l2"><div class="tg">3　人資組</div><b>產生入會連結</b><p>勾選「資格已核對」</p><p>系統給專屬連結與 LINE 訊息，人資轉傳給新會友</p></li><li class="st l0"><div class="tg">4　新會友</div><b>① 繳費</b><p>入會費 1,000、常年會費 6,000（原退會者只繳常年會費）</p><p>到 dues/ 回報現金或匯款後 5 碼</p></li><li class="st l3"><div class="tg">5　財務長</div><b>確認繳費</b><p>核對實收，按「確認」</p><p>自動入收支流水帳</p></li><li class="st l0"><div class="tg">6　新會友</div><b>② 加入官方帳號　③ 填表</b><p>加入 IAA LINE 官方帳號</p><p>填寫 join/ 入會申請表（個資、公司、需求）</p></li><li class="st l2"><div class="tg">7　人資組</div><b>人資長審核</b><p>僅李敏妃（審核密碼）</p><p>需勾「資格證明已確認」，且入會費已確認</p></li><li class="st l4"><div class="tg">8　審核結果</div><b>三種結果</b><p><span class="ok">✔ 通過</span>：系統自動更新會友名冊（有效、NEW）與邀約名單（已入會）、通訊錄、群島</p><p><span class="bk">↩ 退回補件</span>：新會友修改後回到第 6 步重新送出</p><p><span class="no">✖ 不符資格</span>：已繳費的列「待退費」，財務長退款後標「已退費」</p></li><li class="st l0"><div class="tg">9　新會友</div><b>正式會友</b><p>12/04 年會入會禮，新會員自我介紹</p></li></ol>
 <div class="scroll"><svg id="flow" viewBox="0 0 1018 980" width="1018" height="980" role="img" aria-label="新會員加入作業流程圖（泳道圖）">
 <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--line)"/></marker></defs>
 <rect x="14" y="6" width="192" height="968" rx="6" class="lane"/>
@@ -154,7 +162,7 @@ li b{font-weight:700}
 <li><b>待退費：</b>不符資格且已有確認繳費的，系統列「待退費」並寫明已確認金額。財務長退款後標「已退費」，帳務沖銷由財務長處理。</li>
 <li><b>資料保護：</b>金額、匯款後 5 碼、備註只有財務長登入後看得到。</li></ul></div>
 </section>
-<section class="note"><h2>文字版</h2><ol>
+<section class="note txt"><h2>文字版</h2><ol>
 <li><b>邀約。</b>社召集人或邀約人跟進，人資後台邀約名單的進度為「待邀請→邀請中→已同意」。</li>
 <li><b>核對參加資格。</b>人資先審：創新獎對照得獎名單；發起人、歷屆創新主委、副主委、聯合會理事長對照名冊。不符就結案，不收費。</li>
 <li><b>產生入會連結。</b>勾選「資格已核對」，系統產生此人專屬連結與一段 LINE 訊息，人資轉傳給新會友。</li>
