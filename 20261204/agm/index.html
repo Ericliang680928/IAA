@@ -216,15 +216,18 @@ function fit(text, w, h, sizes, lh){
   }
   return sizes[sizes.length - 1];
 }
-const ROLE_RE = /(會長|理事長|執行長|秘書長|財務長|知識長|人資長|總召|召集人|顧問|委員|主委|營運長|社長|工作團隊|聯合會|候任|代表|^\d|[（(]|：$|社$)/;
-/* "輔導會長 高麗琴" / "高麗琴 副會長" / "宜蘭社 黃雅堂" -> 姓名藍色粗體 + 職稱深灰 */
+const ROLE_RE = /(會長|理事長|執行長|秘書長|財務長|知識長|人資長|總召|召集人|顧問|委員|主委|營運長|社長|工作團隊|聯合會|候任|代表|協助|主持|頒予|頒發|致贈|共同|^\d|[（(]|：$|社$)/;
+/* "輔導會長 高麗琴" / "朱碧霞 陳信宏 協助" -> 所有人名一律藍色粗體，職稱／動詞深灰接在後面 */
 function nameRuns(line, size){
   const toks = String(line).replace(/：/g, '： ').split(/\s+/).filter(Boolean);
   if (!toks.length) return [];
-  let ni = toks.findIndex(t => !ROLE_RE.test(t));
-  if (toks.length === 1 || ni < 0) return [{text: toks.join(' '), color: ni < 0 && toks.length > 1 ? DK : BLUE, bold: true, size}];
-  const role = toks.filter((t, k) => k !== ni).join(' ');
-  return [{text: toks[ni], color: BLUE, bold: true, size}, {text: '  ' + role, color: DK, bold: false, size: Math.round(size * 0.9)}];
+  const isName = t => !ROLE_RE.test(t) && t.length <= 4 && !/^[A-Za-z0-9]/.test(t);
+  const names = toks.filter(isName), roles = toks.filter(t => !isName(t));
+  if (toks.length === 1) return [{text: toks[0], color: BLUE, bold: true, size}];
+  if (!names.length) return [{text: toks.join(' '), color: DK, bold: true, size}];
+  const out = [{text: names.join('  '), color: BLUE, bold: true, size}];
+  if (roles.length) out.push({text: '  ' + roles.join(' '), color: DK, bold: false, size: Math.round(size * 0.9)});
+  return out;
 }
 /* 使用者在預覽上調整的排版（c.ov[群組] = {dx,dy,dw,dh,size,color,bold,align}），預覽與 PPTX 共用 */
 function refSize(e){ return e.paras ? Math.max.apply(null, (e.paras[0] || []).map(r => r.size).concat([1])) : (e.size || 1); }
