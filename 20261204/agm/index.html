@@ -1,4 +1,5 @@
 <title>年會簡報司儀稿編輯台</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
 <style>
@@ -137,6 +138,53 @@ legend{padding:0 6px;font-weight:700;color:var(--mag);font-size:13px}
 .toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:9px 14px;border-radius:8px;z-index:60;box-shadow:0 6px 24px rgba(0,0,0,.4);max-width:92vw}
 .toast button{margin-left:10px}
 .empty-note{padding:18px;color:var(--muted)}
+/* ===== 手機專用介面（<=700px）：精簡頂欄＋底部導覽列＋大按鈕 ===== */
+#bMenu{display:none}
+.mnav{display:none}
+@media (max-width:700px){
+  body{touch-action:manipulation;-webkit-text-size-adjust:100%}
+  .tabs{display:none}
+  .top{padding:8px max(12px,env(safe-area-inset-left,0px)) 8px max(12px,env(safe-area-inset-right,0px));gap:6px 8px;flex-wrap:nowrap}
+  .top>a{padding:6px 10px!important;font-size:13px!important}
+  .top h1{font-size:14px;flex:1 1 auto;line-height:1.25}
+  .top h1 small{display:none}
+  .bar{flex:0 0 auto;flex-wrap:nowrap;gap:6px}
+  .bar #status{display:none}
+  .bar .btn:not(#bUndo):not(#bMenu){display:none}
+  #bMenu{display:inline-block;background:var(--mag);border-color:var(--mag)}
+  .btn{min-height:40px;font-size:15px}
+  .mnav{display:flex;flex:0 0 auto;background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .mnav button{flex:1;border:0;background:none;padding:7px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;color:var(--muted);font-size:11.5px;min-height:54px;border-top:3px solid transparent}
+  .mnav button b{font-size:19px;line-height:1.1;font-weight:400}
+  .mnav button[aria-selected="true"]{color:var(--ink);font-weight:700;border-top-color:var(--mag)}
+  .mnav button[data-nav]{color:var(--mag)}
+  .mnav button:disabled{opacity:.3}
+  .tool{padding:8px}
+  .tb{min-height:40px;padding:6px 12px;font-size:14px}
+  .prev{padding:8px}
+  .form{padding:4px 8px 24px}
+  .two{grid-template-columns:1fr}
+  #lyBox .two{grid-template-columns:1fr 1fr}
+  .f input[type=text],.f textarea,.f select,.f input[type=time],.f input[type=number]{font-size:16px;padding:9px 10px}
+  .sc{grid-template-columns:minmax(0,1fr)}
+  #script .sc{scroll-margin-top:52px}
+  .sc .n{border-left:0;border-top:1px dashed var(--line);padding:6px 12px}
+  .vi{grid-template-columns:1fr}
+  .dlg{padding:0;align-items:flex-end}
+  .dlg>div{width:100%;max-height:92dvh;overflow:auto;border-radius:14px 14px 0 0}
+  #lyBox:not(.open) .f,#lyBox:not(.open) .tool,#lyBox:not(.open) .hint{display:none}
+  #lyBox:not(.open) fieldset{padding:0;border:0;gap:0}
+  #lyBox:not(.open) legend{display:block;width:100%;float:none;padding:12px 12px}
+  #lyBox legend{cursor:pointer;padding:6px 10px;border-radius:8px;background:var(--sel)}
+  #lyBox legend::after{content:'　▾ 點開調整'}
+  #lyBox.open legend::after{content:'　▴ 收合'}
+  .sl.edit .e.sel{outline-width:7px}
+  .menu{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .menu button{min-height:56px}
+}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.menu button{border:1px solid var(--line);background:var(--field);border-radius:10px;padding:10px;font-size:15px;min-height:48px;text-align:center}
+.menu button.main{background:var(--mag);border-color:var(--mag);color:#fff}
 </style>
 
 <div class="top">
@@ -145,6 +193,7 @@ legend{padding:0 6px;font-weight:700;color:var(--mag);font-size:13px}
   <div class="bar">
     <span id="status">載入中…</span>
     <button class="btn" id="bUndo" title="復原上一個動作">復原</button>
+    <button class="btn" id="bMenu">選單</button>
     <button class="btn" id="bJson" hidden>下載資料 JSON</button>
     <button class="btn" id="bVars">共用名單／變數</button>
     <button class="btn" id="bOv">簡報總覽</button>
@@ -164,6 +213,7 @@ legend{padding:0 6px;font-weight:700;color:var(--mag);font-size:13px}
   <section class="pane" id="pEditor"><div id="editor"></div></section>
   <section class="pane" id="pScript"><div class="ph">司儀稿 <small>即時預覽，點一段可跳到該頁</small></div><div id="script"></div></section>
 </main>
+<nav class="mnav" id="mnav"><button data-p="outline" aria-selected="false"><b>☰</b><span>大綱</span></button><button data-nav="-1"><b>◀</b><span>上一頁</span></button><button data-p="editor" id="mnavCur" aria-selected="true"><b>✎</b><span>編輯</span></button><button data-nav="1"><b>▶</b><span>下一頁</span></button><button data-p="script" aria-selected="false"><b>🎙</b><span>司儀稿</span></button></nav>
 <div id="layer"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js"></script>
@@ -387,6 +437,7 @@ function renderAll(full){
   renderOutline(); renderScript(); renderChecks();
   if (full) renderEditor(); else renderPreviewOnly();
   const {total} = numbering();
+  updateMnav();
   $('#oCount').textContent = S.segments.length + ' 時段・' + total + ' 張簡報';
 }
 function renderOutline(){
@@ -594,7 +645,7 @@ document.addEventListener('change', e => {
   
 });
 function select(g, i, scroll){
-  sel = {g, i}; armed = ''; selG = ''; renderOutline(); renderScript(); renderEditor();
+  sel = {g, i}; armed = ''; selG = ''; updateMnav(); renderOutline(); renderScript(); renderEditor();
   const c = cur().c;
   if (scroll !== false && c){ const el = document.getElementById('sc-' + c.id); if (el) el.scrollIntoView({block:'nearest'}); }
 }
@@ -677,6 +728,7 @@ function renderLayoutPanel(){
   const opts = '<option value="">（點預覽上的文字框，或在這裡選）</option>' + b.groups.map(g => '<option value="' + g + '"' + (g === selG ? ' selected' : '') + '>' + OVG[g] + (c.ov && c.ov[g] ? '　＊已調整' : '') + '</option>').join('');
   const sel = (id, cur, arr) => '<select id="' + id + '"' + dis + '>' + arr.map(a => '<option value="' + a[0] + '"' + (String(cur) === a[0] ? ' selected' : '') + '>' + a[1] + '</option>').join('') + '</select>';
   const num = (id, label, v, d) => '<div class="f"><label for="' + id + '">' + label + '</label><input type="number" id="' + id + '" step="0.05" value="' + (v || 0) + '"' + (d || dis) + '></div>';
+  if (selG && matchMedia('(max-width:700px)').matches) box.classList.add('open');
   box.innerHTML = '<fieldset><legend>排版（只改這一頁）</legend>' +
     '<div class="hint">在上方預覽<b>點一下文字框</b>選取，<b>按住拖曳</b>移動，<b>連點兩下</b>直接改字；選取後右下角圓點可拖曳改大小；方向鍵微調（Shift＝大步）。改完 PPT 匯出也會一樣。</div>' +
     '<div class="two"><div class="f"><label for="lyG">選取的元素</label><select id="lyG">' + opts + '</select></div>' +
@@ -830,16 +882,55 @@ $('#bHelp').onclick = () => {
     sec('調整簡報版面（只影響這一頁）', ['在預覽上<b>點一下文字框</b>選取，<b>按住拖曳</b>移動。', '右下角圓點可<b>拖曳改大小</b>；方向鍵微調（Shift 大步）。', '預覽下方「排版」面板可改字級、粗細、對齊、顏色；「還原」可回到預設。']) +
     sec('哪些會跑到簡報畫面', ['標題、名單、共用資料：簡報畫面與司儀稿一起變。', '司儀口白、動作提示：只進 PPT 的備註欄，不影響畫面。']) +
     sec('上方按鈕', ['<b>復原</b>：回到上一步。', '<b>共用名單／變數</b>：集中查看與填寫共用資料。', '<b>簡報總覽</b>：一次看全部簡報頁。', '<b>檢查</b>：列出未填資料、時間對不上、司儀稿空白處，開會前請清空。', '<b>同步到網頁版</b>：登記目前這一版，再通知秘書長更新到網頁。', '<b>匯出簡報 PPTX／司儀稿 DOCX</b>：下載成檔案現場使用。']) +
+    sec('用手機操作', ['底部列：<b>大綱／上一頁／編輯／下一頁／司儀稿</b>，單手切換每一頁。', '右上「<b>選單</b>」有共用名單、簡報總覽、檢查、匯出等所有功能。', '文字<b>快點兩下</b>即可修改；點簡報上的文字框後，下方「排版」自動展開，可拖曳移動。']) +
     sec('注意', ['多人可同時編輯；跳出「其他人剛更新了內容」請按「載入最新版」。', '匯出成 PPTX 或 Word 後，在檔案裡另外改的內容<b>不會回到</b>編輯台，要改請回編輯台再重新匯出。', '活動前請確認「檢查」旁沒有數字，再匯出最後一版。']));
 };
 /* ---------- panes (phone) ---------- */
 function setPane(p){
   document.body.dataset.pane = p;
-  document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.p === p));
-  setTimeout(() => scaleSlides(), 30);
+  document.querySelectorAll('.tabs button,.mnav button[data-p]').forEach(b => b.setAttribute('aria-selected', b.dataset.p === p));
+  setTimeout(() => { scaleSlides(); if (p === 'script'){ const o = document.querySelector('#script .sc.on'); if (o) o.scrollIntoView({block:'start'}); } }, 30);
 }
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => setPane(b.dataset.p));
 setPane('editor');
+/* ---------- 手機導覽：底部列、上一頁／下一頁、選單 ---------- */
+function flatScenes(){ const a = []; S.segments.forEach((g, gi) => g.scenes.forEach((c, ci) => a.push([gi, ci]))); return a; }
+function updateMnav(){
+  const cur0 = document.getElementById('mnavCur'); if (!cur0) return;
+  const fl = flatScenes(), i = fl.findIndex(x => x[0] === sel.g && x[1] === Math.max(0, sel.i));
+  cur0.querySelector('span').textContent = (i >= 0 ? (i + 1) : '–') + ' / ' + fl.length;
+  const pv = document.querySelector('[data-nav="-1"]'), nx = document.querySelector('[data-nav="1"]');
+  if (pv) pv.disabled = i <= 0; if (nx) nx.disabled = i < 0 || i >= fl.length - 1;
+}
+function stepScene(d){
+  const fl = flatScenes(), i = fl.findIndex(x => x[0] === sel.g && x[1] === Math.max(0, sel.i)), n = fl[i + d];
+  if (n){ select(n[0], n[1], false); setPane('editor'); const p = document.getElementById('pEditor'); if (p) p.scrollTop = 0; }
+}
+document.querySelectorAll('.mnav [data-p]').forEach(b => b.onclick = () => setPane(b.dataset.p));
+document.querySelectorAll('.mnav [data-nav]').forEach(b => b.onclick = () => stepScene(+b.dataset.nav));
+(function(){
+  const bm = document.getElementById('bMenu'); if (!bm) return;
+  bm.onclick = () => {
+    const items = [['bVars', '共用名單／變數'], ['bOv', '簡報總覽'], ['bChk', '檢查' + (document.getElementById('chkN') && !document.getElementById('chkN').hidden ? '（' + document.getElementById('chkN').textContent + '）' : '')], ['bHelp', '操作教學'], ['bSync', '同步到網頁版'], ['bJson', '下載資料 JSON'], ['bPptx', '匯出簡報 PPTX', 1], ['bDocx', '匯出司儀稿 DOCX', 1]]
+      .filter(x => { const e = document.getElementById(x[0]); return e && !e.hidden; });
+    dlg('選單', '<div class="menu">' + items.map(x => '<button data-mp="' + x[0] + '"' + (x[2] ? ' class="main"' : '') + '>' + x[1] + '</button>').join('') + '</div><div class="hint" style="margin-top:10px">' + esc((document.getElementById('status') || {}).textContent || '') + '</div>');
+  };
+})();
+document.addEventListener('click', e => {
+  const b = e.target.closest && e.target.closest('[data-mp]'); if (!b) return;
+  const id = b.dataset.mp; closeDlg(); setTimeout(() => { const t = document.getElementById(id); if (t) t.click(); }, 0);
+});
+document.addEventListener('click', e => { const lg = e.target.closest && e.target.closest('#lyBox legend'); if (lg) document.getElementById('lyBox').classList.toggle('open'); });
+/* 觸控：連點兩下 → 補發 dblclick（行動瀏覽器不一定會發） */
+let lastTap = null;
+document.addEventListener('pointerup', e => {
+  if (e.pointerType !== 'touch') return;
+  const now = Date.now();
+  if (lastTap && now - lastTap.t < 380 && Math.abs(e.clientX - lastTap.x) < 24 && Math.abs(e.clientY - lastTap.y) < 24){
+    const cx = e.clientX, cy = e.clientY; lastTap = null;
+    setTimeout(() => { const tg = document.elementFromPoint(cx, cy); if (tg) tg.dispatchEvent(new MouseEvent('dblclick', {bubbles:true, cancelable:true, clientX:cx, clientY:cy})); }, 120);
+  } else lastTap = {t: now, x: e.clientX, y: e.clientY};
+}, true);
 
 /* ---------- dialogs ---------- */
 function closeDlg(){ $('#layer').innerHTML = ''; }
