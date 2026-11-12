@@ -61,6 +61,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans TC",sy
 .search input:focus{outline:none;border-color:var(--mg)}
 .res{margin-top:12px}.res .it{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;flex-wrap:wrap}
 .res .nm{font-weight:900}.res .ch{color:var(--mute);font-size:13px;margin-left:6px}
+.crow{cursor:pointer}.crow:hover{background:#f3f5fa}.crow.on{background:#eef1f8}.cax{color:#7a859d;font-size:12px}.cdet td{background:#f7f8fc;padding:10px 12px}.cdet .cg{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0}.cdet .cg>b{min-width:6.5em;font-size:13px}
 .chip{display:inline-block;border-radius:99px;padding:2px 11px;font-size:12.5px;font-weight:700}
 .chip.ok{background:var(--okbg);color:var(--ok)}.chip.lv{background:var(--leavebg);color:var(--leave)}.chip.pd{background:var(--pendbg);color:var(--pend)}
 .note{font-size:13px;color:var(--mute)}
@@ -244,6 +245,7 @@ function parseResp(res){
 function chipFor(st){return st==="參加"?'<span class="chip ok">已報名</span>':(st==="請假"?'<span class="chip lv">請假</span>':'<span class="chip pd">尚未回覆</span>');}
 function bar(label,n,tot,color){var p=tot?Math.round(n/tot*100):0;return '<div class="bar"><div class="bl"><span>'+esc(label)+'</span><b>'+n+' / '+tot+'</b></div><div class="bt"><i style="width:'+p+'%;background:'+color+'"></i></div></div>';}
 
+var OPENC={};
 function render(){
   var mem=0,gst=0,stf=0,lv=0,meal={"葷食":0,"素食":0,"不用餐":0};
   Object.keys(people).forEach(function(k){
@@ -268,11 +270,14 @@ function render(){
   $("reg").innerHTML=loadedRoster?regHtml:'<p class="note">名冊讀取中…</p>';
 
   var chaps={},order=[];
-  roster.forEach(function(r){var c=r.chap||"其他";if(!chaps[c]){chaps[c]={t:0,a:0,l:0};order.push(c);}chaps[c].t++;var p=people["m:"+r.name];if(p){if(p.st==="參加"){chaps[c].a++;}else if(p.st==="請假"){chaps[c].l++;}}});
+  roster.forEach(function(r){var c=r.chap||"其他";if(!chaps[c]){chaps[c]={t:0,a:0,l:0,ma:[],ml:[],mp:[]};order.push(c);}chaps[c].t++;var p=people["m:"+r.name];if(p&&p.st==="參加"){chaps[c].a++;chaps[c].ma.push(r.name);}else if(p&&p.st==="請假"){chaps[c].l++;chaps[c].ml.push(r.name);}else{chaps[c].mp.push(r.name);}});
   var NS=["基隆社","台北社","宜蘭社","桃園社","新竹社","苗栗社","台中社","彰化社","南投社","雲林社","嘉義社","南瀛社","台南市社","高雄社","屏東社"];
   order.sort(function(x,y){var i=NS.indexOf(x),j=NS.indexOf(y);return (i<0?99:i)-(j<0?99:j);});
   var sa=0,sl=0,st=0;order.forEach(function(c){sa+=chaps[c].a;sl+=chaps[c].l;st+=chaps[c].t;});
-  var rows=order.map(function(c){var o=chaps[c];return '<tr><td><b>'+esc(c)+'</b></td><td>'+o.a+' / '+o.t+'</td><td>'+o.l+'</td><td>'+(o.t-o.a-o.l)+'</td></tr>';}).join("");
+  var rows=order.map(function(c){var o=chaps[c],op=OPENC[c];var h='<tr class="crow'+(op?' on':'')+'" data-c="'+esc(c)+'" title="點一下看名單"><td><b>'+esc(c)+'</b> <span class="cax">'+(op?'▾':'▸')+'</span></td><td>'+o.a+' / '+o.t+'</td><td>'+o.l+'</td><td>'+(o.t-o.a-o.l)+'</td></tr>';
+    if(op){var grp=function(t,cl,l){return '<div class="cg"><b>'+t+'（'+l.length+'）</b>'+(l.length?l.map(function(n){return '<span class="mc'+cl+'">'+esc(n)+'</span>';}).join(""):'<span class="note">無</span>')+'</div>';};
+      h+='<tr class="cdet"><td colspan="4">'+grp('已報名',' ok',o.ma)+grp('請假',' lv',o.ml)+grp('尚未回覆','',o.mp)+'</td></tr>';}
+    return h;}).join("");
   if(rows){rows+='<tr style="border-top:2px solid #cfd6e4"><td><b>合計</b></td><td><b>'+sa+' / '+st+'</b></td><td><b>'+sl+'</b></td><td><b>'+(st-sa-sl)+'</b></td></tr>';}
   $("chap").innerHTML=rows||'<tr><td colspan="4" class="note">名冊讀取中…</td></tr>';
 
@@ -351,6 +356,7 @@ $("q").addEventListener("input",doSearch);
 $("rf").addEventListener("click",sync);
 ddl();setInterval(ddl,60000);
 render();sync();setInterval(sync,POLL);
+$("chap").onclick=function(e){var tr=e.target;while(tr&&tr!==this&&!(tr.getAttribute&&tr.getAttribute("data-c"))){tr=tr.parentNode;}if(!tr||tr===this){return;}var c=tr.getAttribute("data-c");OPENC[c]=!OPENC[c];render();};
 })();
 </script>
 </body>
