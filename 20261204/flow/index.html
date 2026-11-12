@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>新會員加入作業流程</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* 泳道圖：一條由上而下的時間軸，五個角色各佔一欄；顏色對應角色，不代表狀態 */
+:root{--bg:#F5F6F8;--card:#FFFFFF;--fg:#1B2433;--mute:#5E6B80;--line:#8B96A8;--lane:#ECEFF4;
+--c0:#C2410C;--c1:#2F7D5B;--c2:#17285A;--c3:#0E7490;--c4:#6D5BD0;
+--f0:#FDF0E7;--f1:#E7F4EE;--f2:#E6EAF5;--f3:#E3F3F7;--f4:#EEEBFA}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10141C;--card:#171D28;--fg:#E8ECF3;--mute:#9AA6BA;--line:#7C889C;--lane:#161B25;
+--c0:#F29A6A;--c1:#6CC3A0;--c2:#9DB2F0;--c3:#5CC3DC;--c4:#B3A6F2;
+--f0:#2A1D16;--f1:#15251F;--f2:#1A2033;--f3:#13262C;--f4:#1E1B33;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10141C;--card:#171D28;--fg:#E8ECF3;--mute:#9AA6BA;--line:#7C889C;--lane:#161B25;
+--c0:#F29A6A;--c1:#6CC3A0;--c2:#9DB2F0;--c3:#5CC3DC;--c4:#B3A6F2;
+--f0:#2A1D16;--f1:#15251F;--f2:#1A2033;--f3:#13262C;--f4:#1E1B33;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:"Noto Sans TC",system-ui,sans-serif;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1{font-size:26px;margin:0;font-weight:700;text-wrap:balance}
+.sub{color:var(--mute);margin:6px 0 0;font-size:14px;line-height:1.7;max-width:62ch}
+.scroll{overflow-x:auto;background:var(--card);border-radius:10px;padding:8px}
+svg{display:block}
+.lane{fill:var(--lane)}
+.lh.l0{fill:var(--c0)}.lh.l1{fill:var(--c1)}.lh.l2{fill:var(--c2)}.lh.l3{fill:var(--c3)}.lh.l4{fill:var(--c4)}
+.lt{font:700 14px "Noto Sans TC",sans-serif;fill:#fff}
+html[data-theme="dark"] .lt{fill:#10141C}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lt{fill:#10141C}}
+.bx rect{stroke-width:1.5}
+.bx.l0 rect{fill:var(--f0);stroke:var(--c0)}.bx.l1 rect{fill:var(--f1);stroke:var(--c1)}.bx.l2 rect{fill:var(--f2);stroke:var(--c2)}.bx.l3 rect{fill:var(--f3);stroke:var(--c3)}.bx.l4 rect{fill:var(--f4);stroke:var(--c4)}
+.bt{font:700 13.5px "Noto Sans TC",sans-serif;fill:var(--fg)}
+.bl{font:400 12px "Noto Sans TC",sans-serif;fill:var(--fg)}
+.ar{fill:none;stroke:var(--line);stroke-width:1.6}
+.al{font:500 11.5px "Noto Sans TC",sans-serif;fill:var(--mute);paint-order:stroke;stroke:var(--lane);stroke-width:4px}
+h2{font-size:17px;margin:0 0 10px}
+ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px;line-height:1.7;font-size:14.5px}
+li b{font-weight:700}
+.note{background:var(--card);border-radius:10px;padding:16px 18px;min-width:0}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px}
+.note ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.75}
+.note.hr{border-top:4px solid var(--c2)}.note.fin{border-top:4px solid var(--c3)}
+.sub a{color:var(--c2);font-weight:700}.note p{margin:0;font-size:14px;line-height:1.8;color:var(--mute)}
+</style>
+</head><body>
+<div class="wrap">
+<header><h1>新會員加入作業流程</h1>
+<p class="sub">從邀約到成為正式會友，共五個角色接力。先審資格再收費，通過後名冊、邀約名單、通訊錄與會務群島都由系統自動更新。</p></header>
+<div class="scroll"><svg id="flow" viewBox="0 0 1018 980" width="1018" height="980" role="img" aria-label="新會員加入作業流程圖（泳道圖）">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--line)"/></marker></defs>
+<rect x="14" y="6" width="192" height="968" rx="6" class="lane"/>
+<rect x="14" y="6" width="192" height="34" rx="6" class="lh l0"/>
+<text x="110.0" y="28" text-anchor="middle" class="lt">新會友</text>
+<rect x="212" y="6" width="192" height="968" rx="6" class="lane"/>
+<rect x="212" y="6" width="192" height="34" rx="6" class="lh l1"/>
+<text x="308.0" y="28" text-anchor="middle" class="lt">社召集人／邀約人</text>
+<rect x="410" y="6" width="192" height="968" rx="6" class="lane"/>
+<rect x="410" y="6" width="192" height="34" rx="6" class="lh l2"/>
+<text x="506.0" y="28" text-anchor="middle" class="lt">人資組</text>
+<rect x="608" y="6" width="192" height="968" rx="6" class="lane"/>
+<rect x="608" y="6" width="192" height="34" rx="6" class="lh l3"/>
+<text x="704.0" y="28" text-anchor="middle" class="lt">財務長</text>
+<rect x="806" y="6" width="192" height="968" rx="6" class="lane"/>
+<rect x="806" y="6" width="192" height="34" rx="6" class="lh l4"/>
+<text x="902.0" y="28" text-anchor="middle" class="lt">系統自動</text>
+<g class="bx l1"><rect x="222" y="64" width="178" height="78" rx="8"/>
+<text x="232" y="83" class="bt">邀約跟進</text>
+<text x="232" y="102" class="bl">社召集人／邀約人</text>
+<text x="232" y="118" class="bl">人資後台邀約名單</text>
+<text x="232" y="134" class="bl">待邀請→邀請中→已同意</text>
+</g>
+<g class="bx l2"><rect x="420" y="170" width="178" height="78" rx="8"/>
+<text x="430" y="189" class="bt">核對參加資格</text>
+<text x="430" y="208" class="bl">創新獎對照得獎名單</text>
+<text x="430" y="224" class="bl">發起人、歷屆主委</text>
+<text x="430" y="240" class="bl">對照名冊；不符即結案</text>
+</g>
+<g class="bx l2"><rect x="420" y="274" width="178" height="78" rx="8"/>
+<text x="430" y="293" class="bt">產生入會連結</text>
+<text x="430" y="312" class="bl">勾選「資格已核對」</text>
+<text x="430" y="328" class="bl">系統給專屬連結與</text>
+<text x="430" y="344" class="bl">LINE 訊息，人資轉傳</text>
+</g>
+<g class="bx l0"><rect x="24" y="378" width="178" height="96" rx="8"/>
+<text x="34" y="397" class="bt">① 繳費</text>
+<text x="34" y="416" class="bl">入會費 1,000、</text>
+<text x="34" y="432" class="bl">常年會費 6,000；</text>
+<text x="34" y="448" class="bl">原退會者只繳年費</text>
+<text x="34" y="464" class="bl">至 dues/ 回報</text>
+</g>
+<g class="bx l3"><rect x="618" y="378" width="178" height="78" rx="8"/>
+<text x="628" y="397" class="bt">確認繳費</text>
+<text x="628" y="416" class="bl">核對現金／匯款後5碼</text>
+<text x="628" y="432" class="bl">按「確認」，自動</text>
+<text x="628" y="448" class="bl">入收支流水帳</text>
+</g>
+<g class="bx l0"><rect x="24" y="520" width="178" height="78" rx="8"/>
+<text x="34" y="539" class="bt">② 加入　③ 填表</text>
+<text x="34" y="558" class="bl">加入 IAA LINE 官方帳號</text>
+<text x="34" y="574" class="bl">填寫 join/ 入會申請表</text>
+<text x="34" y="590" class="bl">（個資、公司、需求）</text>
+</g>
+<g class="bx l2"><rect x="420" y="640" width="178" height="78" rx="8"/>
+<text x="430" y="659" class="bt">人資長審核</text>
+<text x="430" y="678" class="bl">僅李敏妃（審核密碼）</text>
+<text x="430" y="694" class="bl">勾「資格證明已確認」</text>
+<text x="430" y="710" class="bl">且入會費已確認</text>
+</g>
+<g class="bx l3"><rect x="618" y="770" width="178" height="78" rx="8"/>
+<text x="628" y="789" class="bt">待退費</text>
+<text x="628" y="808" class="bl">已繳費但不符資格</text>
+<text x="628" y="824" class="bl">列「待退費」，財務長</text>
+<text x="628" y="840" class="bl">退款後標已退費</text>
+</g>
+<g class="bx l4"><rect x="816" y="770" width="178" height="78" rx="8"/>
+<text x="826" y="789" class="bt">通過後自動更新</text>
+<text x="826" y="808" class="bl">會友名冊：有效、NEW</text>
+<text x="826" y="824" class="bl">邀約名單：已入會</text>
+<text x="826" y="840" class="bl">通訊錄、群島即時更新</text>
+</g>
+<g class="bx l0"><rect x="24" y="890" width="178" height="64" rx="8"/>
+<text x="34" y="909" class="bt">正式會友</text>
+<text x="34" y="928" class="bl">12/04 年會入會禮</text>
+<text x="34" y="944" class="bl">新會員自我介紹</text>
+</g>
+<path d="M400,103 H509 V170" class="ar" marker-end="url(#ar)"/>
+<path d="M509,248 V274" class="ar" marker-end="url(#ar)"/>
+<path d="M420,313 H113 V378" class="ar" marker-end="url(#ar)"/>
+<text x="121" y="307" class="al" text-anchor="start">傳 LINE 訊息</text>
+<path d="M202,426 H618" class="ar" marker-end="url(#ar)"/>
+<text x="410" y="420" class="al" text-anchor="middle">回報繳費</text>
+<path d="M707,456 V559 H202" class="ar" marker-end="url(#ar)"/>
+<text x="699" y="553" class="al" text-anchor="end">確認後可填表</text>
+<path d="M113,598 V679 H420" class="ar" marker-end="url(#ar)"/>
+<text x="121" y="673" class="al" text-anchor="start">送出申請</text>
+<path d="M454,640 V622 H163 V598" class="ar" marker-end="url(#ar)"/>
+<text x="460" y="616" class="al" text-anchor="end">退回補件</text>
+<path d="M598,679 H905 V770" class="ar" marker-end="url(#ar)"/>
+<text x="913" y="673" class="al" text-anchor="start">通過</text>
+<path d="M509,718 V809 H618" class="ar" marker-end="url(#ar)"/>
+<text x="517" y="803" class="al" text-anchor="start">不符資格</text>
+<path d="M905,848 V922 H202" class="ar" marker-end="url(#ar)"/></svg></div>
+<section class="two">
+<div class="note hr"><h2>人資角度：把關資格與名冊</h2><ul>
+<li><b>誰負責：</b>社召集人邀約跟進，區總召督導，人資長統籌並辦入會，人資長（李敏妃）獨享最後審核權。</li>
+<li><b>先審資格再收費：</b>未勾「資格已核對」就產生不了入會連結，避免收了費才發現不符、還要退款。</li>
+<li><b>審核三條件：</b>資格證明已確認、財務長已確認入會費（原退會者看常年會費）、申請表已送出。少一項系統不讓通過。</li>
+<li><b>通過後系統代勞：</b>名冊新增（有效或回歸、NEW 標籤、區域依社別）、寫入公司與資格資料、邀約名單改「已入會」。人資不必再手動建檔。</li>
+<li><b>三種結果：</b>通過、退回補件（寫明補什麼）、不符資格。不符且已繳費，系統自動標「待退費」交財務長。</li>
+<li><b>邀約追蹤：</b>有望新會友每 2 週關懷一次，原退會者依週期提醒；後台「今日待關懷」列出到期與逾期者。</li>
+<li><b>資料保護：</b>手機、Email、生日、地址只有人資後台看得到；通訊錄只顯示姓名、社別、公司、職稱、營業內容、產業。</li></ul></div>
+<div class="note fin"><h2>財務角度：確認收款與帳務連動</h2><ul>
+<li><b>收什麼：</b>入會費 1,000、常年會費 6,000（內含 1,000 回饋聯合會創新委員會）。原退會者只繳常年會費。會籍年度 1/1 至 12/31。</li>
+<li><b>怎麼收：</b>新會友在 dues/ 選項目與方式（現金或匯款後 5 碼）回報，狀態先是「待審核」，財務長核對實收後按「確認」，也可退回或修改金額。</li>
+<li><b>自動入帳：</b>確認後自動寫入收支流水帳（科目「入會費」「常年會費」）；退回或改回待審會自動作廢，兩邊數字同步。</li>
+<li><b>確認不等於入會：</b>財務長確認繳費後，名冊不會自動轉有效，要等人資長審核通過。報名查詢頁的「已繳」也是確認後才顯示，非即時。</li>
+<li><b>待退費：</b>不符資格且已有確認繳費的，系統列「待退費」並寫明已確認金額。財務長退款後標「已退費」，帳務沖銷由財務長處理。</li>
+<li><b>資料保護：</b>金額、匯款後 5 碼、備註只有財務長登入後看得到。</li></ul></div>
+</section>
+<section class="note"><h2>文字版</h2><ol>
+<li><b>邀約。</b>社召集人或邀約人跟進，人資後台邀約名單的進度為「待邀請→邀請中→已同意」。</li>
+<li><b>核對參加資格。</b>人資先審：創新獎對照得獎名單；發起人、歷屆創新主委、副主委、聯合會理事長對照名冊。不符就結案，不收費。</li>
+<li><b>產生入會連結。</b>勾選「資格已核對」，系統產生此人專屬連結與一段 LINE 訊息，人資轉傳給新會友。</li>
+<li><b>繳費。</b>新會友到 dues/ 回報：入會費 1,000、常年會費 6,000（原退會者只繳常年會費）。財務長核對現金或匯款後 5 碼，按「確認」，自動入收支流水帳。</li>
+<li><b>加入官方帳號並填表。</b>新會友加入 IAA LINE 官方帳號，填寫 join/ 入會申請表。表單不收身分證號與照片。</li>
+<li><b>人資長審核。</b>只有李敏妃能審。要勾「資格證明已確認」且入會費已經財務長確認才能通過；原退會者改看常年會費。</li>
+<li><b>三種結果。</b>通過：會友名冊新增（有效、NEW 標籤）、邀約名單改「已入會」。退回補件：新會友修改後重新送出。不符資格：已繳費的列「待退費」，財務長退款後標「已退費」。</li>
+<li><b>入會禮。</b>通過者於 12/04 年會進行新會員入會禮，創新得獎主自我介紹。</li>
+</ol></section>
+<p class="sub" style="margin-top:4px"><a href="../hr/">人資組後台</a>　<a href="../finance/">財務長後台</a>　<a href="../../">IAA 首頁</a></p>
+</div>
+</body></html>
