@@ -131,7 +131,7 @@ $("lkc").onclick=function(){$("lk").hidden=true;};
 $("lkg").onclick=function(){$("lkn").className="msg";call("iaa_hr_app_link",{i:lkid,qp:$("lkq").checked},function(ok,j){
  if(!ok){$("lkn").className="msg err";$("lkn").textContent=(j&&j.message)?j.message:"產生失敗";return;}
  var url="https://ericliang680928.github.io/IAA/20261204/join/?t="+j;
- $("lkm").value=lkname+" 您好，歡迎加入 IAA 創新加速聯盟會！請依序完成三件事：\n\n① 加入 IAA LINE 官方帳號：https://line.me/ti/p/bTaxGeBEY7\n② 在 LINE 官方帳號的選單點「入會申請」，填寫入會資料（若找不到選單，也可用這條您的專屬連結填寫，請勿轉傳）：\n"+url+"\n③ 繳費：入會費 1,000 元、常年會費 6,000 元。請點下面連結填寫繳費回報（選現金或匯款，匯款請填後 5 碼），財務長確認後才算收到：\nhttps://ericliang680928.github.io/IAA/20261204/dues/\n\n資料送出並完成繳費後，由人資長審核，通過即正式成為會友。謝謝🙏";
+ $("lkm").value=lkname+" 您好，歡迎加入 IAA 創新加速聯盟會！請依序完成三件事：\n\n① 加入 IAA LINE 官方帳號：https://lin.ee/w3x5uub\n② 在 LINE 官方帳號的選單點「入會申請」，填寫入會資料（若找不到選單，也可用這條您的專屬連結填寫，請勿轉傳）：\n"+url+"\n③ 繳費：入會費 1,000 元、常年會費 6,000 元。請點下面連結填寫繳費回報（選現金或匯款，匯款請填後 5 碼），財務長確認後才算收到：\nhttps://ericliang680928.github.io/IAA/20261204/dues/\n\n資料送出並完成繳費後，由人資長審核，通過即正式成為會友。謝謝🙏";
  $("lkm").hidden=false;$("lkp").hidden=false;$("lkn").textContent="已產生。複製訊息後以 LINE 傳給對方；同一人再按會得到同一條連結。";load(function(){});});};
 $("lkp").onclick=function(){$("lkm").select();try{document.execCommand("copy");$("lkn").textContent="已複製";}catch(e){$("lkn").textContent="請手動複製";}};
 function qtxt(a){return a.qual_type==="創新獎得主"?"創新獎得主："+esc(a.award_year)+" "+esc(a.award_cat)+esc(a.award_prize)+"《"+esc(a.award_work)+"》":esc(a.qual_type);}
