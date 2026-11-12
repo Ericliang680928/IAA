@@ -147,6 +147,7 @@ legend{padding:0 6px;font-weight:700;color:var(--mag);font-size:13px}
     <button class="btn" id="bJson" hidden>下載資料 JSON</button>
     <button class="btn" id="bVars">共用名單／變數</button>
     <button class="btn" id="bOv">簡報總覽</button>
+    <button class="btn" id="bHelp">操作教學</button>
     <button class="btn" id="bChk">檢查<span class="badge" id="chkN" hidden>0</span></button>
     <button class="btn main" id="bPptx">匯出簡報 PPTX</button>
     <button class="btn main" id="bDocx">匯出司儀稿 DOCX</button>
@@ -819,6 +820,17 @@ function openVarEdit(k){
   dlg('填入：' + k, '<div class="f"><label for="vEdit">' + esc(k) + '（簡報與司儀稿共用，改一次全部更新）</label><input type="text" id="vEdit" data-var="' + esc(k) + '" value="' + esc(S.vars[k] == null ? '' : S.vars[k]) + '"></div><div class="hint" style="margin-top:8px">按 Enter 或「關閉」完成。</div>');
   const i = document.getElementById('vEdit'); if (i){ i.focus(); i.select(); i.addEventListener('keydown', e => { if (e.key === 'Enter') closeDlg(); }); }
 }
+$('#bHelp').onclick = () => {
+  const sec = (t, items) => '<h4 style="margin:14px 0 6px;color:var(--mag)">' + t + '</h4><ol style="margin:0;padding-left:1.3em;display:grid;gap:5px">' + items.map(i => '<li>' + i + '</li>').join('') + '</ol>';
+  dlg('操作教學',
+    '<p style="margin:0">簡報與司儀稿在同一個地方，<b>改一處，兩邊一起更新</b>。改動會自動儲存。</p>' +
+    sec('畫面', ['<b>左</b>：流程大綱，點一下切換到那一頁。', '<b>中</b>：簡報預覽與編輯欄位。', '<b>右</b>：司儀稿，隨時跟著更新。']) +
+    sec('改字', ['<b>簡報上的字</b>：在中間預覽，對文字<b>連點兩下</b>，改完關閉即可。', '<b>司儀稿上的字</b>：在右邊，對文字<b>連點兩下</b>直接改，點外面結束。', '<b>人數、人名等共用資料</b>：有<b>虛線</b>的字點一下就能填（例如「實到人數」），簡報和司儀稿一起更新。', '<b>名單</b>：每段標題旁的「名單」按鈕，簡報卡片與司儀稿唱名會一起變。']) +
+    sec('調整簡報版面（只影響這一頁）', ['在預覽上<b>點一下文字框</b>選取，<b>按住拖曳</b>移動。', '右下角圓點可<b>拖曳改大小</b>；方向鍵微調（Shift 大步）。', '預覽下方「排版」面板可改字級、粗細、對齊、顏色；「還原」可回到預設。']) +
+    sec('哪些會跑到簡報畫面', ['標題、名單、共用資料：簡報畫面與司儀稿一起變。', '司儀口白、動作提示：只進 PPT 的備註欄，不影響畫面。']) +
+    sec('上方按鈕', ['<b>復原</b>：回到上一步。', '<b>共用名單／變數</b>：集中查看與填寫共用資料。', '<b>簡報總覽</b>：一次看全部簡報頁。', '<b>檢查</b>：列出未填資料、時間對不上、司儀稿空白處，開會前請清空。', '<b>同步到網頁版</b>：登記目前這一版，再通知秘書長更新到網頁。', '<b>匯出簡報 PPTX／司儀稿 DOCX</b>：下載成檔案現場使用。']) +
+    sec('注意', ['多人可同時編輯；跳出「其他人剛更新了內容」請按「載入最新版」。', '匯出成 PPTX 或 Word 後，在檔案裡另外改的內容<b>不會回到</b>編輯台，要改請回編輯台再重新匯出。', '活動前請確認「檢查」旁沒有數字，再匯出最後一版。']));
+};
 /* ---------- panes (phone) ---------- */
 function setPane(p){
   document.body.dataset.pane = p;
