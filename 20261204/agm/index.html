@@ -86,6 +86,8 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:260px minmax(0,1.2fr
 [data-ed]{border-radius:4px}
 [data-ed]:hover{background:rgba(179,28,131,.09);cursor:text}
 textarea.sed{width:100%;border:2px solid var(--mag);border-radius:6px;padding:6px 8px;font:inherit;background:#fff;color:#222;resize:none;overflow:hidden;line-height:1.5}
+.var{border-bottom:1px dotted var(--mag);cursor:pointer}
+.var:hover{background:rgba(179,28,131,.12)}
 .form{padding:4px 12px 20px;display:grid;gap:14px}
 fieldset{border:1px solid var(--line);border-radius:8px;margin:0;padding:10px 12px 12px;display:grid;gap:10px;min-width:0}
 legend{padding:0 6px;font-weight:700;color:var(--mag);font-size:13px}
@@ -189,9 +191,11 @@ function resolve(text, sc, html){
   out = out.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (m, k) => {
     if (k === 'lines') return ((sc && sc.lines) || []).map(l => resolve(l, null, false)).join('、');
     const v = S.vars[k];
-    return (v != null && String(v).trim()) ? String(v) : '【待填：' + k + '】';
+    const val = (v != null && String(v).trim()) ? String(v) : '【待填：' + k + '】';
+    return html ? '\u0001' + k + '\u0002' + val + '\u0003' : val;
   });
-  return html ? esc(out).replace(/【待填：[^】]*】/g, m => '<mark>' + m + '</mark>') : out;
+  if (!html) return out;
+  return esc(out).replace(/\u0001([^\u0002]*)\u0002([^\u0003]*)\u0003/g, (m, k, val) => '<span class="var" data-var="' + k + '" title="點一下直接填入／修改">' + val + '</span>').replace(/【待填：[^】]*】/g, m => '<mark>' + m + '</mark>');
 }
 function numbering(){
   const map = {}; let n = 0;
@@ -578,6 +582,7 @@ function select(g, i, scroll){
 document.addEventListener('click', e => {
   const t = e.target;
   if (t.dataset && t.dataset.sed) return;
+  const vv = t.closest('.var'); if (vv){ openVarEdit(vv.dataset.var); return; }
   const sb = t.closest('[data-sedl]'); if (sb){ const sc0 = sb.closest('.sc'); select(+sc0.dataset.g, +sc0.dataset.i, false); openTextEdit('body'); return; }
   const ol = t.closest('#outline [data-g]'); if (ol){ select(+ol.dataset.g, +ol.dataset.i); if (matchMedia('(max-width:1000px)').matches) setPane('editor'); return; }
   const sc = t.closest('#script .sc'); if (sc){ if (sel.g === +sc.dataset.g && sel.i === +sc.dataset.i) return; select(+sc.dataset.g, +sc.dataset.i, false); if (matchMedia('(max-width:1000px)').matches) setPane('editor'); return; }
@@ -793,6 +798,10 @@ document.addEventListener('dblclick', e => {
   ta.addEventListener('click', ev => ev.stopPropagation());
   fit(); ta.focus();
 });
+function openVarEdit(k){
+  dlg('填入：' + k, '<div class="f"><label for="vEdit">' + esc(k) + '（簡報與司儀稿共用，改一次全部更新）</label><input type="text" id="vEdit" data-var="' + esc(k) + '" value="' + esc(S.vars[k] == null ? '' : S.vars[k]) + '"></div><div class="hint" style="margin-top:8px">按 Enter 或「關閉」完成。</div>');
+  const i = document.getElementById('vEdit'); if (i){ i.focus(); i.select(); i.addEventListener('keydown', e => { if (e.key === 'Enter') closeDlg(); }); }
+}
 /* ---------- panes (phone) ---------- */
 function setPane(p){
   document.body.dataset.pane = p;
