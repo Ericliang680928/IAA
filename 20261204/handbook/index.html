@@ -378,7 +378,7 @@ async function boot(){
     let src='';
     try{const l=localStorage.getItem('iaa-handbook-draft'); if(l){S.secs=JSON.parse(l);src='此瀏覽器的草稿'}}catch(e){}
     if(!src){try{const r=await fetch('handbook.json',{cache:'reload'}); if(r.ok){const a=await r.json(); a.forEach(x=>{S.secs[x.id]=x}); src='handbook.json（資料基準 115.11.13，通訊錄電話不公開）'}}catch(e){}}
-    $('#banner').innerHTML='<div class="banner">資料來源：'+esc(src||'無')+'。修改只存在這個瀏覽器；要保留請按「下載編輯資料」。　<button class="btn sm" data-act="export-json">下載編輯資料（JSON）</button></div>';
+    $('#banner').innerHTML='<div class="banner">資料來源：'+esc(src||'無')+'。修改只存在這個瀏覽器；要保留請按「下載編輯資料」。　手冊（公開版，不含電話）：<a href="IAA第四屆第一次會員大會手冊_公開版.pdf">PDF</a>・<a href="IAA第四屆第一次會員大會手冊_公開版.docx">Word</a>　<button class="btn sm" data-act="export-json">下載編輯資料（JSON）</button></div>';
     S.loaded=true; renderSummary(); renderMain(); return;
   }
   S.online=true; setSave('已連線');
