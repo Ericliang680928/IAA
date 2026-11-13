@@ -46,6 +46,12 @@ main{padding-block:28px 24px}
 .sheet .sig{margin-top:1.6em;text-align:right;font-family:var(--display);font-weight:700;font-size:19px}
 .sheet .to{font-weight:500}
 .pull{font-family:var(--display);font-size:clamp(22px,4vw,28px);font-weight:900;color:var(--fg);padding:4px 0 6px 18px;border-left:5px solid var(--magenta);margin-bottom:1.2em}
+.portrait{margin:0 0 14px;width:150px}.portrait img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}
+.portrait.l{float:left;margin-right:24px}.portrait.r{float:right;margin-left:24px}
+.sheet::after{content:'';display:block;clear:both}
+.thumb{width:72px;height:96px;object-fit:cover;object-position:top;border-radius:10px;border:1px solid var(--line);flex-shrink:0}
+.card .row{display:flex;gap:16px;align-items:flex-start}
+@media(max-width:560px){.portrait{float:none!important;margin:0 auto 18px!important;width:140px}}
 .note{margin-top:18px;font-size:14px;color:var(--muted)}
 .pager{display:grid;gap:12px;margin-top:22px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 .pager a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;text-decoration:none;color:var(--fg)}
@@ -94,8 +100,8 @@ footer .copy{max-width:1120px;margin:24px auto 0;padding:16px 16px 0;border-top:
 <div class="wrap"><div class="crumb"><a href="../index.html">首頁</a> › 歷屆會長的話</div></div>
 <main class="wrap">
 <div class="cards">
-<a class="card" href="jiang/"><span class="k">第三屆會長</span><h2>江德利</h2><p>上任感言：「連結、創新、加速、共好」。強化會員服務、深化產官學研合作、拓展國外連結。</p><span class="go">閱讀全文 →</span></a>
-<a class="card" href="kao/"><span class="k">第二屆會長</span><h2>高麗琴</h2><p>卸任感言：「方向對了目標就不會太遠」。一個人可以走很快，一群人可以走很遠。</p><span class="go">閱讀全文 →</span></a>
+<a class="card" href="jiang/"><div class="row"><img class="thumb" src="../assets/president/jiang.jpg" alt="第三屆會長 江德利" width="72" height="96"><div><span class="k">第三屆會長</span><h2>江德利</h2></div></div><p>上任感言：「連結、創新、加速、共好」。強化會員服務、深化產官學研合作、拓展國外連結。</p><span class="go">閱讀全文 →</span></a>
+<a class="card" href="kao/"><div class="row"><img class="thumb" src="../assets/president/kao.jpg" alt="第二屆會長 高麗琴" width="72" height="96"><div><span class="k">第二屆會長</span><h2>高麗琴</h2></div></div><p>卸任感言：「方向對了目標就不會太遠」。一個人可以走很快，一群人可以走很遠。</p><span class="go">閱讀全文 →</span></a>
 </div><p class="note">兩篇皆出自《第三屆第一次會員大會暨會長交接典禮》大會手冊（2025 年 12 月 5 日）。</p>
 </main>
 <footer>
