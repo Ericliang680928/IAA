@@ -103,12 +103,6 @@ section.block{padding-block:64px 8px}
 .facts li{display:flex;flex-direction:column;gap:2px;padding:14px 0;border-top:3px solid var(--magenta)}
 .facts b{font-family:var(--display);font-size:30px;line-height:1.2}
 .facts span{font-size:14px;color:var(--muted)}
-
-/* 會務群島（內嵌介面） */
-.isl-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
-.isl-frame{margin-top:20px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#EAF1F4;box-shadow:0 8px 24px rgba(18,38,71,.10)}
-.isl-frame iframe{display:block;width:100%;height:min(82vh,760px);min-height:520px;border:0}
-.isl-note{margin-top:10px;font-size:13px;color:var(--muted)}
 /* 找人 */
 .needs{display:flex;flex-wrap:wrap;gap:10px}
 .chip{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:99px;border:1.5px solid var(--line);background:var(--panel);font-weight:500;text-decoration:none}
@@ -221,25 +215,9 @@ body{padding-bottom:76px}
       <a class="tile" href="https://ericliang680928.github.io/IAA/matching/"><i class="dot" style="background:#D45824"></i><b>商務配對</b><span>填需求與能提供的</span></a>
       <a class="tile" href="https://ericliang680928.github.io/IAA/20261204/dues/"><i class="dot" style="background:#1F8F8A"></i><b>會費回報</b><span>繳費後回報給財務長</span></a>
       <a class="tile" href="https://ericliang680928.github.io/IAA/20261204/status/"><i class="dot" style="background:#BCCA29"></i><b>年會報名查詢</b><span>看自己有沒有登記</span></a>
-      <a class="tile" href="#island"><i class="dot" style="background:#F0B323"></i><b>會務群島</b><span>各社近況（會友限定）</span></a>
+      <a class="tile" href="island/" rel="nofollow"><i class="dot" style="background:#F0B323"></i><b>會務群島</b><span>各社近況（會友限定）</span></a>
     </div>
   </div>
-</section>
-
-<!-- 會務群島（介面內嵌首頁） -->
-<section class="block wrap" id="island" aria-labelledby="ih">
-  <div class="isl-head">
-    <div class="stack">
-      <div class="eyebrow">會務群島</div>
-      <h2 id="ih">2027 年 IAA 會務群島</h2>
-      <p class="lead">把一整年的會務畫成一張海圖：會長居中的會務本島，周圍是知識、財務、人資、活動等工作島，北、中、南三區總召與各社各守一座島。點任一座島，看負責人、進度與工具。</p>
-    </div>
-    <a class="btn btn-navy" href="island/" rel="nofollow">全螢幕開啟</a>
-  </div>
-  <div class="isl-frame">
-    <iframe src="island/" title="2027 年 IAA 會務群島" loading="lazy" allow="fullscreen"></iframe>
-  </div>
-  <p class="isl-note">群島內含各社近況與名冊，僅供會友與幹部使用。</p>
 </section>
 
 <!-- 認識 IAA -->
