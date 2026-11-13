@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
+<style>body{margin:0}</style>
+<title>會員大會手冊編輯台</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: sticky top bar; left section list; center editor; right paper preview that mirrors the printed handbook. Palette from the 長發會 handbook cover: deep indigo + burnt orange. */
+:root{
+  --bg:#F2F3F8; --surface:#FFFFFF; --surface-2:#F7F8FC; --ink:#1B1F33; --muted:#5C6280; --line:#D9DCEA;
+  --navy:#1F2A5C; --navy-ink:#FFFFFF; --orange:#C55A11; --orange-soft:#FBE9DC;
+  --ok:#1E7A4F; --ok-soft:#DDF1E6; --warn:#9A5B00; --warn-soft:#FFF0CC; --todo:#B3261E; --todo-soft:#FBE0DE; --mark:#FFE766;
+  --paper:#FFFFFF; --paper-ink:#1B1F33; --paper-line:#9AA3BF; --paper-head:#1F2A5C;
+  --font:"Noto Sans TC","Microsoft JhengHei","PingFang TC","Heiti TC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12141F; --surface:#1B1F2F; --surface-2:#222740; --ink:#E7E9F3; --muted:#9BA1C0; --line:#2E3556;
+  --navy:#8FA0F0; --navy-ink:#12141F; --orange:#F08A4B; --orange-soft:#3A2517;
+  --ok:#6FD3A0; --ok-soft:#173326; --warn:#F2C15C; --warn-soft:#3A2E10; --todo:#FF8F86; --todo-soft:#3E1B19; --mark:#8A7A1C;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12141F; --surface:#1B1F2F; --surface-2:#222740; --ink:#E7E9F3; --muted:#9BA1C0; --line:#2E3556;
+  --navy:#8FA0F0; --navy-ink:#12141F; --orange:#F08A4B; --orange-soft:#3A2517;
+  --ok:#6FD3A0; --ok-soft:#173326; --warn:#F2C15C; --warn-soft:#3A2E10; --todo:#FF8F86; --todo-soft:#3E1B19; --mark:#8A7A1C;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.55;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding-block:12px;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.brand{display:flex;flex-direction:column;min-width:0}
+.brand h1{font-size:19px;font-weight:900;margin:0;letter-spacing:.02em;color:var(--navy)}
+.brand span{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:3px}
+.tabs button{border:0;background:transparent;padding:6px 14px;border-radius:6px;color:var(--muted);font-weight:500}
+.tabs button[aria-pressed="true"]{background:var(--navy);color:var(--navy-ink);font-weight:700}
+.sum{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;align-items:center}
+.chip{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 11px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip b{color:var(--ink)}
+.chip.todo b{color:var(--todo)}
+.save{font-size:12px;color:var(--muted);min-width:7em;text-align:right}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:6px 12px;font-weight:500}
+.btn:hover{border-color:var(--navy)}
+.btn.pri{background:var(--navy);color:var(--navy-ink);border-color:var(--navy);font-weight:700}
+.btn.sm{padding:2px 9px;font-size:12px}
+.btn.del{color:var(--todo)}
+.banner{margin-top:12px;padding:9px 14px;border-radius:8px;background:var(--warn-soft);color:var(--warn);font-size:13px}
+.shell{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;margin-top:16px;align-items:start}
+.nav{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);max-height:calc(100vh - 100px);overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px}
+.nav h3{margin:10px 8px 4px;font-size:11px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+.nav button{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;width:100%;text-align:left;border:0;background:transparent;border-radius:7px;padding:7px 9px}
+.nav button:hover{background:var(--surface-2)}
+.nav button[aria-current="true"]{background:var(--navy);color:var(--navy-ink)}
+.nav .t{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav .m{grid-column:1/-1;display:flex;gap:6px;font-size:11px;align-items:center}
+.pill{display:inline-block;padding:0 8px;border-radius:999px;font-size:11px;font-weight:700;line-height:18px}
+.pill.s0{background:var(--todo-soft);color:var(--todo)}
+.pill.s1{background:var(--warn-soft);color:var(--warn)}
+.pill.s2{background:var(--surface-2);color:var(--navy);border:1px solid var(--line)}
+.pill.s3{background:var(--ok-soft);color:var(--ok)}
+.nav button[aria-current="true"] .pill{background:rgba(255,255,255,.2);color:inherit;border:0}
+.nav .n{font-size:11px;opacity:.85}
+.work{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.ed h2{margin:0 0 12px;font-size:16px;color:var(--navy)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px}
+.fld{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 140px}
+.fld label{font-size:11px;color:var(--muted);letter-spacing:.06em}
+input[type=text],select,textarea{width:100%;border:1px solid var(--line);background:var(--surface-2);border-radius:6px;padding:6px 9px}
+textarea{resize:vertical;line-height:1.6}
+.blk{border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px;background:var(--surface)}
+.blk-h{display:flex;gap:6px;align-items:center;margin-bottom:8px;font-size:12px;color:var(--muted)}
+.blk-h .sp{flex:1}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+table.grid{border-collapse:collapse;min-width:100%}
+table.grid th,table.grid td{border:1px solid var(--line);padding:0;vertical-align:top;min-width:96px}
+table.grid th{background:var(--surface-2)}
+table.grid textarea,table.grid input{border:0;border-radius:0;background:transparent;padding:5px 7px;font-size:13px;min-height:30px;resize:none;overflow:hidden;display:block}
+table.grid th input{font-weight:700}
+table.grid td.act,table.grid th.act{min-width:0;width:32px;text-align:center;padding:2px;background:var(--surface-2)}
+table.grid td.act button,table.grid th.act button{border:0;background:transparent;color:var(--muted);padding:2px 5px}
+.add{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.hint{font-size:12px;color:var(--muted);margin:8px 0 0}
+/* paper */
+.paperwrap{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);max-height:calc(100vh - 100px);overflow:auto}
+.paper{background:var(--paper);color:var(--paper-ink);border:1px solid var(--line);border-radius:3px;padding:30px 30px 34px;box-shadow:0 2px 10px rgba(20,24,60,.12);font-size:13px;line-height:1.7;margin-bottom:18px}
+.paper h2.pt{margin:0 0 14px;font-size:19px;font-weight:900;color:var(--paper-head);padding-left:11px;border-left:5px solid #C55A11}
+.paper p{margin:0 0 7px;white-space:pre-wrap}
+.paper p.h{font-weight:700;color:var(--paper-head);margin-top:12px;font-size:14px}
+.paper p.note{font-size:11px;color:#5a5f78}
+.paper table{border-collapse:collapse;width:100%;margin:8px 0 10px;font-size:11.5px}
+.paper th{background:#1F2A5C;color:#fff;font-weight:700;padding:4px 6px;border:1px solid var(--paper-line);text-align:center}
+.paper td{border:1px solid var(--paper-line);padding:4px 6px;vertical-align:top;white-space:pre-wrap}
+.paper .tw2{overflow-x:auto}
+.paper [data-b]{transition:background .15s}
+.paper [data-b].active{background:#FFF1E3;box-shadow:-8px 0 0 #FFF1E3,-12px 0 0 #C55A11;border-radius:2px}
+.blk:focus-within{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-soft)}
+.paper .poster{border:1.5px dashed var(--paper-line);border-radius:4px;padding:40px 16px;text-align:center;color:#5a5f78}
+mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 2px}
+.paper mark{background:#FFE766;color:#1B1F33}
+.cover{margin:-30px -30px 0;padding-top:30px}
+.cover .logo{padding:0 34px 56px;color:#1F2A5C;font-weight:900;font-size:15px;letter-spacing:.04em}
+.cover .blk2{display:grid;grid-template-columns:10px minmax(0,1fr);background:#1F2A5C;color:#fff}
+.cover .blk2 i{background:#C55A11}
+.cover .in{padding:26px 28px 30px}
+.cover .kick{color:#F4B88A;letter-spacing:.35em;font-size:11px}
+.cover .org{font-size:15px;font-weight:700;margin:12px 0 2px}
+.cover .ttl{font-size:25px;font-weight:900;line-height:1.3;margin-bottom:12px}
+.cover .rule{border-top:1px solid #7F8AB5;margin:0 0 10px}
+.cover .meta{font-size:12px;margin:3px 0}
+.cover .foot{padding:50px 34px 24px;font-size:11px;color:#444;display:grid;gap:2px}
+.cover .foot b{color:#1F2A5C;font-size:13px}
+.book .paper{max-width:760px;margin-inline:auto}
+.todo-list{display:grid;gap:8px}
+.todo-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.todo-item .sec{font-size:12px;color:var(--muted)}
+.todo-item .mk{font-weight:700;color:var(--todo)}
+.empty{padding:48px 18px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+@media (max-width:1180px){.work{grid-template-columns:minmax(0,1fr)}.paperwrap{position:static;max-height:none}}
+@media (max-width:860px){.shell{grid-template-columns:minmax(0,1fr)}.nav{position:static;max-height:240px}.sum{margin-left:0}.paper{padding:22px 18px}.cover{margin:-22px -18px 0}}
+@media (prefers-reduced-motion:no-preference){.btn,.nav button{transition:background .12s,border-color .12s}}
+</style>
+
+<header class="top">
+  <div class="brand"><h1>會員大會手冊編輯台</h1><span>第四屆第一次會員大會暨會長交接典禮・115.12.04</span></div>
+  <div class="tabs" role="group" aria-label="檢視">
+    <button id="tab-edit" data-view="edit" aria-pressed="true">編輯</button>
+    <button id="tab-book" data-view="book" aria-pressed="false">全冊預覽</button>
+    <button id="tab-todo" data-view="todo" aria-pressed="false">待補清單</button>
+  </div>
+  <div class="sum" id="sum"></div>
+  <span class="save" id="save" aria-live="polite"></span>
+</header>
+<div id="banner"></div>
+<main id="main"><div class="empty"><b>載入手冊內容中…</b>正在連線共用資料庫。</div></main>
+
+<script>
+(function(){
+const PEND=/【(?:資料待補|待填|待補|待確認|待財務長|待執行長|待會長)[^】]*】/g;
+const STATUS=['待補資料','編修中','待確認','定稿'];
+const GROUPS={front:'封面與本文',body:'封面與本文',att:'附件',tool:'編輯用'};
+const S={secs:{},sel:'cover',view:'edit',loaded:false,online:false};
+let db=null; const timers={}, dirty=new Set();
+const $=s=>document.querySelector(s);
+const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hl=t=>esc(t).replace(PEND,m=>'<mark>'+m+'</mark>');
+const canon=o=>JSON.stringify(o,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,x)=>(a[x]=v[x],a),{}):v);
+const ordered=()=>Object.values(S.secs).sort((a,b)=>a.order-b.order);
+function textOf(s){return canon(s.blocks||[])+canon(s.cover||{})}
+function pendCount(s){return (textOf(s).match(PEND)||[]).length}
+function stLevel(s){return Math.max(0,STATUS.indexOf(s.status))}
+const sel=()=>S.secs[S.sel];
+
+/* ---------- save ---------- */
+function setSave(t){$('#save').textContent=t}
+function touch(id){
+  dirty.add(id); clearTimeout(timers[id]); setSave('儲存中…');
+  timers[id]=setTimeout(()=>flush(id),700);
+}
+async function flush(id){
+  const s=S.secs[id]; if(!s) return;
+  if(!db){dirty.delete(id); try{localStorage.setItem('iaa-handbook-draft',JSON.stringify(S.secs));setSave('已存在此瀏覽器')}catch(e){setSave('只存在這個畫面')} return}
+  try{
+    const {id:_i,...data}=s; await db.collection('sections').doc(id).set(data);
+    dirty.delete(id); const d=new Date(); setSave('已儲存 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'));
+  }catch(e){ setSave((e&&(e.code==='not_granted'||e.code==='revoked'))?'沒有編輯權限':'儲存失敗，請稍後再試') }
+}
+
+/* ---------- render ---------- */
+function paperHTML(s){
+  if(s.kind==='cover'){
+    const c=s.cover||{};
+    return `<div class="paper"><div class="cover"><div class="logo">創新加速聯盟會　IAA</div>
+      <div class="blk2"><i></i><div class="in"><div class="kick">${hl(c.kicker)}</div><div class="org">${hl(c.org)}</div>
+      <div class="ttl">${hl(c.title1)}<br>${hl(c.title2)}</div><div class="rule"></div>
+      ${(c.meta||[]).map(m=>`<div class="meta">${hl(m[0])}　${hl(m[1])}</div>`).join('')}</div></div>
+      <div class="foot">${(c.foot||[]).map((l,i)=>i===0?`<b>${hl(l)}</b>`:`<span>${hl(l)}</span>`).join('')}</div></div></div>`;
+  }
+  let h=`<div class="paper"><h2 class="pt" data-b="title">${hl(s.title)}</h2>`, bi=0;
+  for(const b of s.blocks||[]){
+    const i=bi++;
+    if(b.t==='p') h+=`<p data-b="${i}" class="${b.style==='h'?'h':b.style==='note'?'note':''}">${hl(b.text)}</p>`;
+    else if(b.t==='poster') h+=`<div data-b="${i}" class="poster">${hl(b.text)}<br><small>（印刷時放入海報圖檔）</small></div>`;
+    else if(b.t==='table') h+=`<div data-b="${i}" class="tw2"><table><thead><tr>${b.headers.map(x=>`<th>${hl(x)}</th>`).join('')}</tr></thead><tbody>${b.rows.map(r=>`<tr>${r.map(c=>`<td>${hl(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  }
+  return h+'</div>';
+}
+function renderSummary(){
+  const all=ordered().filter(s=>s.group!=='tool');
+  const done=all.filter(s=>s.status==='定稿').length;
+  const pend=all.reduce((n,s)=>n+pendCount(s),0);
+  $('#sum').innerHTML=`<span class="chip">定稿 <b>${done}</b>／${all.length}</span><span class="chip todo">待補欄位 <b>${pend}</b></span><button class="btn pri" data-act="export-md">下載全冊文字</button>`;
+}
+function renderNav(){
+  const secs=ordered(); let last='',h='';
+  for(const s of secs){
+    const g=GROUPS[s.group]||'';
+    if(g!==last){h+=`<h3>${g}</h3>`;last=g}
+    const n=pendCount(s), lv=stLevel(s);
+    h+=`<button data-sel="${s.id}" ${s.id===S.sel?'aria-current="true"':''}><span class="t">${esc(s.title.replace(/^【附件(.)】/,'附件$1　'))}</span>
+      <span class="n">${n?`待補 ${n}`:''}</span><span class="m"><span class="pill s${lv}">${s.status}</span>${s.owner?`<span>${esc(s.owner)}</span>`:''}</span></button>`;
+  }
+  $('#nav')&&($('#nav').innerHTML=h);
+}
+function blockEditor(b,i,total){
+  const tools=`<span class="sp"></span><button class="btn sm" data-act="up" data-b="${i}" ${i===0?'disabled':''} aria-label="上移">↑</button><button class="btn sm" data-act="down" data-b="${i}" ${i===total-1?'disabled':''} aria-label="下移">↓</button><button class="btn sm del" data-act="delblk" data-b="${i}">刪除區塊</button>`;
+  if(b.t==='p') return `<div class="blk" data-blk="${i}"><div class="blk-h">段落<select data-role="pstyle" data-b="${i}" style="width:auto"><option value="p"${b.style==='p'?' selected':''}>內文</option><option value="h"${b.style==='h'?' selected':''}>小標</option><option value="note"${b.style==='note'?' selected':''}>註記</option></select>${tools}</div>
+    <textarea data-role="ptext" data-b="${i}" rows="${Math.min(10,Math.max(2,Math.ceil(b.text.length/32)))}">${esc(b.text)}</textarea></div>`;
+  if(b.t==='poster') return `<div class="blk" data-blk="${i}"><div class="blk-h">海報位置${tools}</div><input type="text" data-role="postertext" data-b="${i}" value="${esc(b.text)}"></div>`;
+  let h=`<div class="blk" data-blk="${i}"><div class="blk-h">表格（${b.rows.length} 列 × ${b.headers.length} 欄）${tools}</div><div class="tw"><table class="grid"><thead><tr>${b.headers.map((x,c)=>`<th><input type="text" data-role="hcell" data-b="${i}" data-c="${c}" value="${esc(x)}"></th>`).join('')}<th class="act"><button data-act="addcol" data-b="${i}" title="新增欄" aria-label="新增欄">＋</button></th></tr>
+    <tr>${b.headers.map((x,c)=>`<th class="act" style="width:auto"><button data-act="delcol" data-b="${i}" data-c="${c}" title="刪除此欄" aria-label="刪除第${c+1}欄">×欄</button></th>`).join('')}<th class="act"></th></tr></thead><tbody>`;
+  b.rows.forEach((r,ri)=>{h+=`<tr>${r.map((c,ci)=>`<td><textarea data-role="cell" data-b="${i}" data-r="${ri}" data-c="${ci}" rows="1">${esc(c)}</textarea></td>`).join('')}<td class="act"><button data-act="delrow" data-b="${i}" data-r="${ri}" title="刪除此列" aria-label="刪除第${ri+1}列">×</button></td></tr>`});
+  return h+`</tbody></table></div><div class="add"><button class="btn sm" data-act="addrow" data-b="${i}">＋ 新增列</button></div></div>`;
+}
+function editorHTML(s){
+  const head=`<div class="row"><div class="fld" style="flex:2 1 220px"><label for="f-title">章節標題</label><input type="text" id="f-title" data-role="title" value="${esc(s.title)}" ${s.kind==='cover'?'disabled':''}></div>
+    <div class="fld"><label for="f-status">狀態</label><select id="f-status" data-role="status">${STATUS.map(x=>`<option${x===s.status?' selected':''}>${x}</option>`).join('')}</select></div>
+    <div class="fld"><label for="f-owner">負責人</label><input type="text" id="f-owner" data-role="owner" value="${esc(s.owner||'')}" placeholder="例如：財務長"></div></div>`;
+  if(s.kind==='cover'){
+    const c=s.cover||{};
+    return `<div class="card ed"><h2>封面</h2>${head}
+      <div class="row"><div class="fld"><label for="c-kicker">小標</label><input type="text" id="c-kicker" data-role="cf" data-k="kicker" value="${esc(c.kicker)}"></div><div class="fld"><label for="c-org">團體名稱</label><input type="text" id="c-org" data-role="cf" data-k="org" value="${esc(c.org)}"></div></div>
+      <div class="row"><div class="fld"><label for="c-t1">主標題第一行</label><input type="text" id="c-t1" data-role="cf" data-k="title1" value="${esc(c.title1)}"></div><div class="fld"><label for="c-t2">主標題第二行</label><input type="text" id="c-t2" data-role="cf" data-k="title2" value="${esc(c.title2)}"></div></div>
+      ${(c.meta||[]).map((m,j)=>`<div class="row"><div class="fld" style="flex:0 0 90px"><label for="cm-l${j}">欄名</label><input type="text" id="cm-l${j}" data-role="cmeta" data-j="${j}" data-i="0" value="${esc(m[0])}"></div><div class="fld" style="flex:1 1 260px"><label for="cm-v${j}">內容</label><input type="text" id="cm-v${j}" data-role="cmeta" data-j="${j}" data-i="1" value="${esc(m[1])}"></div></div>`).join('')}
+      <div class="fld"><label for="c-foot">頁尾（一行一列，第一行為粗體標題）</label><textarea id="c-foot" data-role="cfoot" rows="5">${esc((c.foot||[]).join('\n'))}</textarea></div>
+      <p class="hint">封面版式照長發會手冊：白底 IAA 標誌、藍色大色塊加橘色側條、白色粗體標題、頁尾列出團隊。</p></div>`;
+  }
+  const bl=s.blocks||[];
+  return `<div class="card ed"><h2>${esc(s.title)}</h2>${head}
+    ${bl.length?bl.map((b,i)=>blockEditor(b,i,bl.length)).join(''):'<div class="empty"><b>這一節還沒有內容</b>用下方按鈕加入段落或表格。</div>'}
+    <div class="add"><button class="btn" data-act="addp">＋ 段落</button><button class="btn" data-act="addtable">＋ 表格</button><button class="btn" data-act="addposter">＋ 海報位置</button></div>
+    <p class="hint">資料不足的地方請寫成【資料待補】；右側預覽會用黃底標出，並自動列入「待補清單」。</p></div>`;
+}
+function growAll(){document.querySelectorAll('table.grid textarea').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px'})}
+function renderEdit(keepPreview){
+  const s=sel(); if(!s){return}
+  $('#ed').innerHTML=editorHTML(s); growAll();
+  renderPreview();
+}
+function renderPreview(){const s=sel();const el=$('#pv');if(el&&s){el.innerHTML=paperHTML(s);markActive(false)}}
+function markActive(scroll){
+  const pv=$('#pv'); if(!pv) return;
+  pv.querySelectorAll('.active').forEach(x=>x.classList.remove('active'));
+  if(S.active==null) return;
+  const el=pv.querySelector('[data-b="'+S.active+'"]'); if(!el) return;
+  el.classList.add('active');
+  const r=el.getBoundingClientRect(), pr=pv.getBoundingClientRect();
+  if(pv.scrollHeight>pv.clientHeight+4 && (r.top<pr.top+24||r.bottom>pr.bottom-24)){
+    pv.scrollTo({top:Math.max(0,pv.scrollTop+(r.top-pr.top)-pr.height/3),behavior:scroll?'smooth':'auto'});
+  }
+}
+function collectTodos(){
+  const out=[];
+  for(const s of ordered()){
+    if(s.group==='tool') continue;
+    const add=(txt,ctx)=>{const m=txt.match(PEND);if(m)m.forEach(k=>out.push({id:s.id,sec:s.title,owner:s.owner||'',mk:k,ctx}))};
+    if(s.kind==='cover'){ (s.cover.meta||[]).forEach(m=>add(m[1],m[0])); (s.cover.foot||[]).forEach(f=>add(f,'頁尾')); }
+    (s.blocks||[]).forEach(b=>{
+      if(b.t==='p'||b.t==='poster') add(b.text,b.text.slice(0,40));
+      else if(b.t==='table') b.rows.forEach(r=>r.forEach(c=>add(c,r.slice(0,2).join('　').replace(/\n/g,' ').slice(0,40))));
+    });
+  }
+  return out;
+}
+function renderTodo(){
+  const t=collectTodos();
+  $('#main').innerHTML=`<div class="card" style="margin-top:16px"><div class="row" style="align-items:center"><h2 style="margin:0;flex:1;font-size:16px;color:var(--navy)">待補清單　${t.length} 項</h2><button class="btn" data-act="export-csv">下載清單（CSV）</button></div>
+    ${t.length?`<div class="todo-list">${t.map(x=>`<div class="todo-item"><div><div class="sec">${esc(x.sec)}${x.owner?'　負責：'+esc(x.owner):''}</div><div><span class="mk">${esc(x.mk)}</span>　${esc(x.ctx)}</div></div><button class="btn sm" data-goto="${x.id}">前往編輯</button></div>`).join('')}</div>`:'<div class="empty"><b>沒有待補欄位</b>所有章節都已填入資料。</div>'}</div>`;
+}
+function renderBook(){
+  $('#main').innerHTML=`<div class="book" style="margin-top:16px">${ordered().filter(s=>s.group!=='tool').map(paperHTML).join('')}</div>`;
+}
+function renderMain(){
+  setTabs();
+  if(!ordered().length && S.loaded){
+    $('#main').innerHTML='<div class="empty"><b>手冊內容還沒有建立</b>請請 Claude 匯入手冊章節，匯入後這裡會出現各章節。</div>';return}
+  if(S.view==='todo') return renderTodo();
+  if(S.view==='book') return renderBook();
+  if(!S.secs[S.sel]) S.sel=(ordered()[0]||{}).id;
+  $('#main').innerHTML=`<div class="shell"><nav class="nav" id="nav" aria-label="章節"></nav><div class="work"><div id="ed"></div><div class="paperwrap" id="pv"></div></div></div>`;
+  renderNav(); renderEdit();
+}
+function setTabs(){document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===S.view)))}
+function refresh(){renderSummary(); if(S.view==='edit'&&$('#nav')){renderNav();renderPreview()} else if(S.view!=='edit') renderMain()}
+let pt=0; function softRefresh(){clearTimeout(pt);pt=setTimeout(()=>{renderSummary();renderNav();renderPreview()},160)}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.view){S.view=t.dataset.view; renderMain(); return}
+  if(t.dataset.sel){S.sel=t.dataset.sel; S.active=null; renderNav(); renderEdit(); return}
+  if(t.dataset.goto){S.sel=t.dataset.goto; S.view='edit'; renderMain(); return}
+  const a=t.dataset.act; if(!a) return;
+  if(a==='export-md') return exportMd();
+  if(a==='export-csv') return exportCsv();
+  if(a==='export-json') return save('handbook.json',JSON.stringify(ordered(),null,1));
+  const s=sel(); if(!s) return; const bl=s.blocks=s.blocks||[]; const b=+t.dataset.b;
+  if(a==='up'&&b>0)[bl[b-1],bl[b]]=[bl[b],bl[b-1]];
+  else if(a==='down'&&b<bl.length-1)[bl[b+1],bl[b]]=[bl[b],bl[b+1]];
+  else if(a==='delblk')bl.splice(b,1);
+  else if(a==='addp')bl.push({t:'p',style:'p',text:''});
+  else if(a==='addposter')bl.push({t:'poster',text:'海報（檔名）'});
+  else if(a==='addtable')bl.push({t:'table',headers:['欄位一','欄位二'],rows:[['','']]});
+  else if(a==='addrow'){const w=bl[b].headers.length;bl[b].rows.push(Array(w).fill(''))}
+  else if(a==='delrow')bl[b].rows.splice(+t.dataset.r,1);
+  else if(a==='addcol'){bl[b].headers.push('新欄');bl[b].rows.forEach(r=>r.push(''))}
+  else if(a==='delcol'){if(bl[b].headers.length>1){const c=+t.dataset.c;bl[b].headers.splice(c,1);bl[b].rows.forEach(r=>r.splice(c,1))}}
+  else return;
+  touch(s.id); renderEdit(); softRefresh();
+});
+document.addEventListener('focusin',e=>{
+  const ed=$('#ed'); if(!ed||!ed.contains(e.target)) return;
+  const blk=e.target.closest('.blk');
+  S.active=blk?blk.dataset.blk:(e.target.dataset&&e.target.dataset.role==='title'?'title':null);
+  markActive(true);
+});
+document.addEventListener('input',e=>{
+  const el=e.target, r=el.dataset&&el.dataset.role; if(!r) return;
+  const s=sel(); if(!s) return; const bl=s.blocks||[]; const b=+el.dataset.b;
+  if(r==='title')s.title=el.value;
+  else if(r==='status'){s.status=el.value}
+  else if(r==='owner')s.owner=el.value;
+  else if(r==='ptext')bl[b].text=el.value;
+  else if(r==='pstyle')bl[b].style=el.value;
+  else if(r==='postertext')bl[b].text=el.value;
+  else if(r==='hcell')bl[b].headers[+el.dataset.c]=el.value;
+  else if(r==='cell'){bl[b].rows[+el.dataset.r][+el.dataset.c]=el.value;el.style.height='auto';el.style.height=el.scrollHeight+'px'}
+  else if(r==='cf')s.cover[el.dataset.k]=el.value;
+  else if(r==='cmeta')s.cover.meta[+el.dataset.j][+el.dataset.i]=el.value;
+  else if(r==='cfoot')s.cover.foot=el.value.split('\n');
+  else return;
+  touch(s.id); softRefresh();
+});
+
+/* ---------- export ---------- */
+function toMd(){
+  let o='';
+  for(const s of ordered()){
+    if(s.group==='tool') continue;
+    if(s.kind==='cover'){const c=s.cover;o+=`# ${c.org}\n\n## ${c.title1}${c.title2}\n\n${c.meta.map(m=>m.join('　')).join('\n\n')}\n\n${c.foot.join('\n\n')}\n\n---\n\n`;continue}
+    o+=`# ${s.title}\n\n`;
+    for(const b of s.blocks||[]){
+      if(b.t==='p')o+=(b.style==='h'?'### ':'')+b.text+'\n\n';
+      else if(b.t==='poster')o+=`［${b.text}］\n\n`;
+      else{const f=x=>String(x).replace(/\n/g,'<br>').replace(/\|/g,'／');o+=`| ${b.headers.map(f).join(' | ')} |\n|${b.headers.map(()=>'---').join('|')}|\n${b.rows.map(r=>`| ${r.map(f).join(' | ')} |`).join('\n')}\n\n`}
+    }
+    o+='---\n\n';
+  }
+  return o;
+}
+async function save(filename,data){
+  try{let d=null;try{d=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){}
+    if(!d){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'text/plain;charset=utf-8'}));a.download=filename;document.body.appendChild(a);a.click();a.remove();return}
+    await d.save({filename,data})}
+  catch(e){ if(!e||e.code!=='declined') flashSave('下載失敗') }
+}
+function flashSave(t){setSave(t)}
+function exportMd(){save('IAA第四屆第一次會員大會手冊_全冊文字.md',toMd())}
+function exportCsv(){
+  const q=x=>'"'+String(x).replace(/"/g,'""')+'"';
+  const rows=[['章節','負責人','待補欄位','位置'],...collectTodos().map(x=>[x.sec,x.owner,x.mk,x.ctx])];
+  save('手冊待補清單.csv','﻿'+rows.map(r=>r.map(q).join(',')).join('\n'));
+}
+
+/* ---------- boot ---------- */
+async function boot(){
+  const timeout=new Promise(r=>setTimeout(()=>r('timeout'),10000));
+  try{
+    const use=window.claude&&window.claude.use;
+    db=use?await Promise.race([use('db'),timeout]):null;
+    if(db==='timeout') db=null;
+  }catch(e){db=null}
+  if(!db){
+    let src='';
+    try{const l=localStorage.getItem('iaa-handbook-draft'); if(l){S.secs=JSON.parse(l);src='此瀏覽器的草稿'}}catch(e){}
+    if(!src){try{const r=await fetch('handbook.json',{cache:'reload'}); if(r.ok){const a=await r.json(); a.forEach(x=>{S.secs[x.id]=x}); src='handbook.json（資料基準 115.11.13，通訊錄電話不公開）'}}catch(e){}}
+    $('#banner').innerHTML='<div class="banner">資料來源：'+esc(src||'無')+'。修改只存在這個瀏覽器；要保留請按「下載編輯資料」。　<button class="btn sm" data-act="export-json">下載編輯資料（JSON）</button></div>';
+    S.loaded=true; renderSummary(); renderMain(); return;
+  }
+  S.online=true; setSave('已連線');
+  db.collection('sections').onSnapshot(snap=>{
+    let changed=false;
+    const seen=new Set();
+    snap.docs.forEach(d=>{
+      const id=d.id; seen.add(id);
+      if(dirty.has(id)) return;
+      const next={id,...d.data()};
+      if(!S.secs[id]||canon(S.secs[id])!==canon(next)){S.secs[id]=next;changed=true}
+    });
+    Object.keys(S.secs).forEach(id=>{if(!seen.has(id)&&!dirty.has(id)){delete S.secs[id];changed=true}});
+    const first=!S.loaded; S.loaded=true;
+    renderSummary();
+    if(first||!changed&&false){renderMain();return}
+    if(!changed) return;
+    if(S.view!=='edit'){renderMain();return}
+    if(!$('#nav')){renderMain();return}
+    renderNav(); renderPreview();
+    const ae=document.activeElement;
+    if(!(ae&&$('#ed')&&$('#ed').contains(ae))) renderEdit();
+  },e=>{setSave('讀取失敗')});
+}
+renderSummary();
+boot();
+})();
+</script>
+
+</head><body></body></html>
