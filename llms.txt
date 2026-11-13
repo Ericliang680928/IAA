@@ -13,6 +13,8 @@
 ## 頁面
 - [首頁](https://ericliang680928.github.io/IAA/): 認識 IAA、活動、入會、常見問題
 - [入會申請](https://ericliang680928.github.io/IAA/20261204/join/): 入會申請表（需專屬連結）
+- [會長的話](https://ericliang680928.github.io/IAA/president/): 第三屆會長江德利上任感言、第二屆會長高麗琴卸任感言
+- [組織章程](https://ericliang680928.github.io/IAA/charter/): 組織章程全文（含 114 年 12 月 5 日修訂）
 - [年會報名查詢](https://ericliang680928.github.io/IAA/20261204/status/)
 
 ## 不對外
