@@ -380,6 +380,14 @@
         onSnapshot: function (cb, onErr) { on(function () { cb(snapDoc(path)); }, onErr); }
       };
     },
+    // 批次寫入／刪除：全部做完才重讀一次，「全部報到」「歸零」不必一筆一筆等
+    setMany: function (items) {
+      var i = 0, err = null;
+      function worker() { if (i >= items.length) return Promise.resolve(); var it = items[i++]; return rpc('mm_write', { p: it.path, d: it.d, uid: uid, pw: pw || null }).then(worker, function (e) { err = err || e; }); }
+      var ws = []; for (var k = 0; k < 6; k++) ws.push(worker());
+      return Promise.all(ws).then(refresh).then(function () { if (err) throw err; });
+    },
+    deleteMany: function (paths) { if (!paths.length) return Promise.resolve(); return rpc('mm_delete', { paths: paths, pw: pw }).then(refresh); },
     collection: function (name) { return { onSnapshot: function (cb, onErr) { on(function () { cb(snapCol(name)); }, onErr); } }; }
   };
   window.MM = {
@@ -676,13 +684,10 @@
   }
   async function delDoc(path) { await S.db.doc(path).delete(); }
   async function resetRounds() {
-    await delDoc('rounds/r1'); await delDoc('rounds/r2'); await delDoc('rounds/r3');
-    var ids = S.picks.map(function (p) { return p.id; });
-    for (var i = 0; i < ids.length; i++) await delDoc('r2picks/' + ids[i]);
+    await S.db.deleteMany(['rounds/r1', 'rounds/r2', 'rounds/r3'].concat(S.picks.map(function (p) { return 'r2picks/' + p.id; })));
   }
   async function clearCheckins() {
-    var ids = S.checkins.map(function (c) { return c.id; });
-    for (var i = 0; i < ids.length; i++) await delDoc('checkins/' + ids[i]);
+    await S.db.deleteMany(S.checkins.map(function (c) { return 'checkins/' + c.id; }));
   }
   async function doCheckin() {
     if (!S.db) return;
@@ -699,14 +704,13 @@
     return run(async function () {
       if (on) await S.db.doc('checkins/manual-' + id).set({ memberId: id, ts: Date.now() });
       else {
-        var mine = S.checkins.filter(function (c) { return c.memberId === id; });
-        for (var i = 0; i < mine.length; i++) await delDoc('checkins/' + mine[i].id);
+        await S.db.deleteMany(S.checkins.filter(function (c) { return c.memberId === id; }).map(function (c) { return 'checkins/' + c.id; }));
       }
     }, '');
   }
   function adminCheckinAll(on) {
     return run(async function () {
-      if (on) { var ms = members(); for (var i = 0; i < ms.length; i++) if (!isIn(ms[i].id)) await S.db.doc('checkins/manual-' + ms[i].id).set({ memberId: ms[i].id, ts: Date.now() }); }
+      if (on) await S.db.setMany(members().filter(function (m) { return !isIn(m.id); }).map(function (m) { return { path: 'checkins/manual-' + m.id, d: { memberId: m.id, ts: Date.now() } }; }));
       else await clearCheckins();
     }, on ? '已全部報到。' : '已清除所有報到。');
   }
@@ -741,7 +745,7 @@
   // 配對歸零：只清大螢幕上的配對結果（第 1、2 輪），名單、報到、會友填的志願都保留
   function doClearShow() {
     if (!S.confirmShow) { S.confirmShow = true; S.confirmReset = false; S.confirmZero = false; render(); return; }
-    run(async function () { await delDoc('rounds/r1'); await delDoc('rounds/r2'); await delDoc('rounds/r3'); S.screenRound = null; },
+    run(async function () { await S.db.deleteMany(['rounds/r1', 'rounds/r2', 'rounds/r3']); S.screenRound = null; },
       '大螢幕配對已歸零。名單、報到與會友填的志願都還在，可以重新結算。');
   }
   function doReset() {

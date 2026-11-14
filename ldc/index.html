@@ -282,7 +282,7 @@ function render(){
         mealHtml = '<span class="meal-tag">—</span>';
       } else if(r.attend === '出席'){
         statusHtml = '<span class="status-chip attend">出席</span>';
-        mealHtml = '<span class="meal-tag">'+(r.meal||'—')+'</span>';
+        mealHtml = '<span class="meal-tag">'+String(r.meal||'—').replace(/[&<>"]/g,'')+'</span>';
       } else {
         statusHtml = '<span class="status-chip leave">請假</span>';
         mealHtml = '<span class="meal-tag">—</span>';
