@@ -66,17 +66,18 @@ $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
 $("sum").onclick=function(e){var d=e.target;while(d&&d!==this&&!(d.getAttribute&&d.getAttribute("data-k"))){d=d.parentNode;}if(!d||d===this){return;}var k=d.getAttribute("data-k");TK=(TK===k)?"":k;draw();};
 function showP(id){var r=rows.filter(function(x){return String(x.id)===String(id);})[0];if(!r){return;}
   function f(l,v){v=(v==null?"":String(v)).trim();return v?'<dt>'+l+'</dt><dd>'+esc(v)+'</dd>':"";}
-  var q=[r.qual_type,r.award_year?r.award_year+" 年":"",r.award_detail].filter(function(x){return x;}).join(" ");
+  var aw=String(r.award_detail||"").split(/[；;\n]+/).map(function(x){return x.trim();}).filter(function(x){return x;});
+  var awh=aw.length?'<dt>得獎紀錄</dt><dd>'+aw.map(esc).join('<br>')+'</dd>':(r.award_year?'<dt>得獎年度</dt><dd>'+esc(r.award_year)+'</dd>':"");
   var nd=Array.isArray(r.needs)?r.needs.join("、"):r.needs;
   $("pf").innerHTML='<div class="pc"><div class="row" style="justify-content:space-between"><h2>'+esc(r.name)+(r.is_new?'<span class="b n">NEW</span>':'')+(r.status==="回歸"?'<span class="b r">回歸</span>':'')+'</h2><button class="g" id="pfx">關閉</button></div>'
    +'<div class="msg">'+esc(r.region||"未分區")+' ／ '+esc(r.chapter)+' ／ '+esc(r.status)+'</div><dl>'
-   +f("公司",r.company)+f("職稱",r.title)+f("營業內容",r.biz)+f("產業別",r.industry)+f("參加資格",q)+f("入會日",r.joined_date)+f("加入 IMC",r.imc_since)+f("手機",r.phone)+f("Email",r.email)+f("公司電話",r.company_tel)+f("生日",r.birthday)+f("通訊地址",r.address)+f("需求",nd)+f("備註",r.note)
-   +'</dl><div class="row"><button id="pfe" data-id="'+r.id+'">編輯此會友</button></div></div>';
+   +f("公司",r.company)+f("職稱",r.title)+f("營業內容",r.biz)+f("產業別",r.industry)+f("參加資格",r.qual_type)+awh+f("入會日",r.joined_date)+f("加入 IMC",r.imc_since)+f("手機",r.phone)+f("Email",r.email)+f("公司電話",r.company_tel)+f("生日",r.birthday)+f("通訊地址",r.address)+f("需求",nd)+f("備註",r.note)
+   +'</dl></div>';
   $("pf").hidden=false;}
 document.addEventListener("click",function(e){var d=e.target;while(d&&d!==document&&!(d.getAttribute&&d.getAttribute("data-p"))){d=d.parentNode;}
   if(d&&d!==document){showP(d.getAttribute("data-p"));return;}
   if(e.target.id==="pfx"||e.target.id==="pf"){$("pf").hidden=true;}
-  if(e.target.id==="pfe"){var i=e.target.getAttribute("data-id");$("pf").hidden=true;var b=document.querySelector('#tb button[data-id="'+i+'"]');if(b){b.click();}}});
+});
 $("rf2").onchange=draw;
 $("sd").onclick=function(e){if(e.target.id==="sdx"){TK="";draw();}};
 $("q").oninput=draw;$("sf").onchange=draw;
