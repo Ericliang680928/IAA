@@ -55,11 +55,11 @@ h3{font-size:19px;font-family:var(--body);font-weight:700}
 .top .wrap{display:flex;align-items:center;gap:12px 28px;min-height:64px;padding-block:8px}
 .top .logo{display:block;flex-shrink:0}
 .top .logo img{height:44px;width:auto;display:block}
-.top nav{display:none;gap:22px;font-weight:500;flex:1}
+.top .wrap{flex-wrap:wrap}.top nav{display:flex;order:3;width:100%;overflow-x:auto;white-space:nowrap;gap:20px;font-weight:500;flex:1 1 100%;scrollbar-width:none}.top nav a{flex-shrink:0}
 .top nav a{text-decoration:none;padding:8px 2px;border-bottom:3px solid transparent}
 .top nav a:hover{border-color:var(--magenta)}
 .top .login{margin-left:auto;background:var(--navy);color:#fff;border-radius:8px;padding:0 18px;min-height:44px;display:inline-flex;align-items:center;font-weight:700;text-decoration:none}
-@media(min-width:860px){.top nav{display:flex}}
+@media(min-width:860px){.top nav{order:0;width:auto;flex:1;overflow:visible}}
 /* 首屏 */
 .hero{background:var(--navy);color:#fff;position:relative;overflow:hidden}
 .hero .wrap{display:grid;gap:32px;padding-block:44px 52px;position:relative;z-index:1}
