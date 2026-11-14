@@ -13,19 +13,21 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 6px;
 .b{display:inline-block;border-radius:6px;padding:0 6px;font-size:12px;font-weight:700;color:#fff;margin-left:4px}.n{background:#D45824}.r{background:#2E7D6B}.q{background:#8a90a8}
 .out td{opacity:.5}.msg{min-height:22px;color:var(--mut);font-size:13px}.err{color:#c0392b}
 .sum{display:flex;gap:10px;flex-wrap:wrap}.sum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;cursor:pointer}.sum div.on{border-color:var(--pk);box-shadow:0 0 0 2px var(--pk) inset}.sum div:after{content:"▾";float:right;margin-left:8px;color:var(--mut);font-size:12px}.sum div.on:after{content:"▴"}
+.nm{cursor:pointer;color:var(--pk);font-weight:600}.sd .ch.nm{font-weight:500}.sd h4{margin:10px 0 2px;font-size:13px;color:var(--mut)}
+#pf{position:fixed;inset:0;background:rgba(20,20,40,.45);z-index:9;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;overflow:auto}#pf[hidden]{display:none}#pf .pc{background:#fff;border-radius:14px;padding:16px;max-width:520px;width:100%}#pf h2{margin:0 0 4px;font-size:20px}#pf dl{display:grid;grid-template-columns:90px 1fr;gap:6px 10px;margin:10px 0;font-size:14px}#pf dt{color:var(--mut)}#pf dd{margin:0;word-break:break-all}
 .sd h3{margin:0 0 8px;font-size:15px}.sd .ch{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin:3px 4px 3px 0;font-size:13px}.sd .ch i{font-style:normal;color:var(--mut);margin-left:4px}.sum b{font-size:20px;display:block}
 @media(max-width:640px){.hm{display:none}}
 </style></head><body><div class="w">
 <h1>IAA 會友後台</h1>
 <div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="後台密碼" autocomplete="current-password"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
 <div id="app" hidden>
-<div class="sum" id="sum"></div><div class="card sd" id="sd" hidden></div>
+<div class="sum" id="sum"></div><div class="card sd" id="sd" hidden></div><div id="pf" hidden></div>
 <div class="card"><div class="row"><b id="ft">新增會友</b></div>
 <div class="row" style="margin-top:8px"><input id="fn" placeholder="姓名" size="8"><input id="fc" placeholder="社別，如 雲林社" size="12" list="cl"><select id="fr"><option>北區</option><option>中區</option><option>南區</option></select>
 <select id="fs"><option>有效</option><option>有望</option><option>回歸</option><option>退會</option></select><label><input type="checkbox" id="fw"> 新會友 NEW</label></div>
 <div class="row" style="margin-top:8px"><input id="fo" placeholder="備註（只有後台看得到）" style="flex:1;min-width:200px"><button id="sv">儲存</button><button class="g" id="cx" hidden>取消編輯</button></div>
 <div class="msg" id="m1"></div></div>
-<div class="card"><div class="row"><input id="q" placeholder="搜尋姓名或社別" style="flex:1;min-width:160px"><select id="sf"><option value="">全部狀態</option><option>有效</option><option>回歸</option><option>有望</option><option>退會</option></select></div>
+<div class="card"><div class="row"><input id="q" placeholder="搜尋姓名或社別" style="flex:1;min-width:160px"><select id="sf"><option value="">全部狀態</option><option>有效</option><option>回歸</option><option>有望</option><option>退會</option></select><select id="rf2"><option value="">全部區域</option><option>北區</option><option>中區</option><option>南區</option></select></div>
 <table style="margin-top:8px"><thead><tr><th>姓名</th><th>社別</th><th class="hm">區域</th><th>狀態</th><th class="hm">備註</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
 <p class="msg">儲存後，報名查詢頁約 30 秒內自動同步。退會者不會出現在公開頁面。</p>
 </div><datalist id="cl"></datalist></div>
@@ -40,27 +42,42 @@ function rpc(fn,body,cb){
   x.onerror=function(){cb(false,null,"network");};x.send(JSON.stringify(body));
 }
 function load(cb){rpc("iaa_member_list",{p:pw},function(ok,j,t){if(ok&&j){rows=j;draw();}cb(ok,t);});}
+function chip(r){return '<span class="ch nm" data-p="'+r.id+'">'+esc(r.name)+'<i>'+esc(r.chapter)+'</i></span>';}
 var TK="",TN={act:"有效會友（含回歸）",rt:"回歸會友",nw:"新會友",wang:"有望（未入會）",out:"退會"};
 function inTile(r,k){if(k==="out"){return r.status==="退會";}if(k==="wang"){return r.status==="有望";}if(k==="rt"){return r.status==="回歸";}if(k==="nw"){return !!r.is_new&&r.status!=="有望"&&r.status!=="退會";}return r.status!=="退會"&&r.status!=="有望";}
 function draw(){
-  var q=$("q").value.trim(),sf=$("sf").value,act=0,rt=0,out=0,nw=0,wang=0,cs={};
+  var q=$("q").value.trim(),sf=$("sf").value,rg=$("rf2").value,act=0,rt=0,out=0,nw=0,wang=0,cs={};
   rows.forEach(function(r){if(r.status==="退會"){out++;}else if(r.status==="有望"){wang++;}else{act++;}if(r.status==="回歸"){rt++;}if(r.is_new&&r.status!=="有望"&&r.status!=="退會"){nw++;}cs[r.chapter]=1;});
   function t(k,n,l){return '<div data-k="'+k+'" class="'+(TK===k?"on":"")+'"><b>'+n+'</b>'+l+'</div>';}
   $("sum").innerHTML=t("act",act,"有效會友（含回歸）")+t("rt",rt,"其中回歸")+t("nw",nw,"新會友")+t("wang",wang,"有望（未入會）")+t("out",out,"退會");
   if(TK){var tl=rows.filter(function(r){return inTile(r,TK);});
-    $("sd").hidden=false;$("sd").innerHTML='<div class="row" style="justify-content:space-between"><h3>'+TN[TK]+'：'+tl.length+' 位</h3><button class="g" id="sdx">收起</button></div>'+(tl.length?tl.map(function(r){return '<span class="ch">'+esc(r.name)+'<i>'+esc(r.chapter)+'</i></span>';}).join(""):'<span class="msg">目前沒有</span>');
+    $("sd").hidden=false;$("sd").innerHTML='<div class="row" style="justify-content:space-between"><h3>'+TN[TK]+'：'+tl.length+' 位</h3><button class="g" id="sdx">收起</button></div>'+(tl.length?["北區","中區","南區"].map(function(g){var gl=tl.filter(function(r){return r.region===g;});return gl.length?'<h4>'+g+'（'+gl.length+'）</h4>'+gl.map(chip).join(""):"";}).join("")+(function(){var o=tl.filter(function(r){return ["北區","中區","南區"].indexOf(r.region)<0;});return o.length?'<h4>未分區（'+o.length+'）</h4>'+o.map(chip).join(""):"";})():'<span class="msg">目前沒有</span>');
   }else{$("sd").hidden=true;$("sd").innerHTML="";}
   $("cl").innerHTML=Object.keys(cs).map(function(c){return '<option value="'+esc(c)+'">';}).join("");
-  var list=rows.filter(function(r){return (!sf||r.status===sf)&&(!q||r.name.indexOf(q)>=0||r.chapter.indexOf(q)>=0);});
+  var list=rows.filter(function(r){return (!sf||r.status===sf)&&(!rg||r.region===rg)&&(!q||r.name.indexOf(q)>=0||r.chapter.indexOf(q)>=0);});
   $("tb").innerHTML=list.map(function(r){
     var b=(r.is_new?'<span class="b n">NEW</span>':'')+(r.status==="回歸"?'<span class="b r">回歸</span>':'')+(r.status==="退會"?'<span class="b q">退會</span>':'');
-    return '<tr class="'+(r.status==="退會"?"out":"")+'"><td>'+esc(r.name)+b+'</td><td>'+esc(r.chapter)+'</td><td class="hm">'+esc(r.region)+'</td><td>'+esc(r.status)+'</td><td class="hm">'+esc(r.note)+'</td><td><button class="g" data-id="'+r.id+'">編輯</button></td></tr>';
+    return '<tr class="'+(r.status==="退會"?"out":"")+'"><td><span class="nm" data-p="'+r.id+'">'+esc(r.name)+'</span>'+b+'</td><td>'+esc(r.chapter)+'</td><td class="hm">'+esc(r.region)+'</td><td>'+esc(r.status)+'</td><td class="hm">'+esc(r.note)+'</td><td><button class="g" data-id="'+r.id+'">編輯</button></td></tr>';
   }).join("");
 }
 function clear(){eid=null;$("fn").value="";$("fc").value="";$("fo").value="";$("fw").checked=false;$("fs").value="有效";$("ft").textContent="新增會友";$("cx").hidden=true;}
 $("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";load(function(ok){if(ok){$("lg").hidden=true;$("app").hidden=false;}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
 $("sum").onclick=function(e){var d=e.target;while(d&&d!==this&&!(d.getAttribute&&d.getAttribute("data-k"))){d=d.parentNode;}if(!d||d===this){return;}var k=d.getAttribute("data-k");TK=(TK===k)?"":k;draw();};
+function showP(id){var r=rows.filter(function(x){return String(x.id)===String(id);})[0];if(!r){return;}
+  function f(l,v){v=(v==null?"":String(v)).trim();return v?'<dt>'+l+'</dt><dd>'+esc(v)+'</dd>':"";}
+  var q=[r.qual_type,r.award_year?r.award_year+" 年":"",r.award_detail].filter(function(x){return x;}).join(" ");
+  var nd=Array.isArray(r.needs)?r.needs.join("、"):r.needs;
+  $("pf").innerHTML='<div class="pc"><div class="row" style="justify-content:space-between"><h2>'+esc(r.name)+(r.is_new?'<span class="b n">NEW</span>':'')+(r.status==="回歸"?'<span class="b r">回歸</span>':'')+'</h2><button class="g" id="pfx">關閉</button></div>'
+   +'<div class="msg">'+esc(r.region||"未分區")+' ／ '+esc(r.chapter)+' ／ '+esc(r.status)+'</div><dl>'
+   +f("公司",r.company)+f("職稱",r.title)+f("營業內容",r.biz)+f("產業別",r.industry)+f("參加資格",q)+f("入會日",r.joined_date)+f("加入 IMC",r.imc_since)+f("手機",r.phone)+f("Email",r.email)+f("公司電話",r.company_tel)+f("生日",r.birthday)+f("通訊地址",r.address)+f("需求",nd)+f("備註",r.note)
+   +'</dl><div class="row"><button id="pfe" data-id="'+r.id+'">編輯此會友</button></div></div>';
+  $("pf").hidden=false;}
+document.addEventListener("click",function(e){var d=e.target;while(d&&d!==document&&!(d.getAttribute&&d.getAttribute("data-p"))){d=d.parentNode;}
+  if(d&&d!==document){showP(d.getAttribute("data-p"));return;}
+  if(e.target.id==="pfx"||e.target.id==="pf"){$("pf").hidden=true;}
+  if(e.target.id==="pfe"){var i=e.target.getAttribute("data-id");$("pf").hidden=true;var b=document.querySelector('#tb button[data-id="'+i+'"]');if(b){b.click();}}});
+$("rf2").onchange=draw;
 $("sd").onclick=function(e){if(e.target.id==="sdx"){TK="";draw();}};
 $("q").oninput=draw;$("sf").onchange=draw;
 $("tb").onclick=function(e){var id=e.target.getAttribute("data-id");if(!id){return;}
