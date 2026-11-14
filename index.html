@@ -103,6 +103,15 @@ section.block{padding-block:64px 8px}
 .facts li{display:flex;flex-direction:column;gap:2px;padding:14px 0;border-top:3px solid var(--magenta)}
 .facts b{font-family:var(--display);font-size:30px;line-height:1.2}
 .facts li>span{font-size:14px;color:var(--muted)}
+.voices{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.voice{display:flex;gap:16px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;text-decoration:none;color:var(--fg);min-width:0}
+.voice:hover{border-color:var(--magenta)}
+.voice img{width:84px;height:112px;object-fit:cover;object-position:top;border-radius:10px;border:1px solid var(--line);flex-shrink:0}
+.voice .k{font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--link)}
+.voice h3{margin:2px 0 4px}.voice p{color:var(--muted);font-size:15px;line-height:1.75}
+.voice .go{display:inline-block;margin-top:6px;font-weight:700;color:var(--link);font-size:15px}
+.voice.charter{align-items:center}
+.voice .ico{width:84px;height:112px;border-radius:10px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:22px;flex-shrink:0;writing-mode:vertical-rl;letter-spacing:.2em}
 /* 找人 */
 .needs{display:flex;flex-wrap:wrap;gap:10px}
 .chip{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:99px;border:1.5px solid var(--line);background:var(--panel);font-weight:500;text-decoration:none}
@@ -237,6 +246,20 @@ body{padding-bottom:76px}
     <article class="card"><i class="dot" style="width:36px;height:36px;background:#B31C83"></i><h3>認識做創新的人</h3><p>服務行銷、研發製造、新創企劃三大類，卓越、傑出、優良三個等級。不同產業的得獎者坐在同一張桌子。</p></article>
     <article class="card"><i class="dot" style="width:36px;height:36px;background:#D45824"></i><h3>讓合作真的發生</h3><p>例會活動安排一對一商務配對，平常可查通訊錄、填需求，找供應商、通路、行銷與國際夥伴。</p></article>
     <article class="card"><i class="dot" style="width:36px;height:36px;background:#1F8F8A"></i><h3>走進彼此的現場</h3><p>例會由北、中、南區輪流承辦，常安排企業參訪，直接看會友的創新怎麼運作。</p></article>
+  </div>
+</section>
+
+<!-- 會長的話與組織章程 -->
+<section class="block wrap" id="voices" aria-labelledby="vh">
+  <div class="stack">
+    <div class="eyebrow">會長的話・組織章程</div>
+    <h2 id="vh">會長的話與組織章程</h2>
+    <p class="lead">看看前後任會長在交接典禮上留給會友的話，以及 IAA 現行的組織章程（含民國 114 年 12 月 5 日修訂）。</p>
+  </div>
+  <div class="voices" style="margin-top:24px">
+    <a class="voice" href="president/jiang/"><img src="assets/president/jiang.jpg" alt="第三屆會長 江德利" width="84" height="112" loading="lazy"><div><span class="k">第三屆會長</span><h3>江德利會長的話</h3><p>「連結、創新、加速、共好」，強化會員服務、深化產官學研合作。</p><span class="go">閱讀全文 →</span></div></a>
+    <a class="voice" href="president/kao/"><img src="assets/president/kao.jpg" alt="第二屆會長 高麗琴" width="84" height="112" loading="lazy"><div><span class="k">第二屆會長</span><h3>高麗琴會長的話</h3><p>「方向對了目標就不會太遠」，一個人可以走很快，一群人可以走很遠。</p><span class="go">閱讀全文 →</span></div></a>
+    <a class="voice charter" href="charter/"><span class="ico" aria-hidden="true">章程</span><div><span class="k">組織章程</span><h3>創新加速聯盟會組織章程</h3><p>總則、會員權利義務、組織、會議、經費及會計，全文與 114 年修訂對照。</p><span class="go">閱讀章程 →</span></div></a>
   </div>
 </section>
 
