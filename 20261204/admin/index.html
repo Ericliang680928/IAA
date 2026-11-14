@@ -12,13 +12,14 @@ button{cursor:pointer;background:var(--pk);color:#fff;border-color:var(--pk);fon
 table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--mut);font-weight:500}
 .b{display:inline-block;border-radius:6px;padding:0 6px;font-size:12px;font-weight:700;color:#fff;margin-left:4px}.n{background:#D45824}.r{background:#2E7D6B}.q{background:#8a90a8}
 .out td{opacity:.5}.msg{min-height:22px;color:var(--mut);font-size:13px}.err{color:#c0392b}
-.sum{display:flex;gap:10px;flex-wrap:wrap}.sum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px}.sum b{font-size:20px;display:block}
+.sum{display:flex;gap:10px;flex-wrap:wrap}.sum div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;cursor:pointer}.sum div.on{border-color:var(--pk);box-shadow:0 0 0 2px var(--pk) inset}.sum div:after{content:"▾";float:right;margin-left:8px;color:var(--mut);font-size:12px}.sum div.on:after{content:"▴"}
+.sd h3{margin:0 0 8px;font-size:15px}.sd .ch{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin:3px 4px 3px 0;font-size:13px}.sd .ch i{font-style:normal;color:var(--mut);margin-left:4px}.sum b{font-size:20px;display:block}
 @media(max-width:640px){.hm{display:none}}
 </style></head><body><div class="w">
 <h1>IAA 會友後台</h1>
 <div class="card" id="lg"><div class="row"><input id="pw" type="password" placeholder="後台密碼" autocomplete="current-password"><button id="go">登入</button></div><div class="msg" id="m0"></div></div>
 <div id="app" hidden>
-<div class="sum" id="sum"></div>
+<div class="sum" id="sum"></div><div class="card sd" id="sd" hidden></div>
 <div class="card"><div class="row"><b id="ft">新增會友</b></div>
 <div class="row" style="margin-top:8px"><input id="fn" placeholder="姓名" size="8"><input id="fc" placeholder="社別，如 雲林社" size="12" list="cl"><select id="fr"><option>北區</option><option>中區</option><option>南區</option></select>
 <select id="fs"><option>有效</option><option>有望</option><option>回歸</option><option>退會</option></select><label><input type="checkbox" id="fw"> 新會友 NEW</label></div>
@@ -39,10 +40,16 @@ function rpc(fn,body,cb){
   x.onerror=function(){cb(false,null,"network");};x.send(JSON.stringify(body));
 }
 function load(cb){rpc("iaa_member_list",{p:pw},function(ok,j,t){if(ok&&j){rows=j;draw();}cb(ok,t);});}
+var TK="",TN={act:"有效會友（含回歸）",rt:"回歸會友",nw:"新會友",wang:"有望（未入會）",out:"退會"};
+function inTile(r,k){if(k==="out"){return r.status==="退會";}if(k==="wang"){return r.status==="有望";}if(k==="rt"){return r.status==="回歸";}if(k==="nw"){return !!r.is_new&&r.status!=="有望"&&r.status!=="退會";}return r.status!=="退會"&&r.status!=="有望";}
 function draw(){
   var q=$("q").value.trim(),sf=$("sf").value,act=0,rt=0,out=0,nw=0,wang=0,cs={};
   rows.forEach(function(r){if(r.status==="退會"){out++;}else if(r.status==="有望"){wang++;}else{act++;}if(r.status==="回歸"){rt++;}if(r.is_new&&r.status!=="有望"&&r.status!=="退會"){nw++;}cs[r.chapter]=1;});
-  $("sum").innerHTML='<div><b>'+act+'</b>有效會友（含回歸）</div><div><b>'+rt+'</b>其中回歸</div><div><b>'+nw+'</b>新會友</div><div><b>'+wang+'</b>有望（未入會）</div><div><b>'+out+'</b>退會</div>';
+  function t(k,n,l){return '<div data-k="'+k+'" class="'+(TK===k?"on":"")+'"><b>'+n+'</b>'+l+'</div>';}
+  $("sum").innerHTML=t("act",act,"有效會友（含回歸）")+t("rt",rt,"其中回歸")+t("nw",nw,"新會友")+t("wang",wang,"有望（未入會）")+t("out",out,"退會");
+  if(TK){var tl=rows.filter(function(r){return inTile(r,TK);});
+    $("sd").hidden=false;$("sd").innerHTML='<div class="row" style="justify-content:space-between"><h3>'+TN[TK]+'：'+tl.length+' 位</h3><button class="g" id="sdx">收起</button></div>'+(tl.length?tl.map(function(r){return '<span class="ch">'+esc(r.name)+'<i>'+esc(r.chapter)+'</i></span>';}).join(""):'<span class="msg">目前沒有</span>');
+  }else{$("sd").hidden=true;$("sd").innerHTML="";}
   $("cl").innerHTML=Object.keys(cs).map(function(c){return '<option value="'+esc(c)+'">';}).join("");
   var list=rows.filter(function(r){return (!sf||r.status===sf)&&(!q||r.name.indexOf(q)>=0||r.chapter.indexOf(q)>=0);});
   $("tb").innerHTML=list.map(function(r){
@@ -53,6 +60,8 @@ function draw(){
 function clear(){eid=null;$("fn").value="";$("fc").value="";$("fo").value="";$("fw").checked=false;$("fs").value="有效";$("ft").textContent="新增會友";$("cx").hidden=true;}
 $("go").onclick=function(){pw=$("pw").value;$("m0").textContent="登入中…";load(function(ok){if(ok){$("lg").hidden=true;$("app").hidden=false;}else{$("m0").className="msg err";$("m0").textContent="密碼不正確或連線失敗";}});};
 $("pw").onkeydown=function(e){if(e.key==="Enter"){$("go").onclick();}};
+$("sum").onclick=function(e){var d=e.target;while(d&&d!==this&&!(d.getAttribute&&d.getAttribute("data-k"))){d=d.parentNode;}if(!d||d===this){return;}var k=d.getAttribute("data-k");TK=(TK===k)?"":k;draw();};
+$("sd").onclick=function(e){if(e.target.id==="sdx"){TK="";draw();}};
 $("q").oninput=draw;$("sf").onchange=draw;
 $("tb").onclick=function(e){var id=e.target.getAttribute("data-id");if(!id){return;}
   var r=rows.filter(function(x){return String(x.id)===id;})[0];if(!r){return;}
