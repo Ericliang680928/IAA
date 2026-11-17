@@ -48,7 +48,7 @@ h2{font-size:18px;margin:4px 0 8px}
 <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400"><input type="checkbox" id="lkq" style="width:22px;height:22px;margin-top:4px"><span>我已核對此人的參加資格（創新獎對照得獎名單，或發起人／歷屆主委／理事長對照名冊）</span></label>
 <div class="row" style="margin-top:10px"><button id="lkg">產生連結與訊息</button><button class="g" id="lkc">關閉</button></div>
 <textarea id="lkm" style="margin-top:10px;min-height:260px" hidden></textarea><div class="row" style="margin-top:8px"><button class="g" id="lkp" hidden>複製訊息</button></div><div class="msg" id="lkn"></div></div>
-<div class="card sc" id="v8" hidden><h2>新會友入會進度 <span style="font-weight:400;font-size:14px;color:#6b7390">邀約 → 資格核對 → 入會申請 → 繳入會費 → 人資長審核</span></h2><div class="row" id="pgf" style="margin:6px 0 10px"></div><div id="pgl"></div></div>
+<div class="card sc" id="v8" hidden><h2>新會友入會進度 <span style="font-weight:400;font-size:14px;color:#6b7390">邀約 → 資格核對 → 入會申請 → 繳入會費 → 人資長審核</span></h2><div class="row" style="margin:6px 0 4px"><label style="margin:0">身分</label><select id="pgk" style="max-width:150px"><option value="新會友">新會友</option><option value="回歸">原退會</option><option value="">全部</option></select></div><div class="row" id="pgf" style="margin:6px 0 10px"></div><div id="pgl"></div></div>
 <div class="card f" id="v7" hidden><h2>入會申請審核</h2><p class="sub" style="margin:0 0 8px">新會友填寫入會申請表後出現在這裡。<b>審核僅限人資長</b>，需輸入人資長審核密碼；其他人只能查看。</p>
 <div class="row"><input id="cpw" type="password" placeholder="人資長審核密碼" style="max-width:260px"><button class="g" id="rl">重新整理</button></div><div class="msg" id="m6"></div><div id="al"></div></div>
 <div class="card" id="v4" hidden><h2>產生給召集人／總召的分派訊息</h2><div class="row"><select id="ms"></select><button id="mk">產生</button><button class="g" id="cp">複製</button></div><textarea id="mt" style="margin-top:10px"></textarea><div class="msg" id="m4"></div></div>
@@ -143,7 +143,7 @@ function pgStage(r,a){
 function pgFor(r){var l=arows.filter(function(a){return a.recruit_id===r.id;});if(!l.length){return null;}l.sort(function(x,y){return (y.id||0)-(x.id||0);});return l[0];}
 function loadPG(){call("iaa_hr_app_list_v2",{},function(ok,l){if(ok&&l){arows=l;}drawPG();});}
 function drawPG(){
- var v=vis(),it=v.map(function(r){var a=pgFor(r);return {r:r,a:a,s:pgStage(r,a)};});
+ var v=vis().filter(function(r){var k=$("pgk").value;return k===""||r.kind===k;}),it=v.map(function(r){var a=pgFor(r);return {r:r,a:a,s:pgStage(r,a)};});
  var cnt={act:0,all:it.length};Object.keys(PGN).forEach(function(k){if(k!=="act"&&k!=="all"){cnt[k]=0;}});
  it.forEach(function(x){cnt[x.s]+=1;if(x.s!=="done"&&x.s!=="no"){cnt.act+=1;}});
  $("pgf").innerHTML=["act","ag","agr","fill","rev","fee","back","done","no","all"].filter(function(k){return k!=="fee";}).map(function(k){return '<button class="pgc'+(PGK===k?" on":"")+'" data-k="'+k+'">'+PGN[k]+' '+cnt[k]+'</button>';}).join(" ");
@@ -168,6 +168,7 @@ function drawPG(){
    +'<span class="'+rv[1]+(curK===4?" cur":"")+'"><b>⑤ 人資長審核</b>'+rv[0]+'</span></div>'
    +'<div class="nx"><b>下一步：</b>'+nx+(r.note?'<br><small style="color:#6b7390">備註：'+esc(r.note)+'</small>':'')+'</div></div>';}).join(""):'<p class="sub">這個狀態目前沒有人。</p>';
 }
+$("pgk").onchange=drawPG;
 $("pgf").onclick=function(e){var k=e.target.getAttribute&&e.target.getAttribute("data-k");if(k){PGK=k;drawPG();}};
 
 function lkOpen(id){var r=byId(id);if(!r){return;}lkid=id;lkname=r.name;$("lkt").textContent="產生入會連結：「"+r.name+"」（"+r.chapter+"）";$("lkq").checked=false;$("lkm").hidden=true;$("lkp").hidden=true;$("lkn").textContent="";$("lk").hidden=false;$("lk").scrollIntoView();}
