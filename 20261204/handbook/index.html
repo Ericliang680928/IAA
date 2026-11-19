@@ -46,6 +46,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .save{font-size:12px;color:var(--muted);min-width:7em;text-align:right}
 .btn{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:6px 12px;font-weight:500}
 .btn:hover{border-color:var(--navy)}
+a.btn{text-decoration:none;color:var(--ink);display:inline-block}
 .btn.pri{background:var(--navy);color:var(--navy-ink);border-color:var(--navy);font-weight:700}
 .btn.sm{padding:2px 9px;font-size:12px}
 .btn.del{color:var(--todo)}
@@ -199,7 +200,7 @@ function renderSummary(){
   const all=ordered().filter(s=>s.group!=='tool');
   const done=all.filter(s=>s.status==='定稿').length;
   const pend=all.reduce((n,s)=>n+pendCount(s),0);
-  $('#sum').innerHTML=`<span class="chip">定稿 <b>${done}</b>／${all.length}</span><span class="chip todo">待補欄位 <b>${pend}</b></span><button class="btn pri" data-act="export-md">下載全冊文字</button>`;
+  $('#sum').innerHTML=`<span class="chip">定稿 <b>${done}</b>／${all.length}</span><span class="chip todo">待補欄位 <b>${pend}</b></span><button class="btn pri" data-act="export-md">下載全冊文字</button><a class="btn pri" href="IAA第四屆第一次會員大會手冊_公開版.pdf" download>下載 PDF</a><a class="btn pri" href="IAA第四屆第一次會員大會手冊_公開版.docx" download>下載 Word</a>`;
 }
 function renderNav(){
   const secs=ordered(); let last='',h='';
