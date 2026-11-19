@@ -473,17 +473,34 @@ function build(c, no){
       y0 += ah + 0.1;
     }
     if (lines.length === 1 && lines[0].indexOf('、') >= 0 && lines[0].length > 24) lines = lines[0].split('、').map(x => x.trim()).filter(Boolean);
+    /* 名單格：姓名與職稱（或社名與姓名）各自成欄、對齊 */
+    function splitLine(l){
+      const t = l.trim(), m = /^(\S{2,3}社)\s*(.+)$/.exec(t);
+      if (m) return {L: m[1], R: m[2].replace(/\s+/g, ''), lc: DK, rc: BLUE, lb: false, rb: true, ls: 0.85, rs: 1};
+      const k = t.split(/\s+/);
+      if (k.length >= 2 && !ROLE_RE.test(k[0]) && k[0].length <= 4 && !/^[A-Za-z0-9]/.test(k[0]) && ROLE_RE.test(k.slice(1).join(' '))) return {L: k[0], R: k.slice(1).join(' '), lc: BLUE, rc: DK, lb: true, rb: false, ls: 1, rs: 0.9};
+      return null;
+    }
+    function placeGrid(lines, g, x0, colW, gy, align){
+      const ps = lines.map(splitLine), paired = ps.every(Boolean);
+      const Lw = paired ? Math.max.apply(null, ps.map(p => cw(p.L) * g.sz * p.ls / 72)) * 1.04 + 0.12 : 0, Rw = paired ? Math.max.apply(null, ps.map(p => cw(p.R) * g.sz * p.rs / 72)) * 1.04 + 0.12 : 0;
+      lines.forEach((l, k) => {
+        const cx = x0 + (k % g.cols) * colW, y = gy + Math.floor(k / g.cols) * g.rowH;
+        if (paired){
+          const p = ps[k], bw = Lw + 0.1 + Rw, bx = align === 'center' ? cx + Math.max(0, (colW - 0.1 - bw) / 2) : cx;
+          P('body', bx, y, Lw, g.rowH, [[{text: p.L, color: p.lc, bold: p.lb, size: Math.round(g.sz * p.ls)}]], {valign:'middle', align:'right'});
+          P('body', bx + Lw + 0.1, y, Rw, g.rowH, [[{text: p.R, color: p.rc, bold: p.rb, size: Math.round(g.sz * p.rs)}]], {valign:'middle', align:'left'});
+        } else P('body', cx, y, colW - 0.1, g.rowH, [nameRuns(l, g.sz)], {valign:'middle', align});
+      });
+    }
     const n = lines.length;
     if (n > 9){
       /* 多人名單：一人一格、等寬欄位、置中，社名（灰）與姓名（藍）分開 */
       const H = END - y0 - 0.1, GX = 2.3, GW = 9.6, g = bestGrid(lines, GW, H, 6), colW = GW / g.cols, gy = y0 + Math.max(0, (H - Math.ceil(n / g.cols) * g.rowH) / 2);
-      lines.forEach((l, k) => {
-        const m = /^(\S{2,3}社)\s*(.+)$/.exec(l.trim()), runs = m ? [{text: m[1] + ' ', color: DK, bold: false, size: Math.round(g.sz * 0.85)}, {text: m[2].replace(/\s+/g, ''), color: BLUE, bold: true, size: g.sz}] : nameRuns(l, g.sz);
-        P('body', GX + (k % g.cols) * colW, gy + Math.floor(k / g.cols) * g.rowH, colW - 0.1, g.rowH, [runs], {valign:'middle', align:'center'});
-      });
+      placeGrid(lines, g, GX, colW, gy, 'center');
     } else if (n){
       const g = bestGrid(lines, 11.0, END - y0), colW = 11.0 / g.cols, gy = y0 + Math.max(0, (END - y0 - Math.ceil(n / g.cols) * g.rowH) / 2 - 0.1);
-      lines.forEach((l, k) => P('body', 0.9 + (k % g.cols) * colW, gy + Math.floor(k / g.cols) * g.rowH, colW - 0.1, g.rowH, [nameRuns(l, g.sz)], {valign:'middle', align: g.cols === 1 ? 'center' : 'left'}));
+      placeGrid(lines, g, 0.9, colW, gy, g.cols === 1 ? 'center' : 'left');
     }
   }
   applyOv(c, els);
