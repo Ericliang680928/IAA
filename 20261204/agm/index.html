@@ -1139,15 +1139,15 @@ $('#bPptx').onclick = async () => {
   try {
     const p = new PptxGenJS(); p.layout = 'LAYOUT_WIDE'; p.title = resolve('{{簡稱}}', null, false);
     const num = col => ({x:11.2, y:6.95, w:1.0, h:0.4, fontSize:12, color:col, align:'right', fontFace:FONT});
-    p.defineSlideMaster({title:'IAA_封面', background:{data:'image/jpeg;base64,' + BG_V}, slideNumber:num('FFFFFF')});
-    p.defineSlideMaster({title:'IAA_內頁', background:{data:'image/jpeg;base64,' + BG_C}, slideNumber:num('555555')});
+    p.defineSlideMaster({title:'IAA_COVER', background:{data:'image/jpeg;base64,' + BG_V}, slideNumber:num('FFFFFF')});
+    p.defineSlideMaster({title:'IAA_BODY', background:{data:'image/jpeg;base64,' + BG_C}, slideNumber:num('555555')});
     const {map} = numbering(), RP = {}, missPh = [];
     for (const g0 of S.segments) for (const c0 of g0.scenes){ if (c0.slide === false) continue;
       for (const e0 of build(c0, map[c0.id]).els) if (e0.t === 'img' && e0.src){ const key = e0.name + '|' + (e0.w / e0.h).toFixed(3) + '|' + e0.shape + '|' + e0.h.toFixed(2); if (!RP[key]) RP[key] = await roundPng(e0.src, e0.w / e0.h, e0.shape, e0.h); } }
     S.segments.forEach(g => g.scenes.forEach(c => {
       if (c.slide === false) return;
       const b = build(c, map[c.id]);
-      const s = p.addSlide({masterName: b.bg === 'cover' ? 'IAA_封面' : 'IAA_內頁'});
+      const s = p.addSlide({masterName: b.bg === 'cover' ? 'IAA_COVER' : 'IAA_BODY'});
       b.els.forEach(e => {
         if (e.t === 'img'){ const dd = e.src && RP[e.name + '|' + (e.w / e.h).toFixed(3) + '|' + e.shape + '|' + e.h.toFixed(2)]; if (dd) { const pd = e.shape === 'round' ? PADIN : 0; s.addImage({data: dd.replace(/^data:/, ''), x:e.x - pd, y:e.y - pd, w:e.w + 2 * pd, h:e.h + 2 * pd}); } else if (missPh.indexOf(e.name) < 0) missPh.push(e.name); }
         else if (e.t === 'rect') s.addShape(e.ell ? p.ShapeType.ellipse : p.ShapeType.rect, {x:e.x, y:e.y, w:e.w, h:e.h, fill:{color:e.fill}, line:{type:'none'}});
