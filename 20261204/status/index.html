@@ -118,7 +118,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 <div class="err" id="err">目前無法讀取最新報名資料，下方顯示的是上次成功同步的結果，稍後會自動重試。</div>
 
 <div class="top">
-<div class="badge"><span id="ddl">報名截止：11 月 20 日（五）</span></div>
+<div class="badge"><span id="ddl">報名截止：11 月 30 日（一）</span></div>
 <a class="btn p" href="https://forms.gle/c68MPEgx1E7mwaNw6" target="_blank" rel="noopener">前往報名 →</a>
 <a class="btn o" href="https://lihi3.me/UD9D9" target="_blank" rel="noopener">開啟原始報名表</a>
 <button class="btn o" id="rf" type="button">↻ 重新整理</button>
@@ -185,7 +185,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 var SHEET="1mNXScGB7Gn3wE32R8zFa1B0VhOSbty8J7hEYfAQHHJY";
 var TAB_RESP="回",TAB_ROSTER="分組名單";
 var CAP=120,POLL=30000;
-var DEADLINE=new Date(2026,10,20,23,59,59);
+var DEADLINE=new Date(2026,10,30,23,59,59);
 var NEWM={"陳定閒":1,"吳連杰":1,"方榮傑":1,"林睦峰":1,"陳珠璜":1,"吳崇愷":1,"黃敏傑":1,"蕭軍平":1,"張永賢":1};
 var REGIONS=["北區","中區","南區"];
 var roster=[],byName={},people={},seq=0,loadedRoster=false;
@@ -334,8 +334,8 @@ function status(ok){
 }
 function ddl(){
   var d=DEADLINE-new Date(),el=$("ddl");
-  if(d<=0){el.textContent="報名已截止（11 月 20 日）";return;}
-  el.textContent="報名截止：11 月 20 日（五）・尚餘 "+Math.ceil(d/86400000)+" 天";
+  if(d<=0){el.textContent="報名已截止（11 月 30 日）";return;}
+  el.textContent="報名截止：11 月 30 日（一）・尚餘 "+Math.ceil(d/86400000)+" 天";
 }
 
 var PAID={};

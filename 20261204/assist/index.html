@@ -200,7 +200,7 @@ function drawA(){if(!ROS.length){return;}
    return '<div class="t" data-nm="'+esc(r.name)+'"><b>'+esc(r.name)+'</b>'+chip+ed+'</div>';}).join("");}).join("");}
 $("la").onclick=function(e){var cp=e.target.getAttribute("data-cp"),sa=e.target.getAttribute("data-sa");
  if(cp!==null){var un=ROS.filter(function(r){return r.chap===cp&&stOf(r.name)!=="參加"&&stOf(r.name)!=="請假";}).map(function(r){return r.name;});
-  var t=cp+"夥伴好，2026 IAA 年會（12/04）報名截止 11/20。"+(un.length?"目前尚未回覆："+un.join("、")+"。":"本社目前都已回覆，謝謝！")+"\n請至報名表回覆（參加或請假）："+FORM+"\n也可查詢是否報名成功："+STAT;
+  var t=cp+"夥伴好，2026 IAA 年會（12/04）報名截止 11/30。"+(un.length?"目前尚未回覆："+un.join("、")+"。":"本社目前都已回覆，謝謝！")+"\n請至報名表回覆（參加或請假）："+FORM+"\n也可查詢是否報名成功："+STAT;
   var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();var okc=false;try{okc=document.execCommand("copy");}catch(x){}document.body.removeChild(ta);
   say("am",okc?"已複製「"+cp+"」提醒訊息":"請手動複製",!okc);if(!okc){window.prompt("請複製",t);}return;}
  if(sa!==null){var box=e.target.parentNode.parentNode.parentNode,v={};var ins=box.querySelectorAll("[data-k]");for(var i=0;i<ins.length;i++){v[ins[i].getAttribute("data-k")]=ins[i].value;}
