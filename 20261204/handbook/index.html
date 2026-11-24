@@ -168,7 +168,7 @@ function touch(id){
 }
 async function flush(id){
   const s=S.secs[id]; if(!s) return;
-  if(!db){dirty.delete(id); try{localStorage.setItem('iaa-handbook-draft',JSON.stringify(S.secs));setSave('已存在此瀏覽器')}catch(e){setSave('只存在這個畫面')} return}
+  if(!db){dirty.delete(id); try{localStorage.setItem('iaa-handbook-draft',JSON.stringify(S.secs));if(S.baseHash)localStorage.setItem('iaa-handbook-base',S.baseHash);setSave('已存在此瀏覽器')}catch(e){setSave('只存在這個畫面')} return}
   try{
     const {id:_i,...data}=s; await db.collection('sections').doc(id).set(data);
     dirty.delete(id); const d=new Date(); setSave('已儲存 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'));
@@ -382,10 +382,18 @@ async function boot(){
     if(db==='timeout') db=null;
   }catch(e){db=null}
   if(!db){
-    let src='';
-    try{const l=localStorage.getItem('iaa-handbook-draft'); if(l){S.secs=JSON.parse(l);src='此瀏覽器的草稿'}}catch(e){}
-    if(!src){try{const r=await fetch('handbook.json',{cache:'reload'}); if(r.ok){const a=await r.json(); a.forEach(x=>{S.secs[x.id]=x}); src='handbook.json（資料基準 115.11.13，通訊錄電話不公開）'}}catch(e){}}
-    $('#banner').innerHTML='<div class="banner">資料來源：'+esc(src||'無')+'。修改只存在這個瀏覽器；要保留請按「下載編輯資料」。　<a href="IAA_2026年會_講師海報_邱重威.png">講師海報</a>・手冊（公開版，不含電話）：<a href="IAA第四屆第一次會員大會手冊_公開版.pdf">PDF</a>・<a href="IAA第四屆第一次會員大會手冊_公開版.docx">Word</a>　<button class="btn sm" data-act="export-json">下載編輯資料（JSON）</button></div>';
+    let src='',note='',remote=null,hash='';
+    try{const r=await fetch('handbook.json',{cache:'reload'}); if(r.ok){const txt=await r.text(); remote=JSON.parse(txt); let h=5381; for(let k=0;k<txt.length;k++){h=((h<<5)+h+txt.charCodeAt(k))|0} hash=String(h)}}catch(e){}
+    S.baseHash=hash;
+    let draft=null,base=null;
+    try{draft=localStorage.getItem('iaa-handbook-draft'); base=localStorage.getItem('iaa-handbook-base')}catch(e){}
+    if(draft&&(!remote||base===hash)){try{S.secs=JSON.parse(draft);src='此瀏覽器的草稿'}catch(e){}}
+    else if(draft&&remote){
+      try{localStorage.setItem('iaa-handbook-draft-old-'+Date.now(),draft); localStorage.removeItem('iaa-handbook-draft'); localStorage.removeItem('iaa-handbook-base')}catch(e){}
+      note='【資料已更新為最新版；你原本在這個瀏覽器的舊草稿已另存備份，未覆蓋】　';
+    }
+    if(!src&&remote){remote.forEach(x=>{S.secs[x.id]=x}); src='handbook.json（資料基準 115.11.13，通訊錄電話不公開）'}
+    $('#banner').innerHTML='<div class="banner">'+esc(note)+'資料來源：'+esc(src||'無')+'。修改只存在這個瀏覽器；要保留請按「下載編輯資料」。　<a href="IAA_2026年會_講師海報_邱重威.png">講師海報</a>・手冊（公開版，不含電話）：<a href="IAA第四屆第一次會員大會手冊_公開版.pdf">PDF</a>・<a href="IAA第四屆第一次會員大會手冊_公開版.docx">Word</a>　<button class="btn sm" data-act="export-json">下載編輯資料（JSON）</button></div>';
     S.loaded=true; renderSummary(); renderMain(); return;
   }
   S.online=true; setSave('已連線');
