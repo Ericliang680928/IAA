@@ -148,7 +148,7 @@ mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 2px}
 const PEND=/【(?:資料待補|待填|待補|待確認|待財務長|待執行長|待會長)[^】]*】/g;
 const STATUS=['待補資料','編修中','待確認','定稿'];
 const GROUPS={front:'封面與本文',body:'封面與本文',att:'附件',tool:'編輯用'};
-const S={secs:{},sel:'cover',view:'edit',loaded:false,online:false};
+const S={secs:{},sel:'cover',view:(location.hash==='#edit'?'edit':location.hash==='#todo'?'todo':'book'),loaded:false,online:false};
 let db=null; const timers={}, dirty=new Set();
 const $=s=>document.querySelector(s);
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
