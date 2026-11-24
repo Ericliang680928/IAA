@@ -242,7 +242,7 @@
   "group": "body",
   "title": "聯合會理事長 致詞",
   "kind": "blocks",
-  "status": "待確認",
+  "status": "定稿",
   "owner": "陳世雷",
   "blocks": [
    {
@@ -289,11 +289,6 @@
     "t": "p",
     "style": "p",
     "text": "IMC 聯合會理事長　陳世雷　敬上"
-   },
-   {
-    "t": "p",
-    "style": "note",
-    "text": "※ 本篇為擬稿，【待陳世雷理事長確認】後定稿。"
    }
   ]
  },
