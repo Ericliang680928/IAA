@@ -156,24 +156,31 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 <p class="note" style="margin:6px 0 0">依已報名參加者所填的 12/4 晚宴選項統計。</p>
 </div>
 <div class="card">
-<h2><i>3</i>各區報名進度</h2>
+<h2><i>3</i>12/4 中午用餐統計</h2>
+<div class="bar"><div class="bl"><span>葷食</span><b id="l1">0</b></div><div class="bt"><i id="lb1" style="width:0%;background:var(--or)"></i></div></div>
+<div class="bar"><div class="bl"><span>素食</span><b id="l2">0</b></div><div class="bt"><i id="lb2" style="width:0%;background:var(--lime)"></i></div></div>
+<div class="bar"><div class="bl"><span>不用餐</span><b id="l3">0</b></div><div class="bt"><i id="lb3" style="width:0%;background:#8c96a6"></i></div></div>
+<p class="note" style="margin:6px 0 0">合計 <b id="lt">0</b> 人用午餐。目前只有工作人員填寫午餐選項，會友與來賓未調查。</p>
+</div>
+<div class="card">
+<h2><i>4</i>各區報名進度</h2>
 <div id="reg"></div>
 </div>
 </div>
 
 <div class="card" style="margin-top:14px">
-<h2><i>4</i>各社報名狀況</h2>
+<h2><i>5</i>各社報名狀況</h2>
 <table><thead><tr><th>社別</th><th>已報名</th><th>請假</th><th>未回覆</th></tr></thead><tbody id="chap"></tbody></table>
 </div>
 
 <div class="card">
-<h2><i>5</i>會友名冊與回覆狀態</h2>
+<h2><i>6</i>會友名冊與回覆狀態</h2>
 <p class="legend"><span class="mc ok">已報名</span><span class="mc lv">請假</span><span class="mc">尚未回覆</span><span class="mc nw">有望新會友<span class="nw-b">有望</span>（尚未入會）／已入會新會友<span class="nw-b">NEW</span></span><span class="mc">回歸會友<span class="nw-b rt-b">回歸</span></span><span class="mc pd">已繳會費<span class="nw-b pd-b">已繳</span></span>點區名展開。</p>
 <div class="pdn"><div>會費已確認繳費：<b id="pd-n">–</b> / <b id="pd-t">–</b> 位</div><div>※ 會友繳費（匯款或現金）後，需<b>由財務長審核確認</b>，確認完成才會在名字旁出現「已繳」標記，<b>並非即時更新</b>，請耐心等候。尚未回報者請至 <a href="../dues/">會費繳費回報</a> 填寫。</div></div><div id="roster"></div>
 </div>
 
 <div class="card">
-<h2><i>6</i>來賓與工作人員</h2>
+<h2><i>7</i>來賓與工作人員</h2>
 <table><thead><tr><th>身分</th><th>姓名</th><th>所屬單位</th></tr></thead><tbody id="gs"><tr><td colspan="3" class="note">尚無資料</td></tr></tbody></table>
 </div>
 
@@ -242,7 +249,8 @@ function parseResp(res){
   col.stat=find(function(x){return x==="報名";});
   col.who=find(function(x){return x==="姓名";});
   col.kind=find(function(x){return x==="身份別";});
-  col.meal=find(function(x){return x.indexOf("12/")===0||x.indexOf("12／")===0;});
+  col.meal=find(function(x){return x.indexOf("12/")===0&&x.indexOf("午")<0||x.indexOf("12／")===0&&x.indexOf("午")<0;});
+  col.lunch=find(function(x){return (x.indexOf("12/")===0||x.indexOf("12／")===0)&&x.indexOf("午")>=0;});
   col.reg=[find(function(x){return x==="北區姓名";}),find(function(x){return x==="中區姓名";}),find(function(x){return x==="南區姓名";})];
   col.gst=find(function(x){return x==="來賓姓名";});
   col.stf=find(function(x){return x==="工作人員姓名";});
@@ -255,10 +263,11 @@ function parseResp(res){
     var st=cell(r,col.stat).indexOf("請假")>=0?"請假":(cell(r,col.stat).indexOf("參加")>=0?"參加":"");
     if(!st){continue;}
     var meal=st==="參加"?mealOf(cell(r,col.meal)):"";
+    var lunch=st==="參加"?mealOf(cell(r,col.lunch)):"";
     var any=false;
     col.reg.forEach(function(k){splitNames(cell(r,k)).forEach(function(n){var b=bare(n);if(b){out["m:"+b]={kind:"m",name:b,st:st,meal:meal,unit:""};any=true;}});});
     splitNames(cell(r,col.gst)).forEach(function(n){var b=bare(n);if(b){out["g:"+b]={kind:"g",name:b,st:st,meal:meal,unit:cell(r,col.gu)};any=true;}});
-    splitNames(cell(r,col.stf)).forEach(function(n){var b=bare(n);if(b){out["s:"+b]={kind:"s",name:b,st:st,meal:meal,unit:cell(r,col.su)};any=true;}});
+    splitNames(cell(r,col.stf)).forEach(function(n){var b=bare(n);if(b){out["s:"+b]={kind:"s",name:b,st:st,meal:meal,lunch:lunch,unit:cell(r,col.su)};any=true;}});
     if(!any){var w=bare(cell(r,col.who));if(w){var rm=byName[w];out["m:"+w]={kind:"m",name:w,st:st,meal:meal,unit:""};}}
   }
   return out;
@@ -269,12 +278,13 @@ function bar(label,n,tot,color){var p=tot?Math.round(n/tot*100):0;return '<div c
 
 var OPENC={};
 function render(){
-  var mem=0,gst=0,stf=0,lv=0,meal={"葷食":0,"素食":0,"不用餐":0};
+  var mem=0,gst=0,stf=0,lv=0,meal={"葷食":0,"素食":0,"不用餐":0},lun={"葷食":0,"素食":0,"不用餐":0};
   Object.keys(people).forEach(function(k){
     var p=people[k];
     if(p.st==="請假"){lv++;return;}
     if(p.kind==="m"){mem++;}else if(p.kind==="g"){gst++;}else{stf++;}
     if(meal[p.meal]!==undefined){meal[p.meal]++;}
+    if(p.lunch&&lun[p.lunch]!==undefined){lun[p.lunch]++;}
   });
   var all=mem+gst+stf;
   $("n-all").textContent=all;
@@ -282,6 +292,9 @@ function render(){
   var vn=0,pdn=0;roster.forEach(function(r){if(!r.pro){vn+=1;if(PAID[r.name]){pdn+=1;}}});$("t-roster").textContent=loadedRoster?vn:"–";$("pd-n").textContent=pdn;$("pd-t").textContent=loadedRoster?vn:"–";$("t-mem").textContent=mem;$("t-gst").textContent=gst;$("t-stf").textContent=stf;$("t-lv").textContent=lv;
   var mt=Math.max(all,1);
   ["葷食","素食","不用餐"].forEach(function(k,i){$("m"+(i+1)).textContent=meal[k];$("mb"+(i+1)).style.width=(meal[k]/mt*100)+"%";});
+  var lt=lun["葷食"]+lun["素食"]+lun["不用餐"],ly=lun["葷食"]+lun["素食"],lm=Math.max(lt,1);
+  ["葷食","素食","不用餐"].forEach(function(k,i){$("l"+(i+1)).textContent=lun[k];$("lb"+(i+1)).style.width=(lun[k]/lm*100)+"%";});
+  $("lt").textContent=ly;
 
   var regHtml="";
   REGIONS.forEach(function(rg){
