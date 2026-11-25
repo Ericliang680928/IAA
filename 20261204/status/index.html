@@ -160,7 +160,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 <div class="bar"><div class="bl"><span>葷食</span><b id="l1">0</b></div><div class="bt"><i id="lb1" style="width:0%;background:var(--or)"></i></div></div>
 <div class="bar"><div class="bl"><span>素食</span><b id="l2">0</b></div><div class="bt"><i id="lb2" style="width:0%;background:var(--lime)"></i></div></div>
 <div class="bar"><div class="bl"><span>不用餐</span><b id="l3">0</b></div><div class="bt"><i id="lb3" style="width:0%;background:#8c96a6"></i></div></div>
-<p class="note" style="margin:6px 0 0">合計 <b id="lt">0</b> 人用午餐。目前只有工作人員填寫午餐選項，會友與來賓未調查。</p>
+<p class="note" style="margin:6px 0 0">合計 <b id="lt">0</b> 人用午餐。依已報名參加者所填的 12/4 中午選項統計（未填午餐者不計入）。</p>
 </div>
 <div class="card">
 <h2><i>4</i>各區報名進度</h2>
@@ -250,7 +250,7 @@ function parseResp(res){
   col.who=find(function(x){return x==="姓名";});
   col.kind=find(function(x){return x==="身份別";});
   col.meal=find(function(x){return x.indexOf("12/")===0&&x.indexOf("午")<0||x.indexOf("12／")===0&&x.indexOf("午")<0;});
-  col.lunch=find(function(x){return (x.indexOf("12/")===0||x.indexOf("12／")===0)&&x.indexOf("午")>=0;});
+  col.lunch=[];H.forEach(function(x,k){if(x.indexOf("中餐")>=0||x.indexOf("午餐")>=0){col.lunch.push(k);}});
   col.reg=[find(function(x){return x==="北區姓名";}),find(function(x){return x==="中區姓名";}),find(function(x){return x==="南區姓名";})];
   col.gst=find(function(x){return x==="來賓姓名";});
   col.stf=find(function(x){return x==="工作人員姓名";});
@@ -263,12 +263,12 @@ function parseResp(res){
     var st=cell(r,col.stat).indexOf("請假")>=0?"請假":(cell(r,col.stat).indexOf("參加")>=0?"參加":"");
     if(!st){continue;}
     var meal=st==="參加"?mealOf(cell(r,col.meal)):"";
-    var lunch=st==="參加"?mealOf(cell(r,col.lunch)):"";
+    var lunch="";if(st==="參加"){col.lunch.forEach(function(k){if(!lunch){lunch=mealOf(cell(r,k));}});}
     var any=false;
-    col.reg.forEach(function(k){splitNames(cell(r,k)).forEach(function(n){var b=bare(n);if(b){out["m:"+b]={kind:"m",name:b,st:st,meal:meal,unit:""};any=true;}});});
-    splitNames(cell(r,col.gst)).forEach(function(n){var b=bare(n);if(b){out["g:"+b]={kind:"g",name:b,st:st,meal:meal,unit:cell(r,col.gu)};any=true;}});
+    col.reg.forEach(function(k){splitNames(cell(r,k)).forEach(function(n){var b=bare(n);if(b){out["m:"+b]={kind:"m",name:b,st:st,meal:meal,lunch:lunch,unit:""};any=true;}});});
+    splitNames(cell(r,col.gst)).forEach(function(n){var b=bare(n);if(b){out["g:"+b]={kind:"g",name:b,st:st,meal:meal,lunch:lunch,unit:cell(r,col.gu)};any=true;}});
     splitNames(cell(r,col.stf)).forEach(function(n){var b=bare(n);if(b){out["s:"+b]={kind:"s",name:b,st:st,meal:meal,lunch:lunch,unit:cell(r,col.su)};any=true;}});
-    if(!any){var w=bare(cell(r,col.who));if(w){var rm=byName[w];out["m:"+w]={kind:"m",name:w,st:st,meal:meal,unit:""};}}
+    if(!any){var w=bare(cell(r,col.who));if(w){var rm=byName[w];out["m:"+w]={kind:"m",name:w,st:st,meal:meal,lunch:lunch,unit:""};}}
   }
   return out;
 }
