@@ -63,6 +63,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans TC",sy
 .res{margin-top:12px}.res .it{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;flex-wrap:wrap}
 .res .nm{font-weight:900}.res .ch{color:var(--mute);font-size:13px;margin-left:6px}
 .crow{cursor:pointer}.crow:hover{background:#f3f5fa}.crow.on{background:#eef1f8}.cax{color:#7a859d;font-size:12px}.cdet td{background:#f7f8fc;padding:10px 12px}.cdet .cg{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0}.cdet .cg>b{min-width:6.5em;font-size:13px}
+.gf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}.gf button{font:inherit;font-size:13.5px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--mute);border-radius:99px;padding:4px 14px;cursor:pointer}.gf button.on{background:var(--teal);border-color:var(--teal);color:#fff}.gf select{font:inherit;font-size:13.5px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;background:#fff}
 .chip{display:inline-block;border-radius:99px;padding:2px 11px;font-size:12.5px;font-weight:700}
 .chip.ok{background:var(--okbg);color:var(--ok)}.chip.lv{background:var(--leavebg);color:var(--leave)}.chip.pd{background:var(--pendbg);color:var(--pend)}
 .note{font-size:13px;color:var(--mute)}
@@ -181,6 +182,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 
 <div class="card">
 <h2><i>7</i>來賓與工作人員</h2>
+<div class="gf" id="gf"></div>
 <table><thead><tr><th>身分</th><th>姓名</th><th>所屬單位</th></tr></thead><tbody id="gs"><tr><td colspan="3" class="note">尚無資料</td></tr></tbody></table>
 </div>
 
@@ -277,6 +279,7 @@ function chipFor(st){return st==="參加"?'<span class="chip ok">已報名</span
 function bar(label,n,tot,color){var p=tot?Math.round(n/tot*100):0;return '<div class="bar"><div class="bl"><span>'+esc(label)+'</span><b>'+n+' / '+tot+'</b></div><div class="bt"><i style="width:'+p+'%;background:'+color+'"></i></div></div>';}
 
 var OPENC={};
+var GF={kind:"",unit:""};
 function render(){
   var mem=0,gst=0,stf=0,lv=0,meal={"葷食":0,"素食":0,"不用餐":0},lun={"葷食":0,"素食":0,"不用餐":0};
   Object.keys(people).forEach(function(k){
@@ -324,9 +327,13 @@ function render(){
   });
   $("roster").innerHTML=rh||'<p class="note">名冊讀取中…</p>';
 
-  var rows=[];
-  Object.keys(people).forEach(function(k){var p=people[k];if(p.kind!=="m"){rows.push('<tr><td>'+(p.kind==="g"?"來賓":"工作人員")+'</td><td><b>'+esc(p.name)+'</b> '+(p.st==="請假"?'<span class="chip lv">請假</span>':'')+'</td><td>'+esc(p.unit||"—")+'</td></tr>');}});
-  $("gs").innerHTML=rows.join("")||'<tr><td colspan="3" class="note">尚無資料</td></tr>';
+  var rows=[],cnt={"":0,"g":0,"s":0},units={};
+  Object.keys(people).forEach(function(k){var p=people[k];if(p.kind!=="m"){cnt[""]++;cnt[p.kind]++;if(p.unit){units[p.unit]=1;}}});
+  Object.keys(people).forEach(function(k){var p=people[k];if(p.kind!=="m"){if(GF.kind&&p.kind!==GF.kind){return;}if(GF.unit&&p.unit!==GF.unit){return;}rows.push('<tr><td>'+(p.kind==="g"?"來賓":"工作人員")+'</td><td><b>'+esc(p.name)+'</b> '+(p.st==="請假"?'<span class="chip lv">請假</span>':'')+'</td><td>'+esc(p.unit||"—")+'</td></tr>');}});
+  var gh="";[["","全部"],["g","來賓"],["s","工作人員"]].forEach(function(t){gh+='<button type="button" data-k="'+t[0]+'"'+(GF.kind===t[0]?' class="on"':'')+'>'+t[1]+'（'+cnt[t[0]]+'）</button>';});
+  gh+='<select id="gfu" aria-label="依所屬單位篩選"><option value="">所有單位</option>'+Object.keys(units).sort().map(function(u){return '<option value="'+esc(u)+'"'+(GF.unit===u?' selected':'')+'>'+esc(u)+'</option>';}).join("")+'</select>';
+  $("gf").innerHTML=gh;
+  $("gs").innerHTML=rows.join("")||'<tr><td colspan="3" class="note">'+(cnt[""]?"沒有符合的資料":"尚無資料")+'</td></tr>';
   doSearch();
 }
 
@@ -392,6 +399,8 @@ $("rf").addEventListener("click",sync);
 ddl();setInterval(ddl,60000);
 render();sync();setInterval(sync,POLL);
 $("chap").onclick=function(e){var tr=e.target;while(tr&&tr!==this&&!(tr.getAttribute&&tr.getAttribute("data-c"))){tr=tr.parentNode;}if(!tr||tr===this){return;}var c=tr.getAttribute("data-c");OPENC[c]=!OPENC[c];render();};
+document.addEventListener("click",function(e){var b=e.target.closest?e.target.closest("#gf button"):null;if(b){GF.kind=b.getAttribute("data-k");render();}});
+document.addEventListener("change",function(e){if(e.target&&e.target.id==="gfu"){GF.unit=e.target.value;render();}});
 })();
 </script>
 <div data-mlj-credit style="text-align:center;font-size:12px;line-height:1.6;color:#8a93a6;padding:14px 16px 18px;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif">由 <a href="https://lin.ee/spzzwQc" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">米樂家數位資訊部</a> 製作</div>
