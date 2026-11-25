@@ -63,6 +63,7 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans TC",sy
 .res{margin-top:12px}.res .it{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;flex-wrap:wrap}
 .res .nm{font-weight:900}.res .ch{color:var(--mute);font-size:13px;margin-left:6px}
 .crow{cursor:pointer}.crow:hover{background:#f3f5fa}.crow.on{background:#eef1f8}.cax{color:#7a859d;font-size:12px}.cdet td{background:#f7f8fc;padding:10px 12px}.cdet .cg{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0}.cdet .cg>b{min-width:6.5em;font-size:13px}
+.bar.clk{cursor:pointer;border-radius:8px;padding:2px 4px;margin-left:-4px;margin-right:-4px}.bar.clk:hover{background:var(--pendbg)}.bar.clk.on{background:var(--pendbg);outline:2px solid var(--teal)}.nl{margin:8px 0 4px;font-size:13.5px}.nl .nh{font-weight:800;margin-bottom:6px}.nl .nn{display:inline-block;border:1px solid var(--line);background:#fff;border-radius:99px;padding:1px 10px;margin:0 5px 5px 0}.nl .nn small{opacity:.7}
 .gf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}.gf button{font:inherit;font-size:13.5px;font-weight:700;border:1px solid var(--line);background:#fff;color:var(--mute);border-radius:99px;padding:4px 14px;cursor:pointer}.gf button.on{background:var(--teal);border-color:var(--teal);color:#fff}.gf select{font:inherit;font-size:13.5px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;background:#fff}
 .chip{display:inline-block;border-radius:99px;padding:2px 11px;font-size:12.5px;font-weight:700}
 .chip.ok{background:var(--okbg);color:var(--ok)}.chip.lv{background:var(--leavebg);color:var(--leave)}.chip.pd{background:var(--pendbg);color:var(--pend)}
@@ -151,16 +152,18 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font
 <div class="panels">
 <div class="card">
 <h2><i>2</i>晚宴用餐統計</h2>
-<div class="bar"><div class="bl"><span>葷食</span><b id="m1">0</b></div><div class="bt"><i id="mb1" style="width:0%;background:var(--or)"></i></div></div>
-<div class="bar"><div class="bl"><span>素食</span><b id="m2">0</b></div><div class="bt"><i id="mb2" style="width:0%;background:var(--lime)"></i></div></div>
-<div class="bar"><div class="bl"><span>不用餐</span><b id="m3">0</b></div><div class="bt"><i id="mb3" style="width:0%;background:#8c96a6"></i></div></div>
-<p class="note" style="margin:6px 0 0">依已報名參加者所填的 12/4 晚宴選項統計。</p>
+<div class="bar clk" data-c="m" data-k="葷食" tabindex="0" role="button" title="點一下看名單"><div class="bl"><span>葷食</span><b id="m1">0</b></div><div class="bt"><i id="mb1" style="width:0%;background:var(--or)"></i></div></div>
+<div class="bar clk" data-c="m" data-k="素食" tabindex="0" role="button" title="點一下看名單"><div class="bl"><span>素食</span><b id="m2">0</b></div><div class="bt"><i id="mb2" style="width:0%;background:var(--lime)"></i></div></div>
+<div class="bar clk" data-c="m" data-k="不用餐" tabindex="0" role="button" title="點一下看名單"><div class="bl"><span>不用餐</span><b id="m3">0</b></div><div class="bt"><i id="mb3" style="width:0%;background:#8c96a6"></i></div></div>
+<div class="nl" id="nl-m"></div>
+<p class="note" style="margin:6px 0 0">依已報名參加者所填的 12/4 晚宴選項統計。點上面的項目可看名單。</p>
 </div>
 <div class="card">
 <h2><i>3</i>12/4 中午用餐統計</h2>
-<div class="bar"><div class="bl"><span>葷食</span><b id="l1">0</b></div><div class="bt"><i id="lb1" style="width:0%;background:var(--or)"></i></div></div>
-<div class="bar"><div class="bl"><span>素食</span><b id="l2">0</b></div><div class="bt"><i id="lb2" style="width:0%;background:var(--lime)"></i></div></div>
-<div class="bar"><div class="bl"><span>不用餐</span><b id="l3">0</b></div><div class="bt"><i id="lb3" style="width:0%;background:#8c96a6"></i></div></div>
+<div class="bar clk" data-c="l" data-k="葷食" tabindex="0" role="button" title="點一下看名單"><div class="bl"><span>葷食</span><b id="l1">0</b></div><div class="bt"><i id="lb1" style="width:0%;background:var(--or)"></i></div></div>
+<div class="bar clk" data-c="l" data-k="素食" tabindex="0" role="button" title="點一下看名單"><div class="bl"><span>素食</span><b id="l2">0</b></div><div class="bt"><i id="lb2" style="width:0%;background:var(--lime)"></i></div></div>
+<div class="bar clk" data-c="l" data-k="不用餐" tabindex="0" role="button" title="點一下看名單"><div class="bl"><span>不用餐</span><b id="l3">0</b></div><div class="bt"><i id="lb3" style="width:0%;background:#8c96a6"></i></div></div>
+<div class="nl" id="nl-l"></div>
 <p class="note" style="margin:6px 0 0">合計 <b id="lt">0</b> 人用午餐。依已報名參加者所填的 12/4 中午選項統計（未填午餐者不計入）。</p>
 </div>
 <div class="card">
@@ -279,15 +282,17 @@ function chipFor(st){return st==="參加"?'<span class="chip ok">已報名</span
 function bar(label,n,tot,color){var p=tot?Math.round(n/tot*100):0;return '<div class="bar"><div class="bl"><span>'+esc(label)+'</span><b>'+n+' / '+tot+'</b></div><div class="bt"><i style="width:'+p+'%;background:'+color+'"></i></div></div>';}
 
 var OPENC={};
-var GF={kind:"",unit:""};
+var GF={kind:"",unit:""},MS={m:"",l:""};
 function render(){
-  var mem=0,gst=0,stf=0,lv=0,meal={"葷食":0,"素食":0,"不用餐":0},lun={"葷食":0,"素食":0,"不用餐":0};
+  var mem=0,gst=0,stf=0,lv=0,meal={"葷食":0,"素食":0,"不用餐":0},lun={"葷食":0,"素食":0,"不用餐":0},mn={"葷食":[],"素食":[],"不用餐":[]},ln={"葷食":[],"素食":[],"不用餐":[]},chapOf={};
+  roster.forEach(function(r){chapOf[r.name]=r.chap||"";});
   Object.keys(people).forEach(function(k){
     var p=people[k];
     if(p.st==="請假"){lv++;return;}
     if(p.kind==="m"){mem++;}else if(p.kind==="g"){gst++;}else{stf++;}
-    if(meal[p.meal]!==undefined){meal[p.meal]++;}
-    if(p.lunch&&lun[p.lunch]!==undefined){lun[p.lunch]++;}
+    var tag=p.kind==="m"?(chapOf[p.name]||""):(p.unit||"")+(p.kind==="g"?"（來賓）":"");
+    if(meal[p.meal]!==undefined){meal[p.meal]++;mn[p.meal].push([p.name,tag]);}
+    if(p.lunch&&lun[p.lunch]!==undefined){lun[p.lunch]++;ln[p.lunch].push([p.name,tag]);}
   });
   var all=mem+gst+stf;
   $("n-all").textContent=all;
@@ -298,6 +303,11 @@ function render(){
   var lt=lun["葷食"]+lun["素食"]+lun["不用餐"],ly=lun["葷食"]+lun["素食"],lm=Math.max(lt,1);
   ["葷食","素食","不用餐"].forEach(function(k,i){$("l"+(i+1)).textContent=lun[k];$("lb"+(i+1)).style.width=(lun[k]/lm*100)+"%";});
   $("lt").textContent=ly;
+  [["m",mn],["l",ln]].forEach(function(t){var c=t[0],src=t[1],k=MS[c],box=$("nl-"+c);
+    var bars=document.querySelectorAll('.bar.clk[data-c="'+c+'"]');for(var q=0;q<bars.length;q++){bars[q].className="bar clk"+(bars[q].getAttribute("data-k")===k?" on":"");}
+    if(!k){box.innerHTML="";return;}
+    var arr=src[k].slice().sort(function(a,b){return a[0]<b[0]?-1:1;});
+    box.innerHTML='<div class="nh">'+esc(k)+'（'+arr.length+' 人）</div>'+(arr.map(function(x){return '<span class="nn">'+esc(x[0])+(x[1]?' <small>'+esc(x[1])+'</small>':'')+'</span>';}).join("")||'<span class="note">目前沒有人</span>');});
 
   var regHtml="";
   REGIONS.forEach(function(rg){
@@ -401,6 +411,9 @@ render();sync();setInterval(sync,POLL);
 $("chap").onclick=function(e){var tr=e.target;while(tr&&tr!==this&&!(tr.getAttribute&&tr.getAttribute("data-c"))){tr=tr.parentNode;}if(!tr||tr===this){return;}var c=tr.getAttribute("data-c");OPENC[c]=!OPENC[c];render();};
 document.addEventListener("click",function(e){var b=e.target.closest?e.target.closest("#gf button"):null;if(b){GF.kind=b.getAttribute("data-k");render();}});
 document.addEventListener("change",function(e){if(e.target&&e.target.id==="gfu"){GF.unit=e.target.value;render();}});
+function mealPick(e){var b=e.target.closest?e.target.closest(".bar.clk"):null;if(!b){return;}var c=b.getAttribute("data-c"),k=b.getAttribute("data-k");MS[c]=MS[c]===k?"":k;render();}
+document.addEventListener("click",mealPick);
+document.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){var b=e.target.closest?e.target.closest(".bar.clk"):null;if(b){e.preventDefault();mealPick(e);}}});
 })();
 </script>
 <div data-mlj-credit style="text-align:center;font-size:12px;line-height:1.6;color:#8a93a6;padding:14px 16px 18px;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif">由 <a href="https://lin.ee/spzzwQc" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">米樂家數位資訊部</a> 製作</div>
