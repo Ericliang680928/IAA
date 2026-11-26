@@ -202,7 +202,7 @@ function tblRows(b){
   if(merge){ let st=-1; R.forEach((r,i)=>{ if(r[0]){st=i} else if(st>=0 && !/^合/.test(r[1]||'')){span[st]++; span[i]=0} else st=-1 }); }
   return R.map((r,i)=>`<tr${/^[收支][\s\u3000]*[入出]：/.test(r[0]||'')?' class="secrow"':''}>${r.map((c,j)=>{
     if(merge&&j===0){ if(span[i]===0) return ''; if(span[i]>1) return `<td rowspan="${span[i]}" style="vertical-align:middle;text-align:center;font-weight:700;white-space:nowrap">${hl(c)}</td>`; }
-    return `<td${merge&&j<2?' style="white-space:nowrap"':''}>${hl(c)}</td>`}).join('')}</tr>`).join('');
+    return `<td${(merge&&j<2)||(b.headers[0]==='NO'&&j<3)?' style="white-space:nowrap"':''}>${hl(c)}</td>`}).join('')}</tr>`).join('');
 }
 function renderSummary(){
   const all=ordered().filter(s=>s.group!=='tool');
