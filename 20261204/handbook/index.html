@@ -152,7 +152,7 @@ const S={secs:{},sel:'cover',view:(location.hash==='#edit'?'edit':location.hash=
 let db=null; const timers={}, dirty=new Set();
 const $=s=>document.querySelector(s);
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const hl=t=>esc(t).replace(PEND,m=>'<mark>'+m+'</mark>');
+const hl=t=>esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(PEND,m=>'<mark>'+m+'</mark>');
 const canon=o=>JSON.stringify(o,(k,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,x)=>(a[x]=v[x],a),{}):v);
 const ordered=()=>Object.values(S.secs).sort((a,b)=>a.order-b.order);
 function textOf(s){return canon(s.blocks||[])+canon(s.cover||{})}
