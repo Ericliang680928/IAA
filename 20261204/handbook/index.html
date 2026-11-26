@@ -100,6 +100,7 @@ table.grid td.act button,table.grid th.act button{border:0;background:transparen
 .paper th{background:#1F2A5C;color:#fff;font-weight:700;padding:4px 6px;border:1px solid var(--paper-line);text-align:center}
 .paper td{border:1px solid var(--paper-line);padding:4px 6px;vertical-align:top;white-space:pre-wrap}
 .paper .tw2{overflow-x:auto}
+.paper tr.secrow td{background:#DCE6F5;font-weight:700}
 .paper [data-b]{transition:background .15s}
 .paper [data-b].active{background:#FFF1E3;box-shadow:-8px 0 0 #FFF1E3,-12px 0 0 #C55A11;border-radius:2px}
 .blk:focus-within{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-soft)}
@@ -199,7 +200,7 @@ function paperHTML(s){
 function tblRows(b){
   const R=b.rows, merge=(b.headers[0]==='區域'), span=R.map(()=>1);
   if(merge){ let st=-1; R.forEach((r,i)=>{ if(r[0]){st=i} else if(st>=0 && !/^合/.test(r[1]||'')){span[st]++; span[i]=0} else st=-1 }); }
-  return R.map((r,i)=>`<tr>${r.map((c,j)=>{
+  return R.map((r,i)=>`<tr${/^[收支][\s\u3000]*[入出]：/.test(r[0]||'')?' class="secrow"':''}>${r.map((c,j)=>{
     if(merge&&j===0){ if(span[i]===0) return ''; if(span[i]>1) return `<td rowspan="${span[i]}" style="vertical-align:middle;text-align:center;font-weight:700;white-space:nowrap">${hl(c)}</td>`; }
     return `<td${merge&&j<2?' style="white-space:nowrap"':''}>${hl(c)}</td>`}).join('')}</tr>`).join('');
 }
