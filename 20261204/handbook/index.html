@@ -120,7 +120,8 @@ mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 2px}
 .cover .foot{padding:50px 34px 24px;font-size:11px;color:#444;display:grid;gap:2px}
 .cover .foot b{color:#1F2A5C;font-size:13px}
 .book .paper{max-width:760px;margin-inline:auto}
-.toc-r{display:flex;align-items:baseline;gap:6px;padding:5px 0;color:inherit;text-decoration:none;border-bottom:1px dotted #9AA3BF}.toc-r i{flex:1}.toc-r b{font-weight:500}.toc-r:hover{background:#F0F2FA}
+.tocban{background:#1F2A5C;color:#fff;display:flex;justify-content:space-between;align-items:flex-end;padding:14px 18px;margin-bottom:16px}.tocban b{font-size:26px;letter-spacing:.2em}.tocban em{font-style:normal;font-weight:900;font-size:22px;letter-spacing:.06em}.tocatt{background:#1F2A5C;color:#fff;font-weight:700;padding:3px 10px;margin:18px 0 6px}
+.toc-r{display:flex;align-items:baseline;gap:6px;padding:7px 0;color:inherit;text-decoration:none}.toc-r i{flex:1;border-bottom:2px dotted #6b7089;transform:translateY(-3px)}.toc-r.nd i{border-bottom:0}.toc-r b{font-weight:500}.toc-r:hover{background:#F0F2FA}
 .pgn{max-width:760px;margin:10px auto 2px;text-align:right;font-size:12px;color:#6b7089}
 .todo-list{display:grid;gap:8px}
 .todo-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
@@ -290,9 +291,9 @@ function renderTodo(){
 }
 const PG={"m1": 1, "m2": 3, "m6": 4, "m7": 5, "m3": 6, "m4": 7, "m5": 8, "a1": 10, "a2": 12, "a3": 14, "a4": 21, "a5": 22, "a6": 24, "a7": 25, "a8": 26};
 function tocHTML(list){
-  const row=s=>`<a class="toc-r" href="#bk-${s.id}"><span>${hl(s.title)}</span><i></i><b>${PG[s.id]||''}</b></a>`;
+  const row=(s,nd)=>`<a class="toc-r${nd?' nd':''}" href="#bk-${s.id}"><span>${hl(s.title)}</span><i></i><b>${PG[s.id]||''}</b></a>`;
   const main=list.filter(s=>s.group!=='att'&&s.kind!=='cover'), att=list.filter(s=>s.group==='att');
-  return `<div class="paper toc"><h2 class="pt">目　錄　<small style="color:#B34E0A;font-size:12px">CONTENTS</small></h2>${main.map(row).join('')}<p class="h" style="margin-top:14px">附件</p>${att.map(row).join('')}</div>`;
+  return `<div class="paper toc"><div class="tocban"><b>目　錄</b><em>CONTENT</em></div>${main.map(row).join('')}<div class="tocatt">附件</div>${att.map(r=>row(r,1)).join('')}</div>`;
 }
 function renderBook(){
   const list=ordered().filter(s=>s.group!=='tool');
