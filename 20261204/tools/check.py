@@ -42,7 +42,7 @@ S={s['id']:s for s in d}
 rows=S['a1']['blocks'][2]['rows']; tot=rows[-1]
 body=[r for r in rows if r[1] and '計' not in r[1]]
 for ci in range(2,11):
-    if sum(int(r[ci] or 0) for r in body)!=int(tot[ci]): err.append(f'附件一第 {ci} 欄加總不符')
+    if sum(int(r[ci] or 0) for r in body)!=int(tot[ci] or 0): err.append(f'附件一第 {ci} 欄加總不符')
 r8=S['a8']['blocks'][1]['rows']
 if len(r8)!=int(tot[10]): err.append(f'附件八 {len(r8)} 位 ≠ 附件一合計 {tot[10]}')
 nm=[r[2].split('\n')[0] for r in r8]
