@@ -192,7 +192,7 @@ function paperHTML(s){
   for(const b of s.blocks||[]){
     const i=bi++;
     if(b.t==='p') h+=`<p data-b="${i}" class="${b.style==='h'?'h':b.style==='note'?'note':''}">${hl(b.text)}</p>`;
-    else if(b.t==='poster') h+=`<div data-b="${i}" class="poster" style="padding:0;border:0"><img src="IAA_2026年會_講師海報_邱重威.png" alt="${esc(b.text)}" style="width:100%;display:block;border:1px solid #9AA3BF"></div>`;
+    else if(b.t==='poster') h+=`<div data-b="${i}" class="poster" style="padding:0;border:0"><img src="${b.src||'IAA_2026年會_講師海報_邱重威.png'}" alt="${esc(b.text)}" style="width:100%;display:block;border:1px solid #9AA3BF"></div>`;
     else if(b.t==='table') h+=`<div data-b="${i}" class="tw2"><table><thead><tr>${b.headers.map(x=>`<th>${hl(x)}</th>`).join('')}</tr></thead><tbody>${tblRows(b)}</tbody></table></div>`;
   }
   return h+'</div>';
