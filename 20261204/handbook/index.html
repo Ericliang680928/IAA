@@ -200,7 +200,7 @@ function renderSummary(){
   const all=ordered().filter(s=>s.group!=='tool');
   const done=all.filter(s=>s.status==='定稿').length;
   const pend=all.reduce((n,s)=>n+pendCount(s),0);
-  $('#sum').innerHTML=`<a class="btn" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="https://claude.ai/artifact/WLANuZtAiRDViS1RBPLM1a#book">開啟全冊預覽頁</a><span class="chip">定稿 <b>${done}</b>／${all.length}</span><span class="chip todo">待補欄位 <b>${pend}</b></span><button class="btn pri" data-act="export-md">下載全冊文字</button><a class="btn pri" href="IAA第四屆第一次會員大會手冊_公開版.pdf" download>下載 PDF</a><a class="btn pri" href="IAA第四屆第一次會員大會手冊_公開版.docx" download>下載 Word</a>`;
+  $('#sum').innerHTML=`<a class="btn" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="https://claude.ai/artifact/WLANuZtAiRDViS1RBPLM1a#book">開啟全冊預覽頁</a><span class="chip">定稿 <b>${done}</b>／${all.length}</span><span class="chip todo">待補欄位 <b>${pend}</b></span><button class="btn pri" data-act="export-md">下載全冊文字</button><button class="btn" data-act="export-roster">下載附件八 Word（橫向）</button><a class="btn pri" href="IAA第四屆第一次會員大會手冊_公開版.pdf" download>下載 PDF</a><a class="btn pri" href="IAA第四屆第一次會員大會手冊_公開版.docx" download>下載 Word</a>`;
 }
 function renderNav(){
   const secs=ordered(); let last='',h='';
@@ -304,6 +304,7 @@ document.addEventListener('click',e=>{
   const a=t.dataset.act; if(!a) return;
   if(a==='export-md') return exportMd();
   if(a==='export-csv') return exportCsv();
+  if(a==='export-roster') return exportRoster();
   if(a==='export-json') return save('handbook.json',JSON.stringify(ordered(),null,1));
   const s=sel(); if(!s) return; const bl=s.blocks=s.blocks||[]; const b=+t.dataset.b;
   if(a==='up'&&b>0)[bl[b-1],bl[b]]=[bl[b],bl[b-1]];
@@ -367,6 +368,47 @@ async function save(filename,data){
 }
 function flashSave(t){setSave(t)}
 function exportMd(){save('IAA第四屆第一次會員大會手冊_全冊文字.md',toMd())}
+async function exportRoster(){
+  const s=S.secs.a8; if(!s){flashSave('找不到附件八');return}
+  const tb=(s.blocks||[]).find(b=>b.t==='table'); if(!tb){flashSave('附件八沒有名冊');return}
+  if(!window.docx){
+    try{await new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.iife.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)})}
+    catch(e){flashSave('Word 元件載入失敗');return}
+  }
+  const D=window.docx, cm=x=>Math.round(x*567);
+  const W=[1.3,1.8,2.3,5.9,4.6,2.4,5.7,3.0];
+  const FONT='Microsoft JhengHei', NAVY='1F2A5C', LINE={style:D.BorderStyle.SINGLE,size:4,color:'9AA3BF'};
+  const BD={top:LINE,bottom:LINE,left:LINE,right:LINE};
+  const run=(t,o={})=>new D.TextRun({text:t,font:FONT,size:o.size||16,bold:!!o.bold,color:o.color,shading:o.hl?{type:D.ShadingType.CLEAR,fill:'FFF59D',color:'auto'}:undefined});
+  const cell=(v,i,head)=>{
+    let txt=String(v==null?'':v);
+    if(i===2) txt=txt.split('\n').join('');
+    const lines=txt.split('\n');
+    return new D.TableCell({width:{size:cm(W[i]),type:D.WidthType.DXA},borders:BD,
+      shading:head?{type:D.ShadingType.CLEAR,fill:NAVY,color:'auto'}:undefined,
+      margins:{top:40,bottom:40,left:60,right:60},
+      verticalAlign:head?D.VerticalAlign.CENTER:D.VerticalAlign.TOP,
+      children:lines.map(l=>new D.Paragraph({alignment:(head||i<3||i===7)?D.AlignmentType.CENTER:D.AlignmentType.LEFT,spacing:{line:240},
+        children:[run(l,{bold:head,color:head?'FFFFFF':undefined,hl:/【資料待補/.test(l)})]}))});
+  };
+  const head=new D.TableRow({tableHeader:true,cantSplit:true,children:tb.headers.map((h,i)=>cell(String(h).replace(/\n/g,''),i,true))});
+  const rows=tb.rows.map(r=>new D.TableRow({cantSplit:true,children:r.map((v,i)=>cell(v,i,false))}));
+  const note=((s.blocks||[]).find(b=>b.t==='p')||{}).text||'';
+  const doc=new D.Document({sections:[{
+    properties:{page:{size:{width:cm(21),height:cm(29.7),orientation:D.PageOrientation.LANDSCAPE},margin:{top:cm(1.5),bottom:cm(1.3),left:cm(1.3),right:cm(1.3)}}},
+    footers:{default:new D.Footer({children:[new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.TextRun({children:[D.PageNumber.CURRENT],font:FONT,size:16})]})]})},
+    children:[
+      new D.Paragraph({spacing:{after:60},children:[run('【附件八】會員聯絡名錄',{size:32,bold:true,color:NAVY})]}),
+      new D.Paragraph({spacing:{after:100},children:[run(note,{size:16,color:'555555'})]}),
+      new D.Table({width:{size:cm(27.1),type:D.WidthType.DXA},columnWidths:W.map(cm),layout:D.TableLayoutType.FIXED,rows:[head,...rows]})]}]});
+  const blob=await D.Packer.toBlob(doc);
+  const filename='附件八_會員聯絡名錄_橫向.docx';
+  try{
+    let d=null; try{d=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){}
+    if(d){await d.save({filename,data:blob});return}
+  }catch(e){ if(e&&e.code==='declined') return }
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.appendChild(a);a.click();a.remove();
+}
 function exportCsv(){
   const q=x=>'"'+String(x).replace(/"/g,'""')+'"';
   const rows=[['章節','負責人','待補欄位','位置'],...collectTodos().map(x=>[x.sec,x.owner,x.mk,x.ctx])];
