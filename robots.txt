@@ -8,5 +8,9 @@ Disallow: /IAA/20261204/progress/
 Disallow: /IAA/20261204/books/
 Disallow: /IAA/20261204/kb/
 Disallow: /IAA/20261204/directory/
+Disallow: /IAA/20261204/agm/
+Disallow: /IAA/20261204/assist/
+Disallow: /IAA/20261204/handbook/
+Disallow: /IAA/20261204/dues/
 
 Sitemap: https://ericliang680928.github.io/IAA/sitemap.xml
